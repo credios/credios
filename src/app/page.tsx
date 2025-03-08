@@ -1,4 +1,5 @@
 import AdvantagesSection from "@/components/advantagessection";
+import HeroFGTS from "@/components/herofgts";
 import HeroSection from "@/components/herosection";
 import SimuladorEmprestimoNaContaDeLuz from "@/components/simuladoremprestimonacontadeluz";
 import SobreCredios from "@/components/sobrecredios";
@@ -12,6 +13,7 @@ export default function Home() {
     <Testemunhos />
     <SobreCredios />
     <SimuladorEmprestimoNaContaDeLuz />
+    <HeroFGTS />
     </>
   );
 }
