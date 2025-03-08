@@ -32,7 +32,6 @@ import {
   X,
   Search,
   Shield,
-  AlertCircle,
   CheckCircle2,
   BadgeCheck,
   Zap,

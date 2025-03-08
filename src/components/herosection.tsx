@@ -326,18 +326,6 @@ const HeroSection: React.FC = () => {
     })
   };
   
-  const highlightVariants = {
-    pulse: {
-      scale: [1, 1.02, 1],
-      opacity: [0.9, 1, 0.9],
-      transition: { 
-        duration: 2,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
-    }
-  };
-
   // Lista de recursos/benefícios
   const recursos = [
     { 
