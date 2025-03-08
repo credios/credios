@@ -1,14 +1,32 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { 
+  Loader2, 
+  MapPin, 
+  User, 
+  Phone, 
+  Check, 
+  X, 
+  Search, 
+  Clock, 
+  Shield, 
+  AlertCircle, 
+  CheckCircle2, 
+  Banknote, 
+  Zap, 
+  BadgeCheck, 
+  Star
+} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-  // Interface para a cidade
+// Interface para a cidade
 interface Cidade {
   nome: string;
   valor?: number;
@@ -49,6 +67,9 @@ const HeroSection: React.FC = () => {
   const [cidadeInput, setCidadeInput] = useState<string>("");
   const [cidadesLista, setCidadesLista] = useState<CidadeJSON[]>([]);
   
+  // Estado para o contador de tempo
+  const [tempoRestante, setTempoRestante] = useState<number>(1800); // 30 minutos em segundos
+  
   // Carregar dados de cidades do JSON local em public/cidades.json
   useEffect(() => {
     const fetchCidades = async () => {
@@ -88,6 +109,23 @@ const HeroSection: React.FC = () => {
     
     fetchCidades();
   }, []);
+  
+  // Efeito para o contador de tempo
+  useEffect(() => {
+    if (tempoRestante > 0) {
+      const timer = setTimeout(() => {
+        setTempoRestante(tempoRestante - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [tempoRestante]);
+  
+  // Formatar o tempo restante
+  const formatarTempoRestante = () => {
+    const minutos = Math.floor(tempoRestante / 60);
+    const segundos = tempoRestante % 60;
+    return `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+  };
   
   // Estado para o resultado da simulação
   const [mostrarResultado, setMostrarResultado] = useState<boolean>(false);
@@ -284,177 +322,280 @@ const HeroSection: React.FC = () => {
     visible: (i: number) => ({
       opacity: 1,
       y: 0,
-      transition: { delay: 0.1 * i, duration: 0.6 }
+      transition: { delay: 0.1 * i, duration: 0.5, ease: "easeOut" }
     })
   };
+  
+  const highlightVariants = {
+    pulse: {
+      scale: [1, 1.02, 1],
+      opacity: [0.9, 1, 0.9],
+      transition: { 
+        duration: 2,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }
+    }
+  };
+
+  // Lista de recursos/benefícios
+  const recursos = [
+    { 
+      icon: <Shield className="h-5 w-5" />, 
+      title: "Negativado?", 
+      text: "Aprovamos mesmo com nome no SPC/Serasa" 
+    },
+    { 
+      icon: <Banknote className="h-5 w-5" />, 
+      title: "Zero burocracia", 
+      text: "sem comprovação de renda" 
+    },
+    { 
+      icon: <Zap className="h-5 w-5" />, 
+      title: "Rápido e fácil", 
+      text: "dinheiro na conta no mesmo dia" 
+    },
+    { 
+      icon: <BadgeCheck className="h-5 w-5" />, 
+      title: "Pagamento facilitado", 
+      text: "direto na sua conta de luz" 
+    }
+  ];
 
   return (
     <>
       {/* Overlay de Carregamento */}
-      {isLoading && (
-        <div className="fixed inset-0 bg-white/90 flex justify-center items-center z-50 backdrop-blur-sm">
-          <div className="bg-white p-8 sm:p-10 rounded-2xl shadow-2xl w-[90%] max-w-md border border-gray-100 relative overflow-hidden">
-            <div className="h-1.5 bg-gradient-to-r from-blue-800 to-indigo-700 absolute top-0 inset-x-0 rounded-t-2xl"></div>
-            <div className="flex flex-col items-center text-center">
-              <Loader2 className="h-14 w-14 text-blue-800 animate-spin mb-6" />
-              <p className="text-lg font-medium text-gray-800 max-w-[320px] mx-auto">
-                ⏳ Aguarde! Nossa IA está analisando seus dados para oferecer o melhor crédito disponível.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div 
+            className="fixed inset-0 bg-white/90 flex justify-center items-center z-50 backdrop-blur-md"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div 
+              className="bg-white p-8 sm:p-10 rounded-2xl shadow-2xl w-[90%] max-w-md border border-gray-100 relative overflow-hidden"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+            >
+              <div className="h-1.5 bg-gradient-to-r from-blue-600 to-indigo-500 absolute top-0 inset-x-0 rounded-t-2xl"></div>
+              <div className="flex flex-col items-center text-center">
+                <div className="relative w-16 h-16 mb-6 flex items-center justify-center">
+                  <motion.div 
+                    className="absolute inset-0 rounded-full bg-blue-100 opacity-70"
+                    animate={{ 
+                      scale: [1, 1.5, 1],
+                    }}
+                    transition={{ 
+                      duration: 2,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
+                  <Loader2 className="h-10 w-10 text-blue-600 animate-spin relative z-10" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Analisando seus dados</h3>
+                <p className="text-gray-600 max-w-[320px] mx-auto">
+                  Nossa IA está verificando as melhores condições de crédito disponíveis para você.
+                </p>
+                
+                <div className="w-full mt-6 bg-gray-100 h-2 rounded-full overflow-hidden">
+                  <motion.div 
+                    className="h-full bg-gradient-to-r from-blue-500 to-indigo-500"
+                    initial={{ width: "0%" }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 2 }}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Hero Section */}
-      <section className="relative py-12 bg-gradient-to-br from-blue-900 via-blue-700 to-sky-600 overflow-hidden text-white">
-        {/* Padrão de fundo com efeito de ondas */}
-        <div 
-          className="absolute inset-0 opacity-10 z-0"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E")`
-          }}
-        />
-        
-        {/* Efeito de ondas na parte inferior */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 sm:h-24 opacity-20">
-          <svg viewBox="0 0 1440 320" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" className="w-full h-full">
-            <path d="M0,128L48,144C96,160,192,192,288,213.3C384,235,480,245,576,234.7C672,224,768,192,864,192C960,192,1056,224,1152,224C1248,224,1344,192,1392,176L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z" fill="white"></path>
+      <section className="relative py-16 sm:py-24 overflow-hidden bg-gradient-to-b from-blue-800 via-blue-700 to-indigo-800 text-white">
+        {/* Elementos de background */}
+        <div className="absolute inset-0 overflow-hidden">
+          <svg viewBox="0 0 1000 1000" className="absolute top-0 left-0 w-[200%] h-[200%] opacity-5 transform -translate-x-1/2 -translate-y-1/3">
+            <circle r="45" cx="400" cy="400" fill="currentColor" className="animate-blob" />
+            <circle r="40" cx="500" cy="600" fill="currentColor" className="animate-blob animation-delay-2000" />
+            <circle r="35" cx="800" cy="400" fill="currentColor" className="animate-blob animation-delay-4000" />
+            <circle r="50" cx="700" cy="700" fill="currentColor" className="animate-blob animation-delay-1000" />
+            <circle r="35" cx="300" cy="700" fill="currentColor" className="animate-blob animation-delay-3000" />
           </svg>
         </div>
         
-        {/* Círculos decorativos */}
-        <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-sky-400 opacity-20 blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-blue-300 opacity-10 blur-3xl"></div>
+        {/* Ondas decorativas */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full h-auto">
+            <path fill="white" fillOpacity="0.05" d="M0,288L48,272C96,256,192,224,288,224C384,224,480,256,576,272C672,288,768,288,864,272C960,256,1056,224,1152,224C1248,224,1344,256,1392,272L1440,288L1440,320L0,320Z"></path>
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full h-auto absolute bottom-0 left-0">
+            <path fill="white" fillOpacity="0.1" d="M0,288L48,272C96,256,192,224,288,208C384,192,480,192,576,176C672,160,768,128,864,128C960,128,1056,160,1152,176C1248,192,1344,192,1392,192L1440,192L1440,320L0,320Z"></path>
+          </svg>
+        </div>
 
-        <div className="container mx-auto px-4 max-w-[1200px] relative z-10">
+        <div className="container mx-auto px-4 max-w-[1300px] relative z-10">
           <div className="flex flex-col lg:flex-row lg:items-center lg:gap-14">
             {/* Coluna de texto */}
-            <div className="flex-1 mb-10 lg:mb-0">
+            <div className="flex-1 mb-12 lg:mb-0">
               <motion.div
-                className="inline-flex items-center bg-gradient-to-r from-sky-500/40 to-blue-600/40 rounded-full py-2 px-4 text-sm font-semibold mb-6 shadow-lg border border-white/30 backdrop-blur-sm"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
+                className="flex items-center gap-2 bg-white/10 rounded-full py-2 px-4 text-sm font-medium mb-6 backdrop-blur-md border border-white/20 w-fit"
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <span className="text-yellow-300 mr-1">★</span>4,9 no Google <span className="mx-3 h-3.5 w-px bg-white/40"></span> Mais de R$ 50 milhões liberados
+                <div className="flex gap-0.5">
+                  {[1, 2, 3, 4, 5].map((_, i) => (
+                    <Star key={i} className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <span>4,9 de 5 no Google</span>
+                <span className="mx-2 h-3.5 w-px bg-white/40"></span>
+                <span>R$ 50 milhões liberados</span>
               </motion.div>
               
               <motion.h1 
-                className="text-3xl md:text-5xl font-extrabold leading-snug mb-3 text-white drop-shadow-md"
+                className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
               >
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-blue-100 to-white">
-                  Empréstimo na Conta de Luz com
+                <span className="block text-blue-100">Empréstimo na Conta</span>
+                <span className="block">
+                  <span className="text-white">de Luz com </span>
+                  <span className="text-yellow-300">Aprovação Imediata</span>
                 </span>
-                <br />
-                <span className="text-yellow-300 leading-tight inline-block mt-[-0.25rem]">Aprovação na Hora</span>
               </motion.h1>
               
               <motion.p 
-                className="text-lg opacity-95 mb-4 max-w-[600px] leading-relaxed text-blue-50"
+                className="text-xl text-blue-100 mb-8 max-w-[600px] leading-relaxed"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
-                <span className="font-semibold border-b-2 border-sky-400/60 pb-0.5">Dinheiro rápido</span> mesmo para quem está com nome sujo. Receba o valor na sua conta
-                e pague em parcelas mensais na sua fatura de energia.
+                <span className="font-semibold text-white">Dinheiro rápido</span> mesmo para quem está com nome sujo. Receba na sua conta e pague em parcelas
+                mensais na sua fatura de energia.
               </motion.p>
               
               <motion.div 
-                className="relative group mb-6 max-w-md mx-auto sm:mx-0"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              >
-                {/* Efeito de glow no background */}
-                <motion.div 
-                  className="absolute -inset-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-lg blur-md opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-300"
-                  animate={{ 
-                    opacity: [0.5, 0.8, 0.5],
-                    scale: [0.98, 1.01, 0.98],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                  }}
-                ></motion.div>
-                
-                {/* Conteúdo do box */}
-                <div className="relative flex items-center px-6 py-3 bg-white rounded-lg border border-orange-300/50 shadow-md">
-                  <div className="flex-grow">
-                    <div className="flex items-baseline">
-                      <span className="font-bold text-orange-600 uppercase tracking-wide mr-1.5">ATÉ</span>
-                      <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600 tracking-tight text-xl">
+  className="bg-white/10 backdrop-blur-md rounded-xl p-5 border border-white/20 mb-10 max-w-md"
+  initial="hidden"
+  animate="visible"
+  variants={{
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      scale: [1, 1.02, 1],
+      transition: {
+        duration: 0.6,
+        delay: 0.3,
+        scale: {
+          duration: 2,
+          repeat: Infinity,
+          repeatType: "reverse"
+        }
+      }
+    }
+  }}
+>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="flex items-baseline gap-2">
+                      <Badge variant="outline" className="bg-gradient-to-r from-yellow-400/20 to-amber-400/20 text-yellow-300 border-yellow-500/30 uppercase font-semibold">
+                        Até
+                      </Badge>
+                      <span className="text-3xl font-bold tracking-tight text-white">
                         R$ 3.300,00
                       </span>
                     </div>
-                    <div className="text-sm font-semibold text-orange-800">
-                      liberados NO MESMO DIA
+                    <div className="text-sm font-medium text-blue-100 mt-1">
+                      Liberados no mesmo dia
                     </div>
                   </div>
-                  <div className="ml-3 flex-shrink-0">
-                    <motion.div
-                      animate={{ 
-                        scale: [1, 1.1, 1], 
-                        rotate: [0, 10, 0] 
-                      }}
-                      transition={{ 
-                        duration: 1.5, 
-                        repeat: Infinity, 
-                        repeatDelay: 2 
-                      }}
-                      className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-md text-white text-xl"
-                    >
-                      ⚡
-                    </motion.div>
-                  </div>
+                  
+                  <motion.div
+                    animate={{ 
+                      scale: [1, 1.1, 1], 
+                      rotate: [0, 5, 0] 
+                    }}
+                    transition={{ 
+                      duration: 1.5, 
+                      repeat: Infinity, 
+                      repeatDelay: 1 
+                    }}
+                    className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full flex items-center justify-center shadow-lg"
+                  >
+                    <Zap className="h-6 w-6 text-white" />
+                  </motion.div>
+                </div>
+                
+                <div className="flex items-center gap-2 mt-4 text-xs text-blue-200">
+                  <Clock className="h-3.5 w-3.5" />
+                  <span>Oferta disponível por: <span className="font-bold text-yellow-300">{formatarTempoRestante()}</span></span>
                 </div>
               </motion.div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {[
-                  { 
-                    icon: "🔎", 
-                    title: "Negativado?", 
-                    text: "Aprovamos mesmo com nome no SPC/Serasa" 
-                  },
-                  { 
-                    icon: "📄", 
-                    title: "Zero burocracia", 
-                    text: "- sem comprovação de renda" 
-                  },
-                  { 
-                    icon: "⏱️", 
-                    title: "Rápido e fácil", 
-                    text: "- dinheiro na conta no mesmo dia" 
-                  },
-                  { 
-                    icon: "💸", 
-                    title: "Pagamento facilitado", 
-                    text: "direto na sua conta de luz" 
-                  }
-                ].map((feature, i) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+                {recursos.map((recurso, i) => (
                   <motion.div 
                     key={i}
-                    className="flex items-start gap-4"
+                    className="flex items-start gap-3"
                     custom={i}
                     initial="hidden"
                     animate="visible"
                     variants={featureVariants}
                   >
-                    <div className="w-12 h-12 bg-gradient-to-br from-sky-500/30 to-blue-600/30 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg backdrop-blur-sm border border-white/40 text-xl relative">
-                      <div className="absolute inset-0 rounded-full bg-blue-400/10 animate-ping opacity-75" style={{ animationDuration: '3s', animationDelay: `${i * 0.5}s` }}></div>
-                      {feature.icon}
+                    <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-md border border-white/20 text-blue-100">
+                      {recurso.icon}
                     </div>
-                    <div className="text-base opacity-90 leading-snug">
-                      <strong className="font-semibold text-white opacity-100">{feature.title}</strong> {feature.text}
+                    <div>
+                      <h3 className="font-medium text-lg text-white">{recurso.title}</h3>
+                      <p className="text-blue-100 text-sm">{recurso.text}</p>
                     </div>
                   </motion.div>
                 ))}
               </div>
+              
+              <motion.div 
+                className="mb-8 sm:mb-0"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7, duration: 0.5 }}
+              >
+                <div className="flex flex-wrap items-center gap-4">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <div className="bg-white/10 backdrop-blur-md rounded-lg py-2 px-4 border border-white/20 flex items-center gap-2 text-sm">
+                          <Shield className="h-4 w-4 text-blue-200" />
+                          <span className="text-blue-50">Regulado pelo Banco Central</span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Somos uma instituição financeira regulamentada</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <div className="bg-white/10 backdrop-blur-md rounded-lg py-2 px-4 border border-white/20 flex items-center gap-2 text-sm">
+                          <BadgeCheck className="h-4 w-4 text-blue-200" />
+                          <span className="text-blue-50">Garantia de segurança</span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Seus dados estão protegidos por criptografia</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </motion.div>
             </div>
             
             {/* Formulário */}
@@ -464,324 +605,397 @@ const HeroSection: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              {mostrarResultado ? (
-                <Card className="bg-white text-gray-800 rounded-2xl shadow-2xl border border-gray-100 relative overflow-hidden">
-                  <div className="h-2 bg-gradient-to-r from-blue-800 via-sky-600 to-blue-800 absolute top-0 inset-x-0 rounded-t-2xl"></div>
-                  <div className="absolute -right-10 -top-10 w-32 h-32 bg-blue-100 rounded-full opacity-30 blur-2xl"></div>
-                  <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-yellow-100 rounded-full opacity-30 blur-3xl"></div>
-                  <CardContent className="pt-8 pb-6 px-8 text-center relative z-10">
-                    <motion.div 
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ 
-                        opacity: 1, 
-                        scale: [0.8, 1.1, 1],
-                        rotate: [0, 5, 0, -5, 0]
-                      }}
-                      transition={{ duration: 1 }}
-                      className="text-5xl mb-2"
-                    >
-                      🎉
-                    </motion.div>
-                    
-                    <motion.h3 
-                      className="text-3xl font-extrabold text-blue-800 mb-6"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      Parabéns!
-                      <div className="text-2xl font-medium text-blue-600 mt-1">Você está pré-aprovado para:</div>
-                    </motion.h3>
-                    
-                    <motion.div 
-                      className="text-5xl font-black text-blue-900 my-8 relative inline-block"
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ 
-                        opacity: 1, 
-                        scale: [0.9, 1.1, 1],
-                      }}
-                      transition={{ duration: 0.8, delay: 0.2 }}
-                    >
-                      <motion.div
-                        initial={{ y: -20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.8, duration: 0.5 }}
-                        className="absolute -top-6 right-0 bg-green-500 text-white text-xs py-1 px-2 rounded-full font-semibold"
-                      >
-                        PRÉ-APROVADO
-                      </motion.div>
-                      {valorAprovado}
-                      <div className="h-2 bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400 absolute -bottom-3 inset-x-0 rounded-full scale-x-75 origin-center"></div>
-                    </motion.div>
-                    
-                    <motion.p 
-                      className="text-lg text-gray-800 mb-8"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 0.3 }}
-                    >
-                      Você pode receber este valor ainda hoje em sua conta!
-                    </motion.p>
-                    
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, delay: 0.4 }}
-                    >
-                      <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <Button 
-                          className="bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white rounded-full py-6 px-10 text-lg font-bold uppercase tracking-wide shadow-xl shadow-orange-600/30 hover:-translate-y-1 hover:shadow-2xl hover:shadow-orange-500/40 transition-all duration-300 border-2 border-orange-300/20 cursor-pointer"
-                          size="lg"
-                          asChild
-                        >
-                          <a href="https://credios.com.br/contratacao-emprestimo-conta-luz" className="flex items-center gap-2">
-                            <span>CONTRATAR AGORA</span>
-                            <motion.span 
-                              animate={{ x: [0, 5, 0] }}
-                              transition={{ 
-                                duration: 1,
-                                repeat: Infinity,
-                                repeatType: "reverse"
-                              }}
-                              className="text-xl"
-                            >
-                              ➡️
-                            </motion.span>
-                          </a>
-                        </Button>
-                      </motion.div>
+              <AnimatePresence mode="wait">
+                {mostrarResultado ? (
+                  <motion.div
+                    key="resultado"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                  >
+                    <Card className="bg-white text-gray-800 rounded-2xl shadow-2xl border-0 relative overflow-hidden">
+                      <div className="h-2 bg-gradient-to-r from-green-500 via-emerald-400 to-green-500 absolute top-0 inset-x-0 rounded-t-2xl"></div>
+                      <div className="absolute -right-16 -top-16 w-40 h-40 bg-green-100 rounded-full opacity-30 blur-3xl"></div>
+                      <div className="absolute -left-16 -bottom-16 w-48 h-48 bg-blue-100 rounded-full opacity-30 blur-3xl"></div>
                       
-                      <div className="text-xs text-gray-500 mt-4 flex items-center justify-center gap-1.5">
-                        <span>🔐</span> A Credios exerce uma atividade regulamentada pelo Banco Central
-                      </div>
-                    </motion.div>
-                  </CardContent>
-                </Card>
-              ) : (
-                <Card className="bg-white text-gray-800 rounded-2xl shadow-2xl border border-gray-100 relative overflow-hidden">
-                  <div className="h-2 bg-gradient-to-r from-blue-800 via-sky-600 to-blue-800 absolute top-0 inset-x-0 rounded-t-2xl"></div>
-                  <div className="absolute -right-10 -top-10 w-32 h-32 bg-blue-100 rounded-full opacity-70 blur-2xl"></div>
-                  <CardHeader className="pb-0 pt-6 relative z-10">
-                    <CardTitle className="text-3xl font-extrabold text-blue-800 text-center">Simule seu empréstimo agora</CardTitle>
-                    <CardDescription className="text-center text-blue-600 font-medium pt-2">Resposta na hora - leva apenas 2 minutos!</CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-4 pb-6 px-8">
-                    <div className="bg-gradient-to-r from-blue-50 to-sky-50 text-blue-800 py-4 px-4 w-full rounded-lg mb-6 border border-blue-200/50 shadow-sm">
-                      <div className="flex items-start gap-3">
-                        <motion.div
+                      <CardContent className="pt-10 pb-8 px-8 text-center relative z-10">
+                        <motion.div 
+                          initial={{ scale: 0, opacity: 0 }}
                           animate={{ 
-                            rotate: [0, 10, 0, -10, 0],
-                            scale: [1, 1.2, 1, 1.2, 1]
+                            scale: [0, 1.2, 1],
+                            rotate: [0, 10, -10, 0]
                           }}
-                          transition={{ 
-                            duration: 1.5,
-                            repeat: Infinity,
-                            repeatDelay: 5
-                          }}
-                          className="text-xl flex-shrink-0 mt-0.5"
+                          transition={{ duration: 0.7 }}
+                          className="w-20 h-20 bg-green-100 rounded-full mx-auto mb-4 flex items-center justify-center"
                         >
-                          📝
+                          <CheckCircle2 className="h-10 w-10 text-green-600" />
                         </motion.div>
-                        <div className="text-base font-medium">
-                          <span className="font-bold">Preencha o formulário</span> agora e receba seu dinheiro <span className="underline decoration-yellow-400 decoration-2 underline-offset-2">ainda hoje</span>!
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <form className="space-y-5">
-                      <div className="w-full">
-                        <div className="space-y-2.5">
-                          <Label htmlFor="cidade-input" className="font-medium text-sm text-gray-700">
-                            Sua cidade*
-                          </Label>
-                          <div className="relative">
-                            <Input
-                              id="cidade-input"
-                              placeholder="Digite sua cidade"
-                              className={`w-full px-4 py-3.5 rounded-lg text-base ${errors.cidade ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 focus:ring-blue-800'}`}
-                              value={cidadeInput}
-                              onChange={handleCidadeInputChange}
-                              autoComplete="address-level2"
-                              inputMode="text"
-                            />
-                            
-                            {mostrarSugestoes && (
-                              <div className="absolute top-full left-0 right-0 max-h-[200px] overflow-y-auto bg-white border border-gray-200 rounded-b-lg shadow-md z-10">
-                                {cidadeSugestoes.map((cidade, index) => (
-                                  <div
-                                    key={index}
-                                    className="py-3 px-4 cursor-pointer border-b border-gray-100 last:border-b-0 text-sm hover:bg-gray-50 transition-colors flex justify-between items-center"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      selecionarCidade(cidade);
-                                    }}
-                                  >
-                                    <span>{cidade.nome}</span>
-                                    {cidade.valor && (
-                                      <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded">
-                                        Até R$ {cidade.valor.toLocaleString('pt-BR')}
-                                      </span>
-                                    )}
-                                  </div>
-                                ))}
-                              </div>
-                            )}
+                        
+                        <motion.h3 
+                          className="text-3xl font-bold text-gray-900 mb-3"
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5 }}
+                        >
+                          Parabéns, {formData.nome.split(' ')[0]}!
+                        </motion.h3>
+                        
+                        <motion.p
+                          className="text-xl font-medium text-gray-600 mb-8"
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5, delay: 0.1 }}
+                        >
+                          Seu crédito foi pré-aprovado!
+                        </motion.p>
+                        
+                        <motion.div 
+                          className="relative mb-10"
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.5, delay: 0.2 }}
+                        >
+                          <Badge className="absolute -top-3 right-0 bg-green-500 border-0 font-medium px-3 py-1">
+                            APROVADO
+                          </Badge>
+                          <div className="bg-gray-50 rounded-xl p-6 border border-gray-100">
+                            <h4 className="text-lg font-medium text-gray-500 mb-2">Valor disponível:</h4>
+                            <div className="text-5xl font-extrabold text-gray-900 mb-1">{valorAprovado}</div>
+                            <div className="text-sm text-gray-500">Pronto para saque imediato</div>
                           </div>
-                          {errors.cidade && (
-                            <p className="text-xs text-red-600 bg-red-50 py-1.5 px-2.5 rounded border-l-3 border-red-600 mt-2">
-                              {errors.cidade}
-                            </p>
-                          )}
-                        </div>
-                      </div>
+                        </motion.div>
+                        
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5, delay: 0.4 }}
+                        >
+                          <motion.div
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.97 }}
+                          >
+                            <Button 
+                              className="bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 w-full text-white rounded-xl py-7 text-xl font-semibold shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30 border-0"
+                              asChild
+                            >
+                              <a href="https://credios.com.br/contratacao-emprestimo-conta-luz" className="flex items-center justify-center gap-2">
+                                <span>CONTRATAR AGORA</span>
+                                <motion.span
+                                  animate={{ x: [0, 5, 0] }}
+                                  transition={{ 
+                                    duration: 1,
+                                    repeat: Infinity,
+                                    repeatType: "reverse"
+                                  }}
+                                >
+                                  →
+                                </motion.span>
+                              </a>
+                            </Button>
+                          </motion.div>
+                          
+                          <div className="flex justify-center items-center gap-2 mt-6 text-gray-500">
+                            <Shield className="h-4 w-4" />
+                            <span className="text-sm">Informações protegidas por criptografia</span>
+                          </div>
+                        </motion.div>
+                      </CardContent>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div className="space-y-2.5">
-                          <Label htmlFor="nome" className="font-medium text-sm text-gray-700">
-                            Nome completo*
-                          </Label>
-                          <Input
-                            id="nome"
-                            name="nome"
-                            placeholder="Digite seu nome"
-                            className={`w-full px-4 py-3.5 rounded-lg text-base ${errors.nome ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 focus:ring-blue-800'}`}
-                            value={formData.nome}
-                            onChange={handleInputChange}
-                            autoComplete="name"
-                            inputMode="text"
-                          />
-                          {errors.nome && (
-                            <p className="text-xs text-red-600 bg-red-50 py-1.5 px-2.5 rounded border-l-3 border-red-600 mt-2">
-                              {errors.nome}
-                            </p>
-                          )}
+                      <CardFooter className="pt-0 pb-6 px-8 flex justify-center">
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: 0.6 }}
+                          className="flex items-center gap-2 text-sm text-gray-500"
+                        >
+                          <Clock className="h-4 w-4" />
+                          <span className="font-medium">Oferta válida por: <span className="text-green-600">{formatarTempoRestante()}</span></span>
+                        </motion.div>
+                      </CardFooter>
+                    </Card>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="formulario"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                  >
+                    <Card className="bg-white text-gray-800 rounded-2xl shadow-2xl border-0 relative overflow-hidden">
+                      <div className="h-2 bg-gradient-to-r from-blue-600 to-indigo-500 absolute top-0 inset-x-0 rounded-t-2xl"></div>
+                      <div className="absolute -right-16 -top-16 w-40 h-40 bg-blue-100 rounded-full opacity-30 blur-3xl"></div>
+                      
+                      <CardHeader className="pt-8 pb-2 px-8 relative z-10">
+                        <CardTitle className="text-2xl font-bold text-gray-900 text-center">Simule seu empréstimo</CardTitle>
+                        <CardDescription className="text-center text-gray-600 mt-1">
+                          É rápido e fácil, leva apenas 2 minutos!
+                        </CardDescription>
+                      </CardHeader>
+                      
+                      <CardContent className="px-8 py-4 relative z-10">
+                        <div className="mb-6 bg-blue-50 rounded-xl p-4 border border-blue-100">
+                          <div className="flex items-start gap-3">
+                            <div className="text-blue-600 mt-1 flex-shrink-0">
+                              <AlertCircle className="h-5 w-5" />
+                            </div>
+                            <div>
+                              <h4 className="font-medium text-blue-800 mb-1">Oferta especial</h4>
+                              <p className="text-sm text-blue-700">
+                                Preencha seus dados e você poderá receber seu dinheiro <span className="font-medium">ainda hoje</span>!
+                              </p>
+                            </div>
+                          </div>
                         </div>
                         
-                        <div className="space-y-2.5">
-                          <Label htmlFor="telefone" className="font-medium text-sm text-gray-700">
-                            WhatsApp*
-                          </Label>
-                          <Input
-                            id="telefone"
-                            name="telefone"
-                            placeholder="(00) 00000-0000"
-                            className={`w-full px-4 py-3.5 rounded-lg text-base ${errors.telefone ? 'border-red-500 focus:ring-red-500' : 'border-gray-200 focus:ring-blue-800'}`}
-                            value={formData.telefone}
-                            onChange={handleInputChange}
-                            autoComplete="tel"
-                            inputMode="tel"
-                          />
-                          {errors.telefone && (
-                            <p className="text-xs text-red-600 bg-red-50 py-1.5 px-2.5 rounded border-l-3 border-red-600 mt-2">
-                              {errors.telefone}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-2.5">
-                        <Label className="font-medium text-sm text-gray-700">
-                          Você é titular da conta de luz?*
-                        </Label>
-                        <div className="flex gap-3">
-                          <motion.button
-                            type="button"
-                            className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium border transition-all ${
-                              formData.titular === 'sim' 
-                                ? 'bg-blue-50 border-blue-600 text-blue-800' 
-                                : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
-                            }`}
-                            onClick={() => handleTitularChange(formData.titular === 'sim' ? '' : 'sim')}
+                        <form className="space-y-5">
+                          <div className="w-full">
+                            <div className="space-y-2.5">
+                              <Label htmlFor="cidade-input" className="font-medium text-gray-700 flex items-center gap-1.5">
+                                <MapPin className="h-4 w-4 text-blue-600" />
+                                Sua cidade*
+                              </Label>
+                              <div className="relative">
+                                <Input
+                                  id="cidade-input"
+                                  placeholder="Digite sua cidade"
+                                  className={`w-full pl-10 py-6 rounded-lg text-base ${errors.cidade ? 'border-red-300 ring-red-100' : 'border-gray-200'}`}
+                                  value={cidadeInput}
+                                  onChange={handleCidadeInputChange}
+                                  autoComplete="address-level2"
+                                  inputMode="text"
+                                />
+                                <Search className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                                
+                                <AnimatePresence>
+                                  {mostrarSugestoes && (
+                                    <motion.div 
+                                      className="absolute top-full left-0 right-0 max-h-[200px] overflow-y-auto bg-white border border-gray-200 rounded-lg shadow-lg z-10 mt-1"
+                                      initial={{ opacity: 0, y: -10 }}
+                                      animate={{ opacity: 1, y: 0 }}
+                                      exit={{ opacity: 0, y: -10 }}
+                                      transition={{ duration: 0.2 }}
+                                    >
+                                      {cidadeSugestoes.map((cidade, index) => (
+                                        <motion.div
+                                          key={index}
+                                          className="py-3 px-4 cursor-pointer text-gray-800 hover:bg-blue-50 transition-colors flex justify-between items-center"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            selecionarCidade(cidade);
+                                          }}
+                                          whileHover={{ backgroundColor: "rgba(59, 130, 246, 0.1)" }}
+                                        >
+                                          <div className="flex items-center gap-2">
+                                            <MapPin className="h-4 w-4 text-gray-400" />
+                                            <span>{cidade.nome}</span>
+                                          </div>
+                                          {cidade.valor && (
+                                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                                              Até R$ {cidade.valor.toLocaleString('pt-BR')}
+                                            </Badge>
+                                          )}
+                                        </motion.div>
+                                      ))}
+                                    </motion.div>
+                                  )}
+                                </AnimatePresence>
+                              </div>
+                              {errors.cidade && (
+                                <motion.p 
+                                  className="text-sm text-red-600 flex items-center gap-1.5"
+                                  initial={{ opacity: 0, x: -10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                >
+                                  <X className="h-4 w-4" />
+                                  {errors.cidade}
+                                </motion.p>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div className="space-y-2.5">
+                              <Label htmlFor="nome" className="font-medium text-gray-700 flex items-center gap-1.5">
+                                <User className="h-4 w-4 text-blue-600" />
+                                Nome completo*
+                              </Label>
+                              <div className="relative">
+                                <Input
+                                  id="nome"
+                                  name="nome"
+                                  placeholder="Digite seu nome"
+                                  className={`w-full pl-10 py-6 rounded-lg text-base ${errors.nome ? 'border-red-300 ring-red-100' : 'border-gray-200'}`}
+                                  value={formData.nome}
+                                  onChange={handleInputChange}
+                                  autoComplete="name"
+                                  inputMode="text"
+                                />
+                                <User className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                              </div>
+                              {errors.nome && (
+                                <motion.p 
+                                  className="text-sm text-red-600 flex items-center gap-1.5"
+                                  initial={{ opacity: 0, x: -10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                >
+                                  <X className="h-4 w-4" />
+                                  {errors.nome}
+                                </motion.p>
+                              )}
+                            </div>
+                            
+                            <div className="space-y-2.5">
+                              <Label htmlFor="telefone" className="font-medium text-gray-700 flex items-center gap-1.5">
+                                <Phone className="h-4 w-4 text-blue-600" />
+                                WhatsApp*
+                              </Label>
+                              <div className="relative">
+                                <Input
+                                  id="telefone"
+                                  name="telefone"
+                                  placeholder="(00) 00000-0000"
+                                  className={`w-full pl-10 py-6 rounded-lg text-base ${errors.telefone ? 'border-red-300 ring-red-100' : 'border-gray-200'}`}
+                                  value={formData.telefone}
+                                  onChange={handleInputChange}
+                                  autoComplete="tel"
+                                  inputMode="tel"
+                                />
+                                <Phone className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+                              </div>
+                              {errors.telefone && (
+                                <motion.p 
+                                  className="text-sm text-red-600 flex items-center gap-1.5"
+                                  initial={{ opacity: 0, x: -10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                >
+                                  <X className="h-4 w-4" />
+                                  {errors.telefone}
+                                </motion.p>
+                              )}
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-2.5">
+                            <Label className="font-medium text-gray-700 flex items-center gap-1.5">
+                              <Badge className="h-4 w-4 text-blue-600" />
+                              Você é titular da conta de luz?*
+                            </Label>
+                            <div className="grid grid-cols-2 gap-3">
+                              <motion.button
+                                type="button"
+                                className={`relative py-4 px-4 rounded-lg text-base font-medium border-2 transition-all overflow-hidden ${
+                                  formData.titular === 'sim' 
+                                    ? 'border-blue-600 text-blue-800' 
+                                    : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                                }`}
+                                onClick={() => handleTitularChange(formData.titular === 'sim' ? '' : 'sim')}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                              >
+                                {formData.titular === 'sim' && (
+                                  <motion.div 
+                                    className="absolute inset-0 bg-blue-50"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                  />
+                                )}
+                                <span className="relative z-10 flex justify-center items-center">
+                                  {formData.titular === 'sim' ? (
+                                    <Check className="h-5 w-5 text-blue-600 mr-2" />
+                                  ) : null}
+                                  Sim
+                                </span>
+                              </motion.button>
+                              
+                              <motion.button
+                                type="button"
+                                className={`relative py-4 px-4 rounded-lg text-base font-medium border-2 transition-all overflow-hidden ${
+                                  formData.titular === 'nao' 
+                                    ? 'border-blue-600 text-blue-800' 
+                                    : 'border-gray-200 text-gray-700 hover:border-gray-300'
+                                }`}
+                                onClick={() => handleTitularChange(formData.titular === 'nao' ? '' : 'nao')}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                              >
+                                {formData.titular === 'nao' && (
+                                  <motion.div 
+                                    className="absolute inset-0 bg-blue-50"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                  />
+                                )}
+                                <span className="relative z-10 flex justify-center items-center">
+                                  {formData.titular === 'nao' ? (
+                                    <Check className="h-5 w-5 text-blue-600 mr-2" />
+                                  ) : null}
+                                  Não
+                                </span>
+                              </motion.button>
+                            </div>
+                            {errors.titular && (
+                              <motion.p 
+                                className="text-sm text-red-600 flex items-center gap-1.5"
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                              >
+                                <X className="h-4 w-4" />
+                                {errors.titular}
+                              </motion.p>
+                            )}
+                          </div>
+                          
+                          <motion.div
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            transition={{ 
-                              type: "spring", 
-                              stiffness: 500, 
-                              damping: 15 
-                            }}
                           >
-                            <div className="flex items-center justify-center">
-                              {formData.titular === 'sim' && (
+                            <Button
+                              type="button"
+                              onClick={simularEmprestimo}
+                              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white py-6 px-4 rounded-xl text-lg font-bold shadow-lg shadow-orange-500/20 hover:shadow-xl hover:shadow-orange-500/30 transition-all duration-300 mt-4 border-0"
+                            >
+                              <motion.span
+                                animate={{ 
+                                  scale: [1, 1.03, 1],
+                                }}
+                                transition={{ 
+                                  duration: 2,
+                                  repeat: Infinity,
+                                  repeatType: "reverse"
+                                }}
+                                className="flex items-center justify-center gap-2"
+                              >
+                                SIMULAR AGORA
                                 <motion.span 
-                                  initial={{ scale: 0, opacity: 0 }}
-                                  animate={{ scale: 1, opacity: 1 }}
-                                  className="w-4 h-4 rounded-full bg-blue-600 mr-2 flex-shrink-0"
-                                />
-                              )}
-                              Sim
-                            </div>
-                          </motion.button>
-                          <motion.button
-                            type="button"
-                            className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium border transition-all ${
-                              formData.titular === 'nao' 
-                                ? 'bg-blue-50 border-blue-600 text-blue-800' 
-                                : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
-                            }`}
-                            onClick={() => handleTitularChange(formData.titular === 'nao' ? '' : 'nao')}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            transition={{ 
-                              type: "spring", 
-                              stiffness: 500, 
-                              damping: 15 
-                            }}
-                          >
-                            <div className="flex items-center justify-center">
-                              {formData.titular === 'nao' && (
-                                <motion.span 
-                                  initial={{ scale: 0, opacity: 0 }}
-                                  animate={{ scale: 1, opacity: 1 }}
-                                  className="w-4 h-4 rounded-full bg-blue-600 mr-2 flex-shrink-0"
-                                />
-                              )}
-                              Não
-                            </div>
-                          </motion.button>
+                                  animate={{ x: [0, 5, 0] }}
+                                  transition={{ 
+                                    duration: 1,
+                                    repeat: Infinity,
+                                    repeatType: "reverse"
+                                  }}
+                                >
+                                  →
+                                </motion.span>
+                              </motion.span>
+                            </Button>
+                          </motion.div>
+                        </form>
+                      </CardContent>
+                      
+                      <CardFooter className="px-8 pb-6 pt-0 flex justify-center">
+                        <div className="flex items-center gap-2 text-gray-500 text-sm">
+                          <Shield className="h-4 w-4" />
+                          <span>Atividade regulamentada pelo Banco Central</span>
                         </div>
-                        {errors.titular && (
-                          <p className="text-xs text-red-600 bg-red-50 py-1.5 px-2.5 rounded border-l-3 border-red-600 mt-2">
-                            {errors.titular}
-                          </p>
-                        )}
-                      </div>
-                      
-                      <motion.div
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <Button
-                          type="button"
-                          onClick={simularEmprestimo}
-                          className="w-full bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white py-5 px-4 rounded-xl text-lg font-bold uppercase tracking-wide shadow-lg hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/30 transition-all duration-300 mt-6 border border-orange-400/20 cursor-pointer"
-                        >
-                          <motion.span
-                            animate={{ 
-                              scale: [1, 1.05, 1],
-                            }}
-                            transition={{ 
-                              duration: 2,
-                              repeat: Infinity,
-                              repeatType: "reverse"
-                            }}
-                            className="flex items-center justify-center gap-2"
-                          >
-                            QUERO SIMULAR AGORA
-                            <span className="text-yellow-200">→</span>
-                          </motion.span>
-                        </Button>
-                      </motion.div>
-                      
-                      <div className="text-xs text-gray-500 text-center flex items-center justify-center gap-1.5">
-                        <span>🔐</span> A Credios exerce uma atividade regulamentada pelo Banco Central
-                      </div>
-                    </form>
-                  </CardContent>
-                </Card>
-              )}
+                      </CardFooter>
+                    </Card>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           </div>
         </div>
