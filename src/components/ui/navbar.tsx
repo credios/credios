@@ -174,7 +174,7 @@ export default function Navbar() {
                   alt="Credios"
                   width={130}
                   height={45}
-                  className="object-contain h-10"
+                  className="object-contain h-8 sm:h-10"
                   priority
                 />
               </div>
@@ -279,12 +279,26 @@ export default function Navbar() {
             </Button>
           </div>
 
-          {/* Botão do menu mobile - redesenhado */}
-          <div className="md:hidden">
+          {/* Container para CTA mobile e botão do menu */}
+          <div className="flex items-center gap-2 md:hidden">
+            {/* CTA Fixo para Mobile */}
+            <Button
+              asChild
+              variant="default"
+              size="sm"
+              className="bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 rounded-lg font-medium transition-all shadow-sm"
+            >
+              <Link href="/simulador" className="flex items-center gap-1.5">
+                <Calculator size={14} />
+                <span className="text-xs font-semibold">Simular</span>
+              </Link>
+            </Button>
+
+            {/* Botão do menu mobile - redesenhado */}
             <motion.button
               onClick={toggleMenu}
               aria-label="Toggle Menu"
-              className="p-2.5 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white/90 shadow-sm"
+              className="p-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white/90 shadow-sm"
               whileTap={{ scale: 0.92 }}
             >
               <AnimatePresence mode="wait" initial={false}>
@@ -326,57 +340,50 @@ export default function Navbar() {
                 hidden: {},
               }}
             >
-              {[
-                { href: "/", label: "Início", icon: <Home size={16} /> },
-                { href: "/sobre", label: "Sobre", icon: <Info size={16} /> },
-              ].map((item) => (
+              {/* Links primários em botões maiores */}
+              <div className="grid grid-cols-2 gap-3 mb-4">
                 <motion.div
-                  key={item.href}
                   variants={{
-                    visible: { opacity: 1, x: 0 },
-                    hidden: { opacity: 0, x: -20 },
+                    visible: { opacity: 1, y: 0 },
+                    hidden: { opacity: 0, y: 10 },
                   }}
                 >
-                  <NavLink
-                    href={item.href}
-                    icon={item.icon}
+                  <Link 
+                    href="/" 
                     onClick={toggleMenu}
-                    className="rounded-xl hover:bg-orange-50 w-full flex py-3"
+                    className={cn(
+                      "flex flex-col items-center justify-center p-3 rounded-xl transition-all hover:bg-orange-50 border border-gray-100 shadow-sm",
+                      pathname === "/" ? "bg-orange-50 border-orange-100" : "bg-white"
+                    )}
                   >
-                    {item.label}
-                  </NavLink>
+                    <Home size={20} className={pathname === "/" ? "text-orange-500" : "text-gray-400"} />
+                    <span className={cn(
+                      "text-sm font-medium mt-1",
+                      pathname === "/" ? "text-orange-600" : "text-gray-700"
+                    )}>Início</span>
+                  </Link>
                 </motion.div>
-              ))}
-              
-              {/* Seção de empréstimos no mobile */}
-              <motion.div
-                variants={{
-                  visible: { opacity: 1, x: 0 },
-                  hidden: { opacity: 0, x: -20 },
-                }}
-              >
-                <div className="mt-2 mb-1 px-2">
-                  <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700 py-2">
-                    <DollarSign size={16} className="text-orange-500" />
-                    <span className="tracking-wide">Empréstimos</span>
-                  </div>
-                </div>
-                <div className="bg-gray-50 rounded-xl p-2 ml-2 border border-gray-100">
-                  {emprestimoOptions.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={toggleMenu}
-                      className="flex flex-col py-2 px-3 rounded-lg hover:bg-white transition-colors"
-                    >
-                      <span className="text-sm font-medium text-gray-800">{item.name}</span>
-                      <span className="text-xs text-gray-500">{item.description}</span>
-                    </Link>
-                  ))}
-                </div>
-              </motion.div>
-              
+                
+                <motion.div
+                  variants={{
+                    visible: { opacity: 1, y: 0 },
+                    hidden: { opacity: 0, y: 10 },
+                  }}
+                >
+                  <Link 
+                    href="/simulador" 
+                    onClick={toggleMenu}
+                    className="flex flex-col items-center justify-center p-3 rounded-xl transition-all bg-gradient-to-br from-orange-500 to-orange-600 text-white border border-orange-400 shadow-md"
+                  >
+                    <Calculator size={20} className="text-white" />
+                    <span className="text-sm font-medium mt-1">Simular</span>
+                  </Link>
+                </motion.div>
+              </div>
+
+              {/* Links de navegação regulares */}
               {[
+                { href: "/sobre", label: "Sobre", icon: <Info size={16} /> },
                 { href: "/contato", label: "Contato", icon: <PhoneCall size={16} /> },
                 { href: "/blog", label: "Blog", icon: <BookOpen size={16} /> },
               ].map((item) => (
@@ -397,28 +404,45 @@ export default function Navbar() {
                   </NavLink>
                 </motion.div>
               ))}
-
+              
+              {/* Seção de empréstimos no mobile - redesenhada */}
               <motion.div
                 variants={{
                   visible: { opacity: 1, x: 0 },
                   hidden: { opacity: 0, x: -20 },
                 }}
-                className="pt-4"
+                className="mt-3"
               >
-                <Button
-                  asChild
-                  variant="default"
-                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 px-4 py-6 rounded-xl font-medium transition-all shadow-md"
-                  onClick={toggleMenu}
-                >
+                <div className="mb-2 px-2">
+                  <div className="flex items-center gap-1.5 text-sm font-semibold text-gray-800 py-2 border-b border-gray-100">
+                    <DollarSign size={16} className="text-orange-500" />
+                    <span className="tracking-wide">Opções de Crédito</span>
+                  </div>
+                </div>
+                <div className="bg-gray-50 rounded-xl p-3 border border-gray-100 shadow-inner">
+                  {emprestimoOptions.map((item, index) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={toggleMenu}
+                      className={cn(
+                        "flex flex-col py-2.5 px-3 rounded-lg hover:bg-white transition-colors",
+                        index !== emprestimoOptions.length - 1 && "border-b border-gray-100/70"
+                      )}
+                    >
+                      <span className="text-sm font-medium text-gray-800">{item.name}</span>
+                      <span className="text-xs text-gray-500 mt-0.5">{item.description}</span>
+                    </Link>
+                  ))}
                   <Link
-                    href="/simulador"
-                    className="flex items-center justify-center gap-2"
+                    href="/emprestimos"
+                    onClick={toggleMenu}
+                    className="flex items-center justify-between w-full text-xs font-medium text-orange-500 hover:text-orange-600 transition-colors px-3 py-2 mt-1 border-t border-gray-200/70"
                   >
-                    <Calculator size={16} />
-                    <span className="tracking-wide">Simular Agora</span>
+                    <span>Ver todas as opções de crédito</span>
+                    <ArrowRight size={12} />
                   </Link>
-                </Button>
+                </div>
               </motion.div>
             </motion.nav>
           </motion.div>

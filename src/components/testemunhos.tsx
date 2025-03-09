@@ -108,35 +108,38 @@ const TestimonialCard: React.FC<{
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
-      className={`bg-white rounded-xl shadow-lg p-6 flex flex-col h-full transform transition-transform ${
-        isActive ? "scale-105 shadow-xl z-10" : "scale-100 opacity-90"
+      className={`bg-white rounded-xl shadow-lg p-4 sm:p-6 flex flex-col h-full transform transition-transform ${
+        isActive ? "scale-100 sm:scale-105 shadow-xl z-10" : "scale-95 sm:scale-100 opacity-90"
       }`}
     >
       <div className="flex items-start mb-4">
-        <div className="relative w-12 h-12 rounded-full overflow-hidden mr-4 border-2 border-blue-100">
+        <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden mr-3 sm:mr-4 border-2 border-blue-100 flex-shrink-0">
           <Image
             src={testimonial.avatar}
             alt={testimonial.name}
-            layout="fill"
-            objectFit="cover"
+            fill
+            sizes="(max-width: 640px) 40px, 48px"
+            className="object-cover"
           />
         </div>
-        <div className="flex-1">
-          <h4 className="font-semibold text-gray-800">{testimonial.name}</h4>
-          <p className="text-sm text-gray-500">{testimonial.location}</p>
+        <div className="flex-1 min-w-0">
+          <h4 className="font-semibold text-gray-800 text-sm sm:text-base truncate">{testimonial.name}</h4>
+          <p className="text-xs sm:text-sm text-gray-500 truncate">{testimonial.location}</p>
           <div className="mt-1">
             <RatingStars rating={testimonial.rating} />
           </div>
         </div>
-        <Quote className="h-8 w-8 text-blue-100 flex-shrink-0" />
+        <Quote className="h-6 w-6 sm:h-8 sm:w-8 text-blue-100 flex-shrink-0" />
       </div>
 
-      <div className="flex-1">
-        <p className="text-gray-700 italic leading-relaxed">{testimonial.text}</p>
+      <div className="flex-1 overflow-hidden">
+        <p className="text-sm sm:text-base text-gray-700 italic leading-relaxed line-clamp-4 sm:line-clamp-none">
+          {testimonial.text}
+        </p>
       </div>
 
-      <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between">
-        <span className="text-sm font-medium text-blue-600">
+      <div className="mt-4 pt-3 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+        <span className="text-xs sm:text-sm font-medium text-blue-600 mb-1 sm:mb-0">
           {testimonial.service}
         </span>
         <span className="text-xs text-gray-500">{testimonial.date}</span>
@@ -148,8 +151,30 @@ const TestimonialCard: React.FC<{
 const Testemunhos: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [isTouching, setIsTouching] = useState(false);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
   const autoPlayRef = useRef<NodeJS.Timeout | null>(null);
-  const itemsPerView = 3; // Número de itens visíveis por vez
+  const [screenWidth, setScreenWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1200);
+  
+  // Número de itens visíveis por vez baseado no tamanho da tela
+  const getItemsPerView = () => {
+    if (screenWidth < 640) return 1; // Mobile
+    if (screenWidth < 1024) return 2; // Tablet
+    return 3; // Desktop
+  };
+  
+  const itemsPerView = getItemsPerView();
+
+  // Atualiza o tamanho da tela quando redimensionada
+  useEffect(() => {
+    const handleResize = () => {
+      setScreenWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Função para avançar para o próximo slide
   const nextSlide = () => {
@@ -163,7 +188,7 @@ const Testemunhos: React.FC = () => {
 
   // Configuração de autoplay para o carrossel
   useEffect(() => {
-    if (isAutoPlaying) {
+    if (isAutoPlaying && !isTouching) {
       autoPlayRef.current = setInterval(() => {
         nextSlide();
       }, 5000);
@@ -174,7 +199,7 @@ const Testemunhos: React.FC = () => {
         clearInterval(autoPlayRef.current);
       }
     };
-  }, [isAutoPlaying, activeIndex]);
+  }, [isAutoPlaying, activeIndex, isTouching]);
 
   // Pausa o autoplay quando o mouse está sobre o carrossel
   const handleMouseEnter = () => {
@@ -184,6 +209,30 @@ const Testemunhos: React.FC = () => {
   // Retoma o autoplay quando o mouse deixa o carrossel
   const handleMouseLeave = () => {
     setIsAutoPlaying(true);
+  };
+
+  // Handlers para suporte a gestos de toque
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setIsTouching(true);
+    setTouchStart(e.targetTouches[0].clientX);
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    setIsTouching(false);
+    
+    // Se o movimento foi significativo o suficiente (mais de 50px)
+    if (touchStart - touchEnd > 50) {
+      // Deslizou para a esquerda
+      nextSlide();
+    } else if (touchEnd - touchStart > 50) {
+      // Deslizou para a direita
+      prevSlide();
+    }
   };
 
   // Função para verificar se um índice está visível no slide atual
@@ -196,19 +245,19 @@ const Testemunhos: React.FC = () => {
   };
 
   return (
-    <section className="bg-gradient-to-b from-gray-50 to-white py-20 overflow-hidden">
+    <section className="bg-gradient-to-b from-gray-50 to-white py-12 sm:py-20 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Elementos decorativos de background */}
-        <div className="absolute top-10 right-20 w-72 h-72 bg-blue-100 rounded-full opacity-30 blur-3xl -z-10"></div>
-        <div className="absolute bottom-10 left-20 w-96 h-96 bg-orange-100 rounded-full opacity-30 blur-3xl -z-10"></div>
+        <div className="absolute top-10 right-0 sm:right-20 w-40 sm:w-72 h-40 sm:h-72 bg-blue-100 rounded-full opacity-30 blur-3xl -z-10"></div>
+        <div className="absolute bottom-10 left-0 sm:left-20 w-40 sm:w-96 h-40 sm:h-96 bg-orange-100 rounded-full opacity-30 blur-3xl -z-10"></div>
 
         {/* Cabeçalho da seção */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-10 sm:mb-16">
           <motion.h2
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent"
+            className="text-2xl sm:text-4xl font-bold mb-3 sm:mb-4 bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent"
           >
             Empréstimo na Conta de Luz é com a Credios
           </motion.h2>
@@ -216,7 +265,7 @@ const Testemunhos: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-xl text-gray-600 max-w-2xl mx-auto"
+            className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto"
           >
             Veja o que falam nossos clientes
           </motion.p>
@@ -227,32 +276,41 @@ const Testemunhos: React.FC = () => {
           className="relative"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         >
-          {/* Botões de navegação */}
+          {/* Botões de navegação - escondidos em mobile, visíveis em tablets e desktop */}
           <button
             onClick={prevSlide}
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 z-20 bg-white rounded-full p-2 shadow-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all"
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-2 sm:-translate-x-4 z-20 
+                       bg-white rounded-full p-1.5 sm:p-2 shadow-md hover:bg-gray-50 focus:outline-none 
+                       focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all
+                       hidden sm:block"
             aria-label="Ver depoimento anterior"
           >
-            <ChevronLeft className="h-6 w-6 text-blue-500" />
+            <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500" />
           </button>
 
           <button
             onClick={nextSlide}
-            className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 z-20 bg-white rounded-full p-2 shadow-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all"
+            className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-2 sm:translate-x-4 z-20 
+                       bg-white rounded-full p-1.5 sm:p-2 shadow-md hover:bg-gray-50 focus:outline-none 
+                       focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all
+                       hidden sm:block"
             aria-label="Ver próximo depoimento"
           >
-            <ChevronRight className="h-6 w-6 text-blue-500" />
+            <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500" />
           </button>
 
           {/* Slider container com efeito de máscara de opacidade nas bordas */}
-          <div className="relative mx-16">
-            {/* Gradientes de fade nas laterais */}
-            <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white to-transparent z-10"></div>
-            <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white to-transparent z-10"></div>
+          <div className="relative mx-0 sm:mx-16">
+            {/* Gradientes de fade nas laterais - visíveis apenas em desktop */}
+            <div className="absolute left-0 top-0 bottom-0 w-4 sm:w-16 bg-gradient-to-r from-white to-transparent z-10 hidden sm:block"></div>
+            <div className="absolute right-0 top-0 bottom-0 w-4 sm:w-16 bg-gradient-to-l from-white to-transparent z-10 hidden sm:block"></div>
 
-            {/* Grade de depoimentos */}
-            <div className="grid grid-cols-3 gap-6 transition-all duration-500">
+            {/* Grade responsiva de depoimentos */}
+            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 transition-all duration-500`}>
               <AnimatePresence mode="wait">
                 {TESTIMONIALS.map((testimonial, index) => (
                   isVisibleIndex(index) && (
@@ -267,20 +325,38 @@ const Testemunhos: React.FC = () => {
             </div>
           </div>
 
-          {/* Indicadores de slide (dots) */}
-          <div className="flex justify-center mt-10">
-            {Array.from({ length: TESTIMONIALS.length }).map((_, index) => (
+          {/* Indicadores de slide (dots) - redesenhados para melhor visualização em mobile */}
+          <div className="flex justify-center mt-6 sm:mt-10">
+            {TESTIMONIALS.map((_, index) => (
               <button
                 key={index}
                 onClick={() => setActiveIndex(index)}
-                className={`w-2.5 h-2.5 mx-1 rounded-full transition-all ${
+                className={`w-2 sm:w-2.5 h-2 sm:h-2.5 mx-1 rounded-full transition-all ${
                   index === activeIndex
-                    ? "bg-blue-500 w-5"
+                    ? "bg-blue-500 w-4 sm:w-5"
                     : "bg-gray-300 hover:bg-gray-400"
                 }`}
                 aria-label={`Ir para depoimento ${index + 1}`}
               />
             ))}
+          </div>
+
+          {/* Botões de navegação para mobile */}
+          <div className="flex justify-center mt-6 gap-4 sm:hidden">
+            <button
+              onClick={prevSlide}
+              className="bg-white rounded-md p-2 shadow-md border border-gray-100 focus:outline-none"
+              aria-label="Ver depoimento anterior"
+            >
+              <ChevronLeft className="h-5 w-5 text-blue-500" />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="bg-white rounded-md p-2 shadow-md border border-gray-100 focus:outline-none"
+              aria-label="Ver próximo depoimento"
+            >
+              <ChevronRight className="h-5 w-5 text-blue-500" />
+            </button>
           </div>
         </div>
 
@@ -289,15 +365,15 @@ const Testemunhos: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="mt-16 text-center"
+          className="mt-10 sm:mt-16 text-center"
         >
-          <p className="text-gray-600 mb-6">
+          <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
             Junte-se a milhares de clientes satisfeitos e solicite seu empréstimo
             hoje mesmo.
           </p>
           <a
             href="/simulador"
-            className="inline-block bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-medium py-3 px-8 rounded-md shadow-md hover:shadow-lg transition-all"
+            className="inline-block bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-medium py-2.5 sm:py-3 px-6 sm:px-8 rounded-lg sm:rounded-md shadow-md hover:shadow-lg transition-all text-sm sm:text-base"
           >
             Simular meu empréstimo
           </a>
