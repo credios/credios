@@ -57,52 +57,51 @@ interface Post {
 // Export revalidate normalmente
 export const revalidate = 3600
 
-export async function generateMetadata(
-  props: PostPageProps
-): Promise<Metadata> {
-  const post = await getPostBySlug(props.params.slug)
-  
-  if (!post) {
-    return {
-      title: 'Post não encontrado',
+export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
+    const { slug } = await params; // Await para resolver a Promise
+    const post = await getPostBySlug(slug);
+    
+    if (!post) {
+      return {
+        title: 'Post não encontrado',
+      };
     }
-  }
-
-  const ogImages = post.mainImage
-    ? [
-        {
-          url: urlFor(post.mainImage).width(1200).height(630).url(),
-          width: 1200,
-          height: 630,
-          alt: post.title || 'Imagem de capa',
-        },
-      ]
-    : undefined
-
-  return {
-    title: `${post.title} | Blog`,
-    description: post.excerpt || '',
-    openGraph: {
-      title: post.title,
+  
+    const ogImages = post.mainImage
+      ? [
+          {
+            url: urlFor(post.mainImage).width(1200).height(630).url(),
+            width: 1200,
+            height: 630,
+            alt: post.title || 'Imagem de capa',
+          },
+        ]
+      : undefined;
+  
+    return {
+      title: `${post.title} | Blog`,
       description: post.excerpt || '',
-      images: ogImages,
-    },
+      openGraph: {
+        title: post.title,
+        description: post.excerpt || '',
+        images: ogImages,
+      },
+    };
   }
-}
-
 // Definir interface para os parâmetros
 interface PostPageProps {
-  params: { slug: string };
-  searchParams: Record<string, string>;
-}
+    params: Promise<{ slug: string }>;
+    searchParams: Record<string, string>;
+  }
 
 // Atualizar a tipagem da função de página
 export default async function PostPage({ params }: PostPageProps) {
-  const post = await getPostBySlug(params.slug) as Post
-  
-  if (!post) {
-    notFound()
-  }
+    const { slug } = await params; // Await para resolver a Promise
+    const post = await getPostBySlug(slug) as Post;
+    
+    if (!post) {
+      notFound();
+    }
 
   const mainImageUrl = post.mainImage
     ? urlFor(post.mainImage).width(1200).height(675).url()
