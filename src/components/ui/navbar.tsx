@@ -197,7 +197,7 @@ export default function Navbar() {
 
               <NavigationMenuItem>
                 <NavLink href="/sobre" icon={<Info size={16} />}>
-                  Sobre
+                  Sobre Nós
                 </NavLink>
               </NavigationMenuItem>
 
