@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -28,7 +28,6 @@ import {
   MapPin,
   AlertCircle,
   ChevronRight,
-  ChevronDown,
 } from "lucide-react";
 
 // Definir componentes de ícones personalizados
@@ -162,11 +161,14 @@ const FAQ_ITEMS = [
 ];
 
 export default function AdvantagesSection() {
-  // Estado para controlar as seções expandidas no mobile
+  // Estado para controlar a seção ativa
   const [activeSection, setActiveSection] = useState<string>("vantagens");
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   // Estado para verificar se estamos em desktop
   const [isDesktop, setIsDesktop] = useState(false);
+  
+  // Referência para a seção de conteúdo
+  const contentRef = useRef<HTMLDivElement>(null);
   
   // Efeito para verificar o tamanho da tela e atualizar quando houver resize
   useEffect(() => {
@@ -185,13 +187,25 @@ export default function AdvantagesSection() {
     return () => window.removeEventListener('resize', checkIsDesktop);
   }, []);
   
+  // Efeito para rolar suavemente para o conteúdo quando trocar de seção no mobile
+  useEffect(() => {
+    if (!isDesktop && contentRef.current) {
+      // Espera um pouco para a animação começar antes de rolar
+      const timer = setTimeout(() => {
+        contentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [activeSection, isDesktop]);
+  
   const toggleFaq = (index: number) => {
     setExpandedFaq(expandedFaq === index ? null : index);
   };
 
-  // Função para alternar as seções no mobile
-  const toggleSection = (section: string) => {
-    setActiveSection(activeSection === section ? "" : section);
+  // Função para alternar as seções
+  const changeSection = (section: string) => {
+    setActiveSection(section);
   };
 
   return (
@@ -468,98 +482,93 @@ export default function AdvantagesSection() {
             </TabsContent>
           </Tabs>
         ) : (
-          // Mobile: Acordeão vertical de seções
+          // Mobile: Tabs verticais
           <div className="space-y-6">
-            {/* Seção Vantagens */}
-            <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
-              <button
-                onClick={() => toggleSection("vantagens")}
-                className="w-full p-4 flex justify-between items-center bg-white"
-              >
-                <h3 className="text-lg font-semibold text-gray-800">Vantagens</h3>
-                <ChevronDown 
-                  className={`h-5 w-5 text-gray-500 transition-transform ${
-                    activeSection === "vantagens" ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-              
-              <AnimatePresence>
-                {activeSection === "vantagens" && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
+            {/* Navegação de tabs verticais para mobile */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div className="grid grid-cols-3 divide-x divide-gray-200">
+                {[
+                  { id: "vantagens", label: "Vantagens" },
+                  { id: "como-funciona", label: "Como Funciona" },
+                  { id: "perguntas", label: "Perguntas" }
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => changeSection(tab.id)}
+                    className={`py-3 px-2 text-sm font-medium transition-colors ${
+                      activeSection === tab.id
+                        ? "bg-orange-50 text-orange-600 border-b-2 border-orange-500"
+                        : "text-gray-700 hover:bg-gray-50"
+                    }`}
                   >
-                    <div className="p-4 pt-0 space-y-4">
-                      {ADVANTAGES.map((item, index) => (
-                        <Card key={index} className="bg-white border-gray-100 shadow-sm overflow-hidden">
-                          <CardHeader className="pb-3">
-                            <div className="flex items-start gap-3">
-                              <div className="w-10 h-10 mt-0.5 flex-shrink-0 flex items-center justify-center bg-gray-50 rounded-lg shadow-sm">
-                                {item.icon}
-                              </div>
-                              <div>
-                                <div className="flex justify-between items-start">
-                                  <CardTitle className="text-base font-bold">
-                                    {item.title}
-                                  </CardTitle>
-                                  {item.highlight && (
-                                    <Badge className="ml-2 bg-gradient-to-r from-orange-500 to-orange-400 border-none text-white text-xs font-semibold">
-                                      {item.highlight}
-                                    </Badge>
-                                  )}
-                                </div>
-                                <CardDescription className="mt-1 text-gray-600 text-sm">
-                                  {item.description}
-                                </CardDescription>
-                              </div>
-                            </div>
-                          </CardHeader>
-                          {item.action && (
-                            <CardFooter className="pt-0 pb-3">
-                              <Button 
-                                variant="ghost" 
-                                className="p-0 h-auto text-orange-500 hover:text-orange-600 hover:bg-transparent text-sm font-medium"
-                              >
-                                {item.action} <ArrowRight className="h-3.5 w-3.5 ml-1 inline" />
-                              </Button>
-                            </CardFooter>
-                          )}
-                        </Card>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Seção Como Funciona */}
-            <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
-              <button
-                onClick={() => toggleSection("como-funciona")}
-                className="w-full p-4 flex justify-between items-center bg-white"
-              >
-                <h3 className="text-lg font-semibold text-gray-800">Como Funciona</h3>
-                <ChevronDown 
-                  className={`h-5 w-5 text-gray-500 transition-transform ${
-                    activeSection === "como-funciona" ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-              
-              <AnimatePresence>
+            {/* Conteúdo das tabs */}
+            <div ref={contentRef} className="mt-4">
+              <AnimatePresence mode="wait">
+                {/* Conteúdo da tab Vantagens */}
+                {activeSection === "vantagens" && (
+                  <motion.div
+                    key="vantagens"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className="space-y-4"
+                  >
+                    {ADVANTAGES.map((item, index) => (
+                      <Card key={index} className="bg-white border-gray-100 shadow-sm overflow-hidden">
+                        <CardHeader className="pb-3">
+                          <div className="flex items-start gap-3">
+                            <div className="w-10 h-10 mt-0.5 flex-shrink-0 flex items-center justify-center bg-gray-50 rounded-lg shadow-sm">
+                              {item.icon}
+                            </div>
+                            <div>
+                              <div className="flex justify-between items-start">
+                                <CardTitle className="text-base font-bold">
+                                  {item.title}
+                                </CardTitle>
+                                {item.highlight && (
+                                  <Badge className="ml-2 bg-gradient-to-r from-orange-500 to-orange-400 border-none text-white text-xs font-semibold">
+                                    {item.highlight}
+                                  </Badge>
+                                )}
+                              </div>
+                              <CardDescription className="mt-1 text-gray-600 text-sm">
+                                {item.description}
+                              </CardDescription>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        {item.action && (
+                          <CardFooter className="pt-0 pb-3">
+                            <Button 
+                              variant="ghost" 
+                              className="p-0 h-auto text-orange-500 hover:text-orange-600 hover:bg-transparent text-sm font-medium"
+                            >
+                              {item.action} <ArrowRight className="h-3.5 w-3.5 ml-1 inline" />
+                            </Button>
+                          </CardFooter>
+                        )}
+                      </Card>
+                    ))}
+                  </motion.div>
+                )}
+
+                {/* Conteúdo da tab Como Funciona */}
                 {activeSection === "como-funciona" && (
                   <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
+                    key="como-funciona"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
                   >
-                    <div className="p-4 pt-0">
+                    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
                       <div className="space-y-5 mb-6">
                         {HOW_IT_WORKS.map((step, index) => (
                           <div key={index} className="flex gap-3">
@@ -583,7 +592,7 @@ export default function AdvantagesSection() {
                         </h4>
                         <div className="flex flex-wrap gap-2">
                           {AVAILABLE_STATES.map((state, index) => (
-                            <Badge key={index} variant="outline" className="bg-white text-xs">
+                            <Badge key={index} variant="outline" className="bg-white text-xs mb-2">
                               {state}
                             </Badge>
                           ))}
@@ -605,33 +614,17 @@ export default function AdvantagesSection() {
                     </div>
                   </motion.div>
                 )}
-              </AnimatePresence>
-            </div>
 
-            {/* Seção Perguntas Frequentes */}
-            <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
-              <button
-                onClick={() => toggleSection("perguntas")}
-                className="w-full p-4 flex justify-between items-center bg-white"
-              >
-                <h3 className="text-lg font-semibold text-gray-800">Perguntas Frequentes</h3>
-                <ChevronDown 
-                  className={`h-5 w-5 text-gray-500 transition-transform ${
-                    activeSection === "perguntas" ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-              
-              <AnimatePresence>
+                {/* Conteúdo da tab Perguntas */}
                 {activeSection === "perguntas" && (
                   <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
+                    key="perguntas"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
                   >
-                    <div className="p-4 pt-2">
+                    <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
                       <div className="space-y-3">
                         {FAQ_ITEMS.map((item, index) => (
                           <div key={index} className="border border-gray-100 rounded-lg overflow-hidden">
@@ -644,9 +637,9 @@ export default function AdvantagesSection() {
                               <span className={`${expandedFaq === index ? "text-orange-600" : "text-gray-800"} text-sm font-medium pr-2`}>
                                 {item.question}
                               </span>
-                              <ChevronDown
+                              <ChevronRight
                                 className={`h-4 w-4 flex-shrink-0 transition-transform ${
-                                  expandedFaq === index ? "rotate-180 text-orange-500" : "text-gray-400"
+                                  expandedFaq === index ? "rotate-90 text-orange-500" : "text-gray-400"
                                 }`} 
                               />
                             </button>
