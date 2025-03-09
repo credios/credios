@@ -14,7 +14,6 @@ import {
   Check, 
   X, 
   Search, 
-  Clock, 
   Shield, 
   AlertCircle, 
   CheckCircle2, 
@@ -67,8 +66,24 @@ const HeroSection: React.FC = () => {
   const [cidadeInput, setCidadeInput] = useState<string>("");
   const [cidadesLista, setCidadesLista] = useState<CidadeJSON[]>([]);
   
-  // Estado para o contador de tempo
-  const [tempoRestante, setTempoRestante] = useState<number>(1800); // 30 minutos em segundos
+  // Estado para o modo móvel (detectar se está em mobile)
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  
+  // Detectar mobile na montagem do componente e ao redimensionar
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    // Verificar na montagem
+    checkIfMobile();
+    
+    // Adicionar event listener para redimensionamento
+    window.addEventListener('resize', checkIfMobile);
+    
+    // Limpar event listener
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
   
   // Carregar dados de cidades do JSON local em public/cidades.json
   useEffect(() => {
@@ -110,26 +125,17 @@ const HeroSection: React.FC = () => {
     fetchCidades();
   }, []);
   
-  // Efeito para o contador de tempo
-  useEffect(() => {
-    if (tempoRestante > 0) {
-      const timer = setTimeout(() => {
-        setTempoRestante(tempoRestante - 1);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [tempoRestante]);
-  
-  // Formatar o tempo restante
-  const formatarTempoRestante = () => {
-    const minutos = Math.floor(tempoRestante / 60);
-    const segundos = tempoRestante % 60;
-    return `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
-  };
-  
   // Estado para o resultado da simulação
   const [mostrarResultado, setMostrarResultado] = useState<boolean>(false);
   const [valorAprovado, setValorAprovado] = useState<string>("R$ 0,00");
+  
+  // Estado para mostrar diretamente o formulário em mobile
+  const [focarFormulario, setFocarFormulario] = useState<boolean>(false);
+
+  // Função para normalizar textos (remover acentos)
+  const normalizeText = (text: string): string => {
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  };
 
   // Função para validar o formulário
   const validarFormulario = (): boolean => {
@@ -224,11 +230,14 @@ const HeroSection: React.FC = () => {
     });
     
     if (value.length >= 2) {
-      // Filtrar cidades do JSON carregado
+      // Filtrar cidades do JSON carregado, ignorando acentos
+      const searchValueNormalized = normalizeText(value.toLowerCase());
+      
       const filtradas = cidadesLista
-        .filter(item => 
-          item.cidade.toLowerCase().includes(value.toLowerCase())
-        )
+        .filter(item => {
+          const cidadeNormalized = normalizeText(item.cidade.toLowerCase());
+          return cidadeNormalized.includes(searchValueNormalized);
+        })
         .slice(0, 10) // Limitamos a 10 resultados para performance
         .map(item => ({ 
           nome: item.cidade,
@@ -272,9 +281,12 @@ const HeroSection: React.FC = () => {
         // Obtém o valor pré-aprovado baseado na cidade do usuário
         let valorAprovado = 500; // Valor padrão mínimo
         
+        // Normalizar para ignorar acentos
+        const cidadeNormalizada = normalizeText(formData.cidade.toLowerCase());
+        
         // Procura pela cidade na lista
         const cidadeEncontrada = cidadesLista.find(
-          item => item.cidade.toLowerCase() === formData.cidade.toLowerCase()
+          item => normalizeText(item.cidade.toLowerCase()) === cidadeNormalizada
         );
         
         if (cidadeEncontrada) {
@@ -283,8 +295,8 @@ const HeroSection: React.FC = () => {
         } else {
           // Procura por correspondência parcial
           const cidadeParcial = cidadesLista.find(
-            item => item.cidade.toLowerCase().includes(formData.cidade.toLowerCase()) ||
-                   formData.cidade.toLowerCase().includes(item.cidade.toLowerCase())
+            item => normalizeText(item.cidade.toLowerCase()).includes(cidadeNormalizada) ||
+                   cidadeNormalizada.includes(normalizeText(item.cidade.toLowerCase()))
           );
           
           if (cidadeParcial) {
@@ -304,15 +316,35 @@ const HeroSection: React.FC = () => {
     }
   };
 
+  // Função para focar no formulário (para mobile)
+  const irParaFormulario = () => {
+    setFocarFormulario(true);
+    
+    // Scroll suave até o formulário
+    setTimeout(() => {
+      const formElement = document.getElementById('form-emprestimo');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
+
   // Efeito para esconder sugestões quando clicar fora
   useEffect(() => {
-    const handleClickOutside = () => {
-      setMostrarSugestoes(false);
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      const inputElement = document.getElementById('cidade-input');
+      
+      // Se o clique não foi no input de cidade ou em suas sugestões, esconde as sugestões
+      if (inputElement && !inputElement.contains(target) && 
+          !(target as Element).closest('.cidade-sugestoes-container')) {
+        setMostrarSugestoes(false);
+      }
     };
 
-    document.addEventListener("click", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -349,6 +381,9 @@ const HeroSection: React.FC = () => {
       text: "direto na sua conta de luz" 
     }
   ];
+  
+  // Versão compacta dos recursos para mobile
+  const recursosMobile = recursos.slice(0, isMobile ? 2 : recursos.length);
 
   return (
     <>
@@ -403,7 +438,7 @@ const HeroSection: React.FC = () => {
       </AnimatePresence>
 
       {/* Hero Section */}
-      <section className="relative py-16 sm:py-24 overflow-hidden bg-gradient-to-b from-blue-800 via-blue-700 to-indigo-800 text-white">
+      <section className="relative py-8 sm:py-16 lg:py-24 overflow-hidden bg-gradient-to-b from-blue-800 via-blue-700 to-indigo-800 text-white">
         {/* Elementos de background */}
         <div className="absolute inset-0 overflow-hidden">
           <svg viewBox="0 0 1000 1000" className="absolute top-0 left-0 w-[200%] h-[200%] opacity-5 transform -translate-x-1/2 -translate-y-1/3">
@@ -424,171 +459,243 @@ const HeroSection: React.FC = () => {
             <path fill="white" fillOpacity="0.1" d="M0,288L48,272C96,256,192,224,288,208C384,192,480,192,576,176C672,160,768,128,864,128C960,128,1056,160,1152,176C1248,192,1344,192,1392,192L1440,192L1440,320L0,320Z"></path>
           </svg>
         </div>
-
+        
         <div className="container mx-auto px-4 max-w-[1300px] relative z-10">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:gap-14">
-            {/* Coluna de texto */}
-            <div className="flex-1 mb-12 lg:mb-0">
-              <motion.div
-                className="flex items-center gap-2 bg-white/10 rounded-full py-2 px-4 text-sm font-medium mb-6 backdrop-blur-md border border-white/20 w-fit"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <div className="flex gap-0.5">
-                  {[1, 2, 3, 4, 5].map((_, i) => (
-                    <Star key={i} className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <span>4,9 de 5 no Google</span>
-                <span className="mx-2 h-3.5 w-px bg-white/40"></span>
-                <span>R$ 50 milhões liberados</span>
-              </motion.div>
-              
-              <motion.h1 
-                className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-              >
-                <span className="block text-blue-100">Empréstimo na Conta</span>
-                <span className="block">
-                  <span className="text-white">de Luz com </span>
-                  <span className="text-yellow-300">Aprovação Imediata</span>
-                </span>
-              </motion.h1>
-              
-              <motion.p 
-                className="text-xl text-blue-100 mb-8 max-w-[600px] leading-relaxed"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-              >
-                <span className="font-semibold text-white">Dinheiro rápido</span> mesmo para quem está com nome sujo. Receba na sua conta e pague em parcelas
-                mensais na sua fatura de energia.
-              </motion.p>
-              
-              <motion.div 
-  className="bg-white/10 backdrop-blur-md rounded-xl p-5 border border-white/20 mb-10 max-w-md"
-  initial="hidden"
-  animate="visible"
-  variants={{
-    hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      scale: [1, 1.02, 1],
-      transition: {
-        duration: 0.6,
-        delay: 0.3,
-        scale: {
-          duration: 2,
-          repeat: Infinity,
-          repeatType: "reverse"
-        }
-      }
-    }
-  }}
->
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="flex items-baseline gap-2">
-                      <Badge variant="outline" className="bg-gradient-to-r from-yellow-400/20 to-amber-400/20 text-yellow-300 border-yellow-500/30 uppercase font-semibold">
-                        Até
-                      </Badge>
-                      <span className="text-3xl font-bold tracking-tight text-white">
-                        R$ 3.300,00
-                      </span>
-                    </div>
-                    <div className="text-sm font-medium text-blue-100 mt-1">
-                      Liberados no mesmo dia
-                    </div>
+          {/* Layout adaptativo baseado no modo mobile e no estado de foco do formulário */}
+          <div className={`flex flex-col lg:flex-row lg:items-center lg:gap-14 ${(isMobile && focarFormulario) ? 'pt-4' : ''}`}>
+            {/* Coluna de texto - escondida em mobile quando focar no formulário */}
+            {(!isMobile || !focarFormulario) && (
+              <div className={`flex-1 ${isMobile ? 'mb-6' : 'mb-12 lg:mb-0'}`}>
+                <motion.div
+                  className="flex items-center gap-2 bg-white/10 rounded-full py-2 px-4 text-sm font-medium mb-4 md:mb-6 backdrop-blur-md border border-white/20 w-fit"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <div className="flex gap-0.5">
+                    {[1, 2, 3, 4, 5].map((_, i) => (
+                      <Star key={i} className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                    ))}
                   </div>
-                  
-                  <motion.div
-                    animate={{ 
-                      scale: [1, 1.1, 1], 
-                      rotate: [0, 5, 0] 
-                    }}
-                    transition={{ 
-                      duration: 1.5, 
-                      repeat: Infinity, 
-                      repeatDelay: 1 
-                    }}
-                    className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full flex items-center justify-center shadow-lg"
-                  >
-                    <Zap className="h-6 w-6 text-white" />
-                  </motion.div>
-                </div>
+                  <span>4,9 de 5 no Google</span>
+                </motion.div>
                 
-                <div className="flex items-center gap-2 mt-4 text-xs text-blue-200">
-                  <Clock className="h-3.5 w-3.5" />
-                  <span>Oferta disponível por: <span className="font-bold text-yellow-300">{formatarTempoRestante()}</span></span>
-                </div>
-              </motion.div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
-                {recursos.map((recurso, i) => (
-                  <motion.div 
-                    key={i}
-                    className="flex items-start gap-3"
-                    custom={i}
-                    initial="hidden"
-                    animate="visible"
-                    variants={featureVariants}
-                  >
-                    <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-md border border-white/20 text-blue-100">
-                      {recurso.icon}
-                    </div>
+                <motion.h1 
+                  className={`${isMobile ? 'text-3xl' : 'text-4xl md:text-5xl lg:text-6xl'} font-bold leading-tight mb-4 md:mb-6`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                >
+                  <span className="block text-blue-100">Empréstimo na Conta</span>
+                  <span className="block">
+                    <span className="text-white">de Luz com </span>
+                    <span className="text-yellow-300">Aprovação Imediata</span>
+                  </span>
+                </motion.h1>
+                
+                {/* Descrição - versão resumida para mobile */}
+                <motion.p 
+                  className={`${isMobile ? 'text-base' : 'text-xl'} text-blue-100 mb-6 max-w-[600px] leading-relaxed`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                  <span className="font-semibold text-white">Dinheiro rápido</span> mesmo para quem está com nome sujo. Receba na sua conta e pague em parcelas
+                  mensais na sua fatura de energia.
+                </motion.p>
+                
+                {/* Box de valor - mantido compacto em mobile */}
+                <motion.div 
+                  className="bg-white/10 backdrop-blur-md rounded-xl p-4 md:p-5 border border-white/20 mb-6 md:mb-10 max-w-md"
+                  initial="hidden"
+                  animate="visible"
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { 
+                      opacity: 1, 
+                      y: 0,
+                      scale: [1, 1.02, 1],
+                      transition: {
+                        duration: 0.6,
+                        delay: 0.3,
+                        scale: {
+                          duration: 2,
+                          repeat: Infinity,
+                          repeatType: "reverse"
+                        }
+                      }
+                    }
+                  }}
+                >
+                  <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-medium text-lg text-white">{recurso.title}</h3>
-                      <p className="text-blue-100 text-sm">{recurso.text}</p>
+                      <div className="flex items-baseline gap-2">
+                        <Badge variant="outline" className="bg-gradient-to-r from-yellow-400/20 to-amber-400/20 text-yellow-300 border-yellow-500/30 uppercase font-semibold">
+                          Até
+                        </Badge>
+                        <span className="text-2xl md:text-3xl font-bold tracking-tight text-white">
+                          R$ 3.300,00
+                        </span>
+                      </div>
+                      <div className="text-xs md:text-sm font-medium text-blue-100 mt-1">
+                        Liberados no mesmo dia
+                      </div>
+                    </div>
+                    
+                    <motion.div
+                      animate={{ 
+                        scale: [1, 1.1, 1], 
+                        rotate: [0, 5, 0] 
+                      }}
+                      transition={{ 
+                        duration: 1.5, 
+                        repeat: Infinity, 
+                        repeatDelay: 1 
+                      }}
+                      className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-full flex items-center justify-center shadow-lg"
+                    >
+                      <Zap className="h-5 w-5 md:h-6 md:w-6 text-white" />
+                    </motion.div>
+                  </div>
+                </motion.div>
+                
+                {/* Recursos - em desktop, mostrar todos os recursos */}
+                {!isMobile && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-10">
+                    {recursos.map((recurso, i) => (
+                      <motion.div 
+                        key={i}
+                        className="flex items-start gap-3"
+                        custom={i}
+                        initial="hidden"
+                        animate="visible"
+                        variants={featureVariants}
+                      >
+                        <div className="w-8 h-8 md:w-10 md:h-10 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 backdrop-blur-md border border-white/20 text-blue-100">
+                          {recurso.icon}
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-base md:text-lg text-white">{recurso.title}</h3>
+                          <p className="text-xs md:text-sm text-blue-100">{recurso.text}</p>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+                
+                {/* Botão alternativo para mobile que leva ao formulário */}
+                {isMobile && !focarFormulario && (
+                  <motion.div 
+                    className="flex flex-col gap-3"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.3 }}
+                  >
+                    {/* Recursos compactos em linha (apenas 2) para mobile */}
+                    <div className="flex gap-3 mb-4">
+                      {recursosMobile.map((recurso, i) => (
+                        <motion.div 
+                          key={i}
+                          className="flex-1 bg-white/10 backdrop-blur-md rounded-lg p-3 border border-white/20"
+                          custom={i}
+                          initial="hidden"
+                          animate="visible"
+                          variants={featureVariants}
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white">
+                              {recurso.icon}
+                            </div>
+                            <div>
+                              <h3 className="font-medium text-sm text-white">{recurso.title}</h3>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                    
+                    <motion.div
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Button
+                        onClick={irParaFormulario}
+                        className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white py-5 px-4 rounded-xl text-lg font-bold shadow-lg shadow-orange-500/20 hover:shadow-xl hover:shadow-orange-500/30 transition-all duration-300 border-0"
+                      >
+                        <motion.span
+                          animate={{ 
+                            scale: [1, 1.03, 1],
+                          }}
+                          transition={{ 
+                            duration: 2,
+                            repeat: Infinity,
+                            repeatType: "reverse"
+                          }}
+                          className="flex items-center justify-center gap-2"
+                        >
+                          SIMULAR AGORA
+                          <motion.span 
+                            animate={{ x: [0, 5, 0] }}
+                            transition={{ 
+                              duration: 1,
+                              repeat: Infinity,
+                              repeatType: "reverse"
+                            }}
+                          >
+                            →
+                          </motion.span>
+                        </motion.span>
+                      </Button>
+                    </motion.div>
+                  </motion.div>
+                )}
+                
+                {/* Badges de segurança - removidas em mobile */}
+                {!isMobile && (
+                  <motion.div 
+                    className="mb-8 sm:mb-0"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.7, duration: 0.5 }}
+                  >
+                    <div className="flex flex-wrap items-center gap-4">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <div className="bg-white/10 backdrop-blur-md rounded-lg py-2 px-4 border border-white/20 flex items-center gap-2 text-sm">
+                              <Shield className="h-4 w-4 text-blue-200" />
+                              <span className="text-blue-50">Regulado pelo Banco Central</span>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Somos uma instituição financeira regulamentada</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                          <div className="bg-white/10 backdrop-blur-md rounded-lg py-2 px-4 border border-white/20 flex items-center gap-2 text-sm">
+                              <BadgeCheck className="h-4 w-4 text-blue-200" />
+                              <span className="text-blue-50">Garantia de segurança</span>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Seus dados estão protegidos por criptografia</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </div>
                   </motion.div>
-                ))}
+                )}
               </div>
-              
-              <motion.div 
-                className="mb-8 sm:mb-0"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.7, duration: 0.5 }}
-              >
-                <div className="flex flex-wrap items-center gap-4">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <div className="bg-white/10 backdrop-blur-md rounded-lg py-2 px-4 border border-white/20 flex items-center gap-2 text-sm">
-                          <Shield className="h-4 w-4 text-blue-200" />
-                          <span className="text-blue-50">Regulado pelo Banco Central</span>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Somos uma instituição financeira regulamentada</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <div className="bg-white/10 backdrop-blur-md rounded-lg py-2 px-4 border border-white/20 flex items-center gap-2 text-sm">
-                          <BadgeCheck className="h-4 w-4 text-blue-200" />
-                          <span className="text-blue-50">Garantia de segurança</span>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Seus dados estão protegidos por criptografia</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </motion.div>
-            </div>
+            )}
             
-            {/* Formulário */}
+            {/* Formulário - sempre visível, porém otimizado para mobile */}
             <motion.div 
-              className="flex-1 max-w-lg mx-auto lg:mx-0"
+              id="form-emprestimo"
+              className={`flex-1 max-w-lg mx-auto lg:mx-0 ${isMobile ? 'w-full' : ''}`}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
@@ -691,15 +798,7 @@ const HeroSection: React.FC = () => {
                       </CardContent>
                       
                       <CardFooter className="pt-0 pb-6 px-8 flex justify-center">
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          transition={{ delay: 0.6 }}
-                          className="flex items-center gap-2 text-sm text-gray-500"
-                        >
-                          <Clock className="h-4 w-4" />
-                          <span className="font-medium">Oferta válida por: <span className="text-green-600">{formatarTempoRestante()}</span></span>
-                        </motion.div>
+                        {/* Timer de oferta removido */}
                       </CardFooter>
                     </Card>
                   </motion.div>
@@ -715,31 +814,33 @@ const HeroSection: React.FC = () => {
                       <div className="h-2 bg-gradient-to-r from-blue-600 to-indigo-500 absolute top-0 inset-x-0 rounded-t-2xl"></div>
                       <div className="absolute -right-16 -top-16 w-40 h-40 bg-blue-100 rounded-full opacity-30 blur-3xl"></div>
                       
-                      <CardHeader className="pt-8 pb-2 px-8 relative z-10">
+                      <CardHeader className={`${isMobile ? 'pt-6 pb-2 px-6' : 'pt-8 pb-2 px-8'} relative z-10`}>
                         <CardTitle className="text-2xl font-bold text-gray-900 text-center">Simule seu empréstimo</CardTitle>
                         <CardDescription className="text-center text-gray-600 mt-1">
                           É rápido e fácil, leva apenas 2 minutos!
                         </CardDescription>
                       </CardHeader>
                       
-                      <CardContent className="px-8 py-4 relative z-10">
-                        <div className="mb-6 bg-blue-50 rounded-xl p-4 border border-blue-100">
-                          <div className="flex items-start gap-3">
-                            <div className="text-blue-600 mt-1 flex-shrink-0">
-                              <AlertCircle className="h-5 w-5" />
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-blue-800 mb-1">Oferta especial</h4>
-                              <p className="text-sm text-blue-700">
-                                Preencha seus dados e você poderá receber seu dinheiro <span className="font-medium">ainda hoje</span>!
-                              </p>
+                      <CardContent className={`${isMobile ? 'px-6 py-3' : 'px-8 py-4'} relative z-10`}>
+                        {!isMobile && (
+                          <div className="mb-6 bg-blue-50 rounded-xl p-4 border border-blue-100">
+                            <div className="flex items-start gap-3">
+                              <div className="text-blue-600 mt-1 flex-shrink-0">
+                                <AlertCircle className="h-5 w-5" />
+                              </div>
+                              <div>
+                                <h4 className="font-medium text-blue-800 mb-1">Oferta especial</h4>
+                                <p className="text-sm text-blue-700">
+                                  Preencha seus dados e você poderá receber seu dinheiro <span className="font-medium">ainda hoje</span>!
+                                </p>
+                              </div>
                             </div>
                           </div>
-                        </div>
+                        )}
                         
-                        <form className="space-y-5">
+                        <form className="space-y-4">
                           <div className="w-full">
-                            <div className="space-y-2.5">
+                            <div className="space-y-2">
                               <Label htmlFor="cidade-input" className="font-medium text-gray-700 flex items-center gap-1.5">
                                 <MapPin className="h-4 w-4 text-blue-600" />
                                 Sua cidade*
@@ -748,7 +849,7 @@ const HeroSection: React.FC = () => {
                                 <Input
                                   id="cidade-input"
                                   placeholder="Digite sua cidade"
-                                  className={`w-full pl-10 py-6 rounded-lg text-base ${errors.cidade ? 'border-red-300 ring-red-100' : 'border-gray-200'}`}
+                                  className={`w-full pl-10 ${isMobile ? 'py-5' : 'py-6'} rounded-lg text-base ${errors.cidade ? 'border-red-300 ring-red-100' : 'border-gray-200'}`}
                                   value={cidadeInput}
                                   onChange={handleCidadeInputChange}
                                   autoComplete="address-level2"
@@ -759,7 +860,7 @@ const HeroSection: React.FC = () => {
                                 <AnimatePresence>
                                   {mostrarSugestoes && (
                                     <motion.div 
-                                      className="absolute top-full left-0 right-0 max-h-[200px] overflow-y-auto bg-white border border-gray-200 rounded-lg shadow-lg z-10 mt-1"
+                                      className="absolute top-full left-0 right-0 max-h-[200px] overflow-y-auto bg-white border border-gray-200 rounded-lg shadow-lg z-50 mt-1 cidade-sugestoes-container"
                                       initial={{ opacity: 0, y: -10 }}
                                       animate={{ opacity: 1, y: 0 }}
                                       exit={{ opacity: 0, y: -10 }}
@@ -803,8 +904,8 @@ const HeroSection: React.FC = () => {
                             </div>
                           </div>
                           
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div className="space-y-2.5">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
                               <Label htmlFor="nome" className="font-medium text-gray-700 flex items-center gap-1.5">
                                 <User className="h-4 w-4 text-blue-600" />
                                 Nome completo*
@@ -814,7 +915,7 @@ const HeroSection: React.FC = () => {
                                   id="nome"
                                   name="nome"
                                   placeholder="Digite seu nome"
-                                  className={`w-full pl-10 py-6 rounded-lg text-base ${errors.nome ? 'border-red-300 ring-red-100' : 'border-gray-200'}`}
+                                  className={`w-full pl-10 ${isMobile ? 'py-5' : 'py-6'} rounded-lg text-base ${errors.nome ? 'border-red-300 ring-red-100' : 'border-gray-200'}`}
                                   value={formData.nome}
                                   onChange={handleInputChange}
                                   autoComplete="name"
@@ -834,7 +935,7 @@ const HeroSection: React.FC = () => {
                               )}
                             </div>
                             
-                            <div className="space-y-2.5">
+                            <div className="space-y-2">
                               <Label htmlFor="telefone" className="font-medium text-gray-700 flex items-center gap-1.5">
                                 <Phone className="h-4 w-4 text-blue-600" />
                                 WhatsApp*
@@ -844,7 +945,7 @@ const HeroSection: React.FC = () => {
                                   id="telefone"
                                   name="telefone"
                                   placeholder="(00) 00000-0000"
-                                  className={`w-full pl-10 py-6 rounded-lg text-base ${errors.telefone ? 'border-red-300 ring-red-100' : 'border-gray-200'}`}
+                                  className={`w-full pl-10 ${isMobile ? 'py-5' : 'py-6'} rounded-lg text-base ${errors.telefone ? 'border-red-300 ring-red-100' : 'border-gray-200'}`}
                                   value={formData.telefone}
                                   onChange={handleInputChange}
                                   autoComplete="tel"
@@ -865,7 +966,7 @@ const HeroSection: React.FC = () => {
                             </div>
                           </div>
                           
-                          <div className="space-y-2.5">
+                          <div className="space-y-2">
                             <Label className="font-medium text-gray-700 flex items-center gap-1.5">
                               <Badge className="h-4 w-4 text-blue-600" />
                               Você é titular da conta de luz?*
@@ -873,7 +974,7 @@ const HeroSection: React.FC = () => {
                             <div className="grid grid-cols-2 gap-3">
                               <motion.button
                                 type="button"
-                                className={`relative py-4 px-4 rounded-lg text-base font-medium border-2 transition-all overflow-hidden ${
+                                className={`relative py-3 md:py-4 px-4 rounded-lg text-base font-medium border-2 transition-all overflow-hidden ${
                                   formData.titular === 'sim' 
                                     ? 'border-blue-600 text-blue-800' 
                                     : 'border-gray-200 text-gray-700 hover:border-gray-300'
@@ -900,7 +1001,7 @@ const HeroSection: React.FC = () => {
                               
                               <motion.button
                                 type="button"
-                                className={`relative py-4 px-4 rounded-lg text-base font-medium border-2 transition-all overflow-hidden ${
+                                className={`relative py-3 md:py-4 px-4 rounded-lg text-base font-medium border-2 transition-all overflow-hidden ${
                                   formData.titular === 'nao' 
                                     ? 'border-blue-600 text-blue-800' 
                                     : 'border-gray-200 text-gray-700 hover:border-gray-300'
@@ -944,7 +1045,7 @@ const HeroSection: React.FC = () => {
                             <Button
                               type="button"
                               onClick={simularEmprestimo}
-                              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white py-6 px-4 rounded-xl text-lg font-bold shadow-lg shadow-orange-500/20 hover:shadow-xl hover:shadow-orange-500/30 transition-all duration-300 mt-4 border-0"
+                              className="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white py-5 md:py-6 px-4 rounded-xl text-lg font-bold shadow-lg shadow-orange-500/20 hover:shadow-xl hover:shadow-orange-500/30 transition-all duration-300 mt-4 border-0"
                             >
                               <motion.span
                                 animate={{ 
