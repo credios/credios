@@ -20,16 +20,37 @@ interface Category {
   slug: { current: string };
 }
 
-export const revalidate = 3600;
-
-interface PostPageProps {
-  params: Promise<{ slug: string }>;
-  searchParams: Record<string, string>;
+interface SanityImage {
+  _type: string;
+  asset: { _ref: string; _type: string };
+  alt?: string;
 }
 
-export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
+interface Author {
+  _id: string;
+  name: string;
+  image?: SanityImage;
+  bio?: PortableTextBlock[];
+}
+
+interface Post {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  excerpt?: string;
+  mainImage?: SanityImage;
+  publishedAt: string;
+  readingTime?: number;
+  content?: PortableTextBlock[];
+  categories?: Category[];
+  author?: Author;
+}
+
+export const revalidate = 3600;
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = await getPostBySlug(slug) as Post | null;
 
   if (!post) {
     notFound();
@@ -57,9 +78,9 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
   };
 }
 
-export default async function PostPage({ params }: PostPageProps) {
+export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = await getPostBySlug(slug) as Post | null;
 
   if (!post) {
     notFound();
