@@ -169,7 +169,7 @@ export default function AdvantagesSection() {
   };
 
   return (
-    <section className="w-full py-20 bg-gradient-to-b from-white to-gray-50 overflow-hidden">
+    <section className="w-full py-12 sm:py-20 bg-gradient-to-b from-white to-gray-50 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Elementos decorativos de background */}
         <div className="absolute top-0 right-0 w-72 h-72 bg-orange-100 rounded-full opacity-20 blur-3xl -z-10 transform translate-x-1/2 -translate-y-1/4"></div>
@@ -177,7 +177,7 @@ export default function AdvantagesSection() {
         
         {/* Título da seção com animação */}
         <motion.div 
-          className="mb-14 text-center"
+          className="mb-8 sm:mb-14 text-center"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -186,33 +186,33 @@ export default function AdvantagesSection() {
           <Badge className="mb-4 px-3 py-1 bg-orange-100 text-orange-700 hover:bg-orange-200 border-none">
             Solução financeira inovadora
           </Badge>
-          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-orange-600 to-amber-500 bg-clip-text text-transparent">
+          <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-orange-600 to-amber-500 bg-clip-text text-transparent">
             Empréstimo na Conta de Luz
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+          <p className="text-gray-600 max-w-2xl mx-auto text-base sm:text-lg">
             Uma maneira simples, rápida e sem burocracia de conseguir o crédito que você precisa.
           </p>
         </motion.div>
         
-        {/* Tabs de navegação */}
-        <Tabs defaultValue="vantagens" value={activeTab} onValueChange={setActiveTab} className="mb-10">
-          <div className="flex justify-center">
-            <TabsList className="mb-8 bg-gray-100/80 p-1 backdrop-blur-sm">
+        {/* Tabs de navegação - Ajustadas para mobile */}
+        <Tabs defaultValue="vantagens" value={activeTab} onValueChange={setActiveTab} className="mb-8 sm:mb-10">
+          <div className="flex justify-center overflow-x-auto">
+            <TabsList className="mb-6 sm:mb-8 bg-gray-100/80 p-1 backdrop-blur-sm">
               <TabsTrigger 
                 value="vantagens" 
-                className="data-[state=active]:bg-white data-[state=active]:text-orange-600 px-6"
+                className="data-[state=active]:bg-white data-[state=active]:text-orange-600 px-3 sm:px-6 text-sm whitespace-nowrap"
               >
                 Vantagens
               </TabsTrigger>
               <TabsTrigger 
                 value="como-funciona" 
-                className="data-[state=active]:bg-white data-[state=active]:text-orange-600 px-6"
+                className="data-[state=active]:bg-white data-[state=active]:text-orange-600 px-3 sm:px-6 text-sm whitespace-nowrap"
               >
                 Como Funciona
               </TabsTrigger>
               <TabsTrigger 
                 value="perguntas" 
-                className="data-[state=active]:bg-white data-[state=active]:text-orange-600 px-6"
+                className="data-[state=active]:bg-white data-[state=active]:text-orange-600 px-3 sm:px-6 text-sm whitespace-nowrap"
               >
                 Perguntas Frequentes
               </TabsTrigger>
@@ -281,12 +281,12 @@ export default function AdvantagesSection() {
             </motion.div>
           </TabsContent>
 
-          {/* Conteúdo da tab Como Funciona */}
+          {/* Conteúdo da tab Como Funciona - Ajustado para mobile */}
           <TabsContent value="como-funciona" className="mt-0">
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 sm:gap-8 items-start">
               {/* Etapas do processo */}
               <div className="lg:col-span-3 space-y-6">
-                <h3 className="text-2xl font-bold mb-6 text-gray-800">
+                <h3 className="text-xl sm:text-2xl font-bold mb-6 text-gray-800">
                   Processo simplificado em 4 etapas
                 </h3>
 
@@ -297,36 +297,36 @@ export default function AdvantagesSection() {
                   {HOW_IT_WORKS.map((step, index) => (
                     <motion.div 
                       key={index}
-                      className="relative mb-8 last:mb-0"
+                      className="relative mb-6 sm:mb-8 last:mb-0"
                       initial={{ opacity: 0, x: -20 }}
                       whileInView={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1, duration: 0.5 }}
                       viewport={{ once: true }}
                     >
-                      <div className="flex gap-5">
+                      <div className="flex gap-4 sm:gap-5">
                         <div className="flex-shrink-0 w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center border-2 border-orange-400 shadow-md z-10">
                           <div className="text-orange-500">{step.icon}</div>
                         </div>
-                        <div>
-                          <h4 className="text-lg font-semibold text-gray-800 mb-1 flex items-center">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-base sm:text-lg font-semibold text-gray-800 mb-1 flex flex-wrap items-center">
                             <span className="mr-2">Etapa {index + 1}:</span> 
                             {step.title}
                           </h4>
-                          <p className="text-gray-600">{step.description}</p>
+                          <p className="text-sm sm:text-base text-gray-600">{step.description}</p>
                         </div>
                       </div>
                     </motion.div>
                   ))}
                 </div>
 
-                <div className="mt-10 pt-6 border-t border-gray-100">
+                <div className="mt-8 pt-6 border-t border-gray-100">
                   <h4 className="text-lg font-semibold mb-4 flex items-center">
                     <MapPin className="mr-2 h-5 w-5 text-orange-500" />
                     Estados participantes
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {AVAILABLE_STATES.map((state, index) => (
-                      <Badge key={index} variant="outline" className="bg-white">
+                      <Badge key={index} variant="outline" className="bg-white mb-2">
                         {state}
                       </Badge>
                     ))}
@@ -335,9 +335,9 @@ export default function AdvantagesSection() {
               </div>
 
               {/* Imagem e Call-to-action */}
-              <div className="lg:col-span-2">
+              <div className="lg:col-span-2 mt-6 lg:mt-0">
                 <motion.div
-                  className="bg-gradient-to-br from-orange-50 to-amber-50 p-6 rounded-2xl shadow-md relative overflow-hidden"
+                  className="bg-gradient-to-br from-orange-50 to-amber-50 p-4 sm:p-6 rounded-2xl shadow-md relative overflow-hidden"
                   initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.5 }}
@@ -352,18 +352,18 @@ export default function AdvantagesSection() {
                       alt="Pessoa utilizando o serviço de empréstimo"
                       width={300}
                       height={300}
-                      className="mx-auto rounded-xl shadow-lg"
+                      className="mx-auto rounded-xl shadow-lg max-w-full h-auto"
                     />
                     <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 bg-white px-4 py-2 rounded-full shadow-md border border-gray-100">
-                      <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-100">
+                      <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-100 text-xs whitespace-nowrap">
                         <CheckCircle2 className="h-3 w-3 mr-1" /> Aprovação em minutos
                       </Badge>
                     </div>
                   </div>
 
                   <div className="text-center">
-                    <h4 className="text-xl font-bold mb-2">Pronto para começar?</h4>
-                    <p className="text-gray-600 mb-4">
+                    <h4 className="text-lg sm:text-xl font-bold mb-2">Pronto para começar?</h4>
+                    <p className="text-gray-600 mb-4 text-sm sm:text-base">
                       Simule agora e descubra quanto você pode receber
                     </p>
                     <Button className="bg-gradient-to-r from-orange-500 to-amber-500 text-white hover:from-orange-600 hover:to-amber-600 shadow-md hover:shadow-lg transition-all w-full">
@@ -379,10 +379,10 @@ export default function AdvantagesSection() {
             </div>
           </TabsContent>
 
-          {/* Conteúdo da tab Perguntas Frequentes */}
+          {/* Conteúdo da tab Perguntas Frequentes - Ajustado para mobile */}
           <TabsContent value="perguntas" className="mt-0">
-            <div className="max-w-3xl mx-auto">
-              <h3 className="text-2xl font-bold mb-6 text-center text-gray-800">
+            <div className="max-w-3xl mx-auto w-full">
+              <h3 className="text-xl sm:text-2xl font-bold mb-6 text-center text-gray-800">
                 Perguntas Frequentes
               </h3>
               
@@ -394,7 +394,7 @@ export default function AdvantagesSection() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
                     viewport={{ once: true }}
-                    className="rounded-lg border border-gray-200 overflow-hidden"
+                    className="rounded-lg border border-gray-200 overflow-hidden w-full"
                   >
                     <button
                       onClick={() => toggleFaq(index)}
@@ -402,11 +402,11 @@ export default function AdvantagesSection() {
                         expandedFaq === index ? "bg-orange-50" : "bg-white"
                       }`}
                     >
-                      <span className={expandedFaq === index ? "text-orange-600" : "text-gray-800"}>
+                      <span className={`${expandedFaq === index ? "text-orange-600" : "text-gray-800"} text-sm sm:text-base pr-2`}>
                         {item.question}
                       </span>
                       <ChevronRight 
-                        className={`h-5 w-5 transition-transform ${
+                        className={`h-5 w-5 flex-shrink-0 transition-transform ${
                           expandedFaq === index ? "rotate-90 text-orange-500" : "text-gray-400"
                         }`} 
                       />
@@ -420,7 +420,7 @@ export default function AdvantagesSection() {
                           transition={{ duration: 0.2 }}
                           className="overflow-hidden"
                         >
-                          <div className="p-4 pt-0 bg-white text-gray-600">
+                          <div className="p-4 pt-0 bg-white text-gray-600 text-sm sm:text-base">
                             {item.answer}
                           </div>
                         </motion.div>
@@ -430,8 +430,8 @@ export default function AdvantagesSection() {
                 ))}
               </div>
 
-              <div className="mt-8 p-6 bg-gray-50 rounded-xl text-center">
-                <p className="mb-4 text-gray-700">
+              <div className="mt-8 p-4 sm:p-6 bg-gray-50 rounded-xl text-center">
+                <p className="mb-4 text-gray-700 text-sm sm:text-base">
                   Ainda tem dúvidas sobre o empréstimo na conta de luz?
                 </p>
                 <Button variant="outline" className="border-orange-200 text-orange-600 hover:bg-orange-50">
@@ -442,17 +442,17 @@ export default function AdvantagesSection() {
           </TabsContent>
         </Tabs>
 
-        {/* Nota informativa */}
+        {/* Nota informativa - Ajustada para mobile */}
         <motion.div 
-          className="mt-16 text-center max-w-4xl mx-auto"
+          className="mt-10 sm:mt-16 text-center max-w-4xl mx-auto"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.5 }}
           viewport={{ once: true }}
         >
-          <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 inline-block">
-            <p className="text-sm text-blue-700 flex items-center">
-              <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0" />
+          <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 sm:p-4 inline-block">
+            <p className="text-xs sm:text-sm text-blue-700 flex items-start sm:items-center">
+              <AlertCircle className="h-4 w-4 mr-2 flex-shrink-0 mt-0.5 sm:mt-0" />
               <span>
                 O crédito na conta de luz é uma parceria da Credios com a Crefaz e está disponível na maioria 
                 das cidades dos estados listados. Consulte disponibilidade para a sua região.
