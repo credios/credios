@@ -8,7 +8,7 @@ import { PortableTextBlock } from '@portabletext/types';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { formatDate, getSlugString } from '@/lib/blog/utils';
-import { Calendar, Clock, ChevronLeft, Share2 } from 'lucide-react';
+import { Calendar, Clock, ChevronLeft } from 'lucide-react';
 import { getPostBySlug, urlFor } from '@/lib/blog/api';
 import { Separator } from '@/components/ui/separator';
 import { buttonVariants } from '@/components/ui/button';
