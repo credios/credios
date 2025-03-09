@@ -41,15 +41,15 @@ interface Post {
   mainImage?: SanityImage;
   publishedAt: string;
   readingTime?: number;
-  content?: PortableTextBlock[];
+  body?: PortableTextBlock[]; // Alterado de content para body (nome padrão no Sanity)
   categories?: Category[];
   author?: Author;
 }
 
 export const revalidate = 3600;
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params;
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const { slug } = params;
   const post = await getPostBySlug(slug) as Post | null;
 
   if (!post) {
@@ -78,13 +78,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
+export default async function PostPage({ params }: { params: { slug: string } }) {
+  const { slug } = params;
   const post = await getPostBySlug(slug) as Post | null;
 
   if (!post) {
     notFound();
   }
+
+  // Para debugging, você pode comentar esta linha em ambiente de desenvolvimento
+  // console.log('Post content:', post.body);
 
   const mainImageUrl = post.mainImage
     ? urlFor(post.mainImage).width(1200).height(675).url()
@@ -245,8 +248,8 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
           )}
 
           <div className="px-6 pb-10 prose prose-lg max-w-none dark:prose-invert prose-headings:font-bold prose-headings:text-primary prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg prose-pre:bg-muted prose-pre:border prose-figcaption:text-center prose-blockquote:border-l-primary">
-            {post.content ? (
-              <PortableText value={post.content as PortableTextBlock[]} />
+            {post.body ? (
+              <PortableText value={post.body} />
             ) : (
               <p>Este post ainda não possui conteúdo.</p>
             )}
@@ -292,7 +295,7 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                   </h3>
                   {post.author.bio ? (
                     <div className="mt-2 text-muted-foreground prose-sm">
-                      <PortableText value={post.author.bio as PortableTextBlock[]} />
+                      <PortableText value={post.author.bio} />
                     </div>
                   ) : (
                     <p className="mt-2 text-muted-foreground">Autor de conteúdo em nosso blog.</p>

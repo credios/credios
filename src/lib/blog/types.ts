@@ -1,9 +1,9 @@
-// src/lib/blog/types.ts
+// src/lib/blog/types.ts (certifique-se de atualizar este arquivo também)
 
-// Interfaces para tipos específicos
+import { PortableTextBlock } from '@portabletext/types';
+
 export interface ImageAsset {
-  _key?: string;
-  _type?: string;
+  _type: string;
   asset: {
     _ref: string;
     _type: string;
@@ -11,56 +11,36 @@ export interface ImageAsset {
   alt?: string;
 }
 
-interface BlockContent {
-  _key: string;
+export interface Slug {
+  current: string;
   _type: string;
-  // Propriedades comuns para diferentes tipos de blocos
-  children?: Array<{
-    _key: string;
-    _type: string;
-    marks?: string[];
-    text?: string;
-  }>;
-  markDefs?: Array<{
-    _key: string;
-    _type: string;
-  }>;
-  style?: string;
-  // Permite propriedades adicionais com índice de string
-  [key: string]: unknown;
 }
 
 export interface Author {
   _id: string;
   name: string;
-  slug: {
-    current: string;
-  };
-  image: ImageAsset;
-  bio: BlockContent[];
+  image?: ImageAsset;
+  bio?: PortableTextBlock[];
+  slug?: Slug;
 }
 
 export interface Category {
   _id: string;
   title: string;
-  slug: {
-    current: string;
-  };
   description?: string;
+  slug: Slug;
 }
 
 export interface Post {
   _id: string;
   title: string;
-  slug: {
-    current: string;
-  };
+  slug: Slug;
   excerpt?: string;
   mainImage?: ImageAsset;
   publishedAt: string;
-  categories?: Category[];
-  author?: Author;
-  content: BlockContent[];
   readingTime?: number;
   featured?: boolean;
+  body?: PortableTextBlock[]; // Alterado de content para body
+  categories?: Category[];
+  author?: Author;
 }

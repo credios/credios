@@ -65,13 +65,13 @@ function NavLink({
     >
       {icon && (
         <span className={cn(
-          "transition-all duration-300",
+          "transition-all duration-300 flex-shrink-0",
           isActive ? "text-orange-500" : "text-gray-400 group-hover:text-orange-400"
         )}>
           {icon}
         </span>
       )}
-      <span className="tracking-wide">{children}</span>
+      <span className="tracking-wide whitespace-nowrap">{children}</span>
       
       {badge && (
         <span className="ml-1.5 px-1.5 py-0.5 text-[10px] font-bold uppercase bg-orange-100 text-orange-600 rounded-full">
@@ -112,9 +112,11 @@ function LoanCard({
         className="flex h-full select-none space-y-1 rounded-xl p-4 leading-none no-underline outline-none transition-all duration-300 hover:bg-orange-50 hover:shadow-sm group relative overflow-hidden"
       >
         {isPopular && (
-          <span className="absolute top-0 right-0 bg-gradient-to-l from-orange-600 to-orange-500 text-white text-[10px] px-3 py-0.5 font-semibold tracking-wide transform rotate-0 translate-x-2 -translate-y-0 shadow-sm">
-            POPULAR
-          </span>
+          <div className="absolute top-0 right-0 z-10">
+            <div className="inline-block bg-orange-500 text-white text-xs font-semibold px-4 py-1 rounded-tr-md rounded-bl-md border border-orange-600">
+              POPULAR
+            </div>
+          </div>
         )}
         
         <div className="flex gap-3">
@@ -446,7 +448,7 @@ export default function Navbar() {
                     <Link
                       href="/emprestimos"
                       onClick={toggleMenu}
-                      className="text-xs font-medium text-orange-500 px-2 flex items-center gap-1"
+                      className="inline-flex items-center whitespace-nowrap text-xs font-medium text-orange-500 px-2 gap-1"
                     >
                       <span>Ver todos</span>
                       <ChevronRight size={12} />
@@ -466,18 +468,20 @@ export default function Navbar() {
                       )}
                     >
                       {item.isPopular && (
-                        <span className="absolute top-0 right-0 bg-gradient-to-l from-orange-600 to-orange-500 text-white text-[10px] px-2 py-0.5 font-medium">
-                          POPULAR
-                        </span>
+                        <div className="absolute -top-2.5 right-3">
+                          <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-bold px-3 py-1 rounded-md shadow-md transform rotate-2">
+                            POPULAR
+                          </div>
+                        </div>
                       )}
-                      <div className="p-2 bg-orange-100/60 rounded-lg mt-0.5">
+                      <div className="p-2 bg-orange-100/60 rounded-lg mt-0.5 flex-shrink-0">
                         {item.icon}
                       </div>
-                      <div className="flex flex-col pr-4">
-                        <span className="text-sm font-medium text-gray-800">{item.name}</span>
+                      <div className="flex flex-col flex-grow min-w-0">
+                        <span className="text-sm font-medium text-gray-800 whitespace-nowrap">{item.name}</span>
                         <span className="text-xs text-gray-500 mt-0.5 line-clamp-2">{item.description}</span>
                       </div>
-                      <ChevronRight size={16} className="text-gray-300 ml-auto self-center" />
+                      <ChevronRight size={16} className="text-gray-300 self-center flex-shrink-0" />
                     </Link>
                   ))}
                 </div>
@@ -500,10 +504,13 @@ export default function Navbar() {
                     href={item.href}
                     icon={item.icon}
                     onClick={toggleMenu}
-                    className="rounded-xl hover:bg-orange-50 w-full flex items-center py-3.5"
+                    className="rounded-xl hover:bg-orange-50 w-full flex items-center justify-between py-3.5"
                   >
-                    {item.label}
-                    <ChevronRight size={16} className="ml-auto text-gray-400" />
+                    <span className="flex items-center gap-2">
+                      {item.icon && <span>{item.icon}</span>}
+                      <span>{item.label}</span>
+                    </span>
+                    <ChevronRight size={16} className="text-gray-400" />
                   </NavLink>
                 </motion.div>
               ))}

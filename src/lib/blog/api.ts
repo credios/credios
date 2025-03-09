@@ -45,7 +45,7 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
       excerpt,
       mainImage,
       publishedAt,
-      content,
+      body, // Alterado de content para body (padrão do Sanity)
       readingTime,
       featured,
       categories[] -> {
