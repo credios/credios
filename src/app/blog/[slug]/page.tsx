@@ -58,10 +58,9 @@ interface Post {
 export const revalidate = 3600
 
 export async function generateMetadata(
-  // Aqui tipamos inline o param "params"
-  { params }: { params: { slug: string } }
+  props: PostPageProps
 ): Promise<Metadata> {
-  const post = await getPostBySlug(params.slug)
+  const post = await getPostBySlug(props.params.slug)
   
   if (!post) {
     return {
@@ -69,7 +68,6 @@ export async function generateMetadata(
     }
   }
 
-  // Se quiser tipar certinho as imagens do OpenGraph:
   const ogImages = post.mainImage
     ? [
         {
@@ -92,10 +90,14 @@ export async function generateMetadata(
   }
 }
 
-export default async function PostPage(
-  // Aqui também tipamos inline
-  { params }: { params: { slug: string } }
-) {
+// Definir interface para os parâmetros
+interface PostPageProps {
+  params: { slug: string };
+  searchParams: Record<string, string>;
+}
+
+// Atualizar a tipagem da função de página
+export default async function PostPage({ params }: PostPageProps) {
   const post = await getPostBySlug(params.slug) as Post
   
   if (!post) {

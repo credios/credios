@@ -3,7 +3,7 @@ import HeroSection from "@/components/herosection";
 import SobreCredios from "@/components/sobrecredios";
 import Testemunhos from "@/components/testemunhos";
 
-export default function Home() {
+export default function EmprestimoNaContaDeLuz() {
   return (
     <>
     <HeroSection />
