@@ -13,10 +13,15 @@ import { getPostBySlug, urlFor } from '@/lib/blog/api';
 import { Separator } from '@/components/ui/separator';
 import { buttonVariants } from '@/components/ui/button';
 
+// Tipo para a página com parâmetros
+type PostPageParams = {
+  slug: string;
+};
+
+// Interface para as props da página compatível com Next.js 15
 interface PostPageProps {
-  params: {
-    slug: string;
-  };
+  params: PostPageParams;
+  searchParams: Record<string, string | string[] | undefined>;
 }
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
@@ -47,7 +52,7 @@ export default async function PostPage({ params }: PostPageProps) {
   }
 
   // URL da imagem principal
-  const mainImageUrl = post.mainImage ? urlFor(post.mainImage).width(1600).height(900).url() : null;
+  const mainImageUrl = post.mainImage ? urlFor(post.mainImage).width(1200).height(675).url() : null;
 
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-8 pb-20">
