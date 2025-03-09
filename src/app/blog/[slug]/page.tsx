@@ -1,119 +1,84 @@
 // app/blog/[slug]/page.tsx
 
-import { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import Image from 'next/image'
-import Link from 'next/link'
-import { PortableText } from '@/lib/blog/portable-text'
-import { PortableTextBlock } from '@portabletext/types'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { formatDate, getSlugString } from '@/lib/blog/utils'
-import { Calendar, Clock, ChevronLeft } from 'lucide-react'
-import { getPostBySlug, urlFor } from '@/lib/blog/api'
-import { Separator } from '@/components/ui/separator'
-import { buttonVariants } from '@/components/ui/button'
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import { PortableText } from '@/lib/blog/portable-text';
+import { PortableTextBlock } from '@portabletext/types';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { formatDate, getSlugString } from '@/lib/blog/utils';
+import { Calendar, Clock, ChevronLeft } from 'lucide-react';
+import { getPostBySlug, urlFor } from '@/lib/blog/api';
+import { Separator } from '@/components/ui/separator';
+import { buttonVariants } from '@/components/ui/button';
 
-// Define proper types for the Sanity content
 interface Category {
   _id: string;
   title: string;
-  slug: {
-    current: string;
-  };
+  slug: { current: string };
 }
 
-interface SanityImage {
-  _type: string;
-  asset: {
-    _ref: string;
-    _type: string;
-  };
-  alt?: string;
-}
+export const revalidate = 3600;
 
-interface Author {
-  _id: string;
-  name: string;
-  image?: SanityImage;
-  bio?: PortableTextBlock[];
+interface PostPageProps {
+  params: Promise<{ slug: string }>;
+  searchParams: Record<string, string>;
 }
-
-interface Post {
-  _id: string;
-  title: string;
-  slug: {
-    current: string;
-  };
-  excerpt?: string;
-  mainImage?: SanityImage;
-  publishedAt: string;
-  readingTime?: number;
-  content?: PortableTextBlock[];
-  categories?: Category[];
-  author?: Author;
-}
-
-// Export revalidate normalmente
-export const revalidate = 3600
 
 export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
-    const { slug } = await params; // Await para resolver a Promise
-    const post = await getPostBySlug(slug);
-    
-    if (!post) {
-      return {
-        title: 'Post não encontrado',
-      };
-    }
-  
-    const ogImages = post.mainImage
-      ? [
-          {
-            url: urlFor(post.mainImage).width(1200).height(630).url(),
-            width: 1200,
-            height: 630,
-            alt: post.title || 'Imagem de capa',
-          },
-        ]
-      : undefined;
-  
-    return {
-      title: `${post.title} | Blog`,
-      description: post.excerpt || '',
-      openGraph: {
-        title: post.title,
-        description: post.excerpt || '',
-        images: ogImages,
-      },
-    };
-  }
-// Definir interface para os parâmetros
-interface PostPageProps {
-    params: Promise<{ slug: string }>;
-    searchParams: Record<string, string>;
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
+
+  if (!post) {
+    notFound();
   }
 
-// Atualizar a tipagem da função de página
+  const ogImages = post.mainImage
+    ? [
+        {
+          url: urlFor(post.mainImage).width(1200).height(630).url(),
+          width: 1200,
+          height: 630,
+          alt: post.mainImage.alt || post.title || 'Imagem de capa',
+        },
+      ]
+    : undefined;
+
+  return {
+    title: `${post.title} | Blog`,
+    description: post.excerpt || '',
+    openGraph: {
+      title: post.title,
+      description: post.excerpt || '',
+      images: ogImages,
+    },
+  };
+}
+
 export default async function PostPage({ params }: PostPageProps) {
-    const { slug } = await params; // Await para resolver a Promise
-    const post = await getPostBySlug(slug) as Post;
-    
-    if (!post) {
-      notFound();
-    }
+  const { slug } = await params;
+  const post = await getPostBySlug(slug);
+
+  if (!post) {
+    notFound();
+  }
 
   const mainImageUrl = post.mainImage
     ? urlFor(post.mainImage).width(1200).height(675).url()
-    : null
+    : null;
+
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://seusite.com';
+  const postUrl = `${baseUrl}/blog/${getSlugString(post.slug)}`;
 
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-8 pb-20">
-      {/* Breadcrumb */}
       <div className="mb-8 max-w-4xl mx-auto">
         <Link 
           href="/blog" 
           className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors group"
+          aria-label="Voltar para o blog"
         >
           <ChevronLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
           <span>Voltar para o blog</span>
@@ -121,7 +86,6 @@ export default async function PostPage({ params }: PostPageProps) {
       </div>
 
       <article className="max-w-4xl mx-auto">
-        {/* Categories */}
         <div className="flex flex-wrap gap-2 mb-4">
           {post.categories?.map((category: Category) => (
             <Link key={category._id} href={`/blog/category/${getSlugString(category.slug)}`}>
@@ -132,12 +96,10 @@ export default async function PostPage({ params }: PostPageProps) {
           ))}
         </div>
 
-        {/* Title */}
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
           {post.title}
         </h1>
 
-        {/* Post metadata */}
         <div className="flex flex-wrap items-center gap-6 text-muted-foreground mb-8">
           {post.author && (
             <div className="flex items-center gap-3">
@@ -171,29 +133,24 @@ export default async function PostPage({ params }: PostPageProps) {
           </div>
         </div>
 
-        {/* Featured image */}
         {mainImageUrl && (
           <div className="w-full aspect-[16/9] relative rounded-xl overflow-hidden border shadow-sm mb-10">
             <Image
               src={mainImageUrl}
-              alt={post.title || 'Imagem principal'}
+              alt={post.mainImage?.alt || post.title || 'Imagem principal'}
               fill
               priority
             />
           </div>
         )}
 
-        {/* Post Content Container */}
         <div className="bg-card shadow-sm rounded-xl overflow-hidden border mb-12">
-          {/* Social Sharing */}
           <div className="flex justify-end p-6 pb-0">
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Compartilhar:</span>
               <div className="flex items-center gap-2">
                 <Link
-                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(
-                    `https://seusite.com/blog/${getSlugString(post.slug)}`
-                  )}&text=${encodeURIComponent(post.title)}`}
+                  href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(postUrl)}&text=${encodeURIComponent(post.title)}`}
                   target="_blank"
                   aria-label="Compartilhar no Twitter"
                   className={buttonVariants({
@@ -213,9 +170,7 @@ export default async function PostPage({ params }: PostPageProps) {
                   </svg>
                 </Link>
                 <Link
-                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-                    `https://seusite.com/blog/${getSlugString(post.slug)}`
-                  )}`}
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`}
                   target="_blank"
                   aria-label="Compartilhar no Facebook"
                   className={buttonVariants({
@@ -235,9 +190,7 @@ export default async function PostPage({ params }: PostPageProps) {
                   </svg>
                 </Link>
                 <Link
-                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-                    `https://seusite.com/blog/${getSlugString(post.slug)}`
-                  )}`}
+                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(postUrl)}`}
                   target="_blank"
                   aria-label="Compartilhar no LinkedIn"
                   className={buttonVariants({
@@ -262,7 +215,6 @@ export default async function PostPage({ params }: PostPageProps) {
 
           <Separator className="mx-6 my-4" />
 
-          {/* Excerpt como intro */}
           {post.excerpt && (
             <div className="px-6 pb-6">
               <blockquote className="border-l-4 border-primary pl-4 py-2 italic text-xl text-muted-foreground font-medium">
@@ -271,7 +223,6 @@ export default async function PostPage({ params }: PostPageProps) {
             </div>
           )}
 
-          {/* Post Content */}
           <div className="px-6 pb-10 prose prose-lg max-w-none dark:prose-invert prose-headings:font-bold prose-headings:text-primary prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg prose-pre:bg-muted prose-pre:border prose-figcaption:text-center prose-blockquote:border-l-primary">
             {post.content ? (
               <PortableText value={post.content as PortableTextBlock[]} />
@@ -281,7 +232,6 @@ export default async function PostPage({ params }: PostPageProps) {
           </div>
         </div>
 
-        {/* Tags and Author Section */}
         <div className="grid gap-8">
           {post.categories && post.categories.length > 0 && (
             <div className="mb-8">
@@ -333,7 +283,6 @@ export default async function PostPage({ params }: PostPageProps) {
         </div>
       </article>
 
-      {/* CTA */}
       <div className="max-w-4xl mx-auto mt-16">
         <div className="p-8 bg-gradient-to-br from-primary/10 to-transparent rounded-xl border border-primary/20 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="text-center md:text-left">
@@ -356,5 +305,5 @@ export default async function PostPage({ params }: PostPageProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
