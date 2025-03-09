@@ -1,4 +1,5 @@
 // app/blog/[slug]/page.tsx
+
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
@@ -12,29 +13,25 @@ import { Calendar, Clock, ChevronLeft } from 'lucide-react'
 import { getPostBySlug, urlFor } from '@/lib/blog/api'
 import { Separator } from '@/components/ui/separator'
 import { buttonVariants } from '@/components/ui/button'
-import { Category } from '@/lib/blog/types'
 
-// Tipo para a página com parâmetros
-interface PostPageProps {
-  params: {
-    slug: string
-  }
-}
+// -- Opção 1: tipagem inline no componente e no generateMetadata
 
-// Revalida a cada 1 hora
+// Export revalidate normalmente
 export const revalidate = 3600
 
-// Geração de metadados dinâmicos (caso sua versão do Next permita)
-export async function generateMetadata({ params }: PostPageProps): Promise<Metadata> {
+export async function generateMetadata(
+  // Aqui tipamos inline o param "params"
+  { params }: { params: { slug: string } }
+): Promise<Metadata> {
   const post = await getPostBySlug(params.slug)
-
+  
   if (!post) {
     return {
       title: 'Post não encontrado',
     }
   }
 
-  // Montamos o objeto de Open Graph com um fallback simples
+  // Se quiser tipar certinho as imagens do OpenGraph:
   const ogImages = post.mainImage
     ? [
         {
@@ -53,19 +50,20 @@ export async function generateMetadata({ params }: PostPageProps): Promise<Metad
       title: post.title,
       description: post.excerpt || '',
       images: ogImages,
-      // Você pode incluir mais campos se desejar, como url, siteName, etc.
     },
   }
 }
 
-export default async function PostPage({ params }: PostPageProps) {
+export default async function PostPage(
+  // Aqui também tipamos inline
+  { params }: { params: { slug: string } }
+) {
   const post = await getPostBySlug(params.slug)
-
+  
   if (!post) {
     notFound()
   }
 
-  // URL da imagem principal, caso exista
   const mainImageUrl = post.mainImage
     ? urlFor(post.mainImage).width(1200).height(675).url()
     : null
@@ -74,8 +72,8 @@ export default async function PostPage({ params }: PostPageProps) {
     <div className="w-full px-4 sm:px-6 lg:px-8 py-8 pb-20">
       {/* Breadcrumb */}
       <div className="mb-8 max-w-4xl mx-auto">
-        <Link
-          href="/blog"
+        <Link 
+          href="/blog" 
           className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors group"
         >
           <ChevronLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
@@ -84,78 +82,67 @@ export default async function PostPage({ params }: PostPageProps) {
       </div>
 
       <article className="max-w-4xl mx-auto">
-        {/* Hero Section */}
-        <div className="mb-12">
-          {/* Categories */}
-          <div className="flex flex-wrap gap-2 mb-4">
-            {post.categories?.map((category: Category) => (
-              <Link key={category._id} href={`/blog/category/${getSlugString(category.slug)}`}>
-                <Badge
-                  variant="secondary"
-                  className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
-                >
-                  {category.title}
-                </Badge>
-              </Link>
-            ))}
-          </div>
+        {/* Categories */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {post.categories?.map((category: any) => (
+            <Link key={category._id} href={`/blog/category/${getSlugString(category.slug)}`}>
+              <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+                {category.title}
+              </Badge>
+            </Link>
+          ))}
+        </div>
 
-          {/* Title */}
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
-            {post.title}
-          </h1>
+        {/* Title */}
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
+          {post.title}
+        </h1>
 
-          {/* Post metadata */}
-          <div className="flex flex-wrap items-center gap-6 text-muted-foreground mb-8">
-            {post.author && (
-              <div className="flex items-center gap-3">
-                <Avatar className="border-2 border-primary/10">
-                  {post.author.image ? (
-                    <AvatarImage
-                      src={urlFor(post.author.image).width(100).height(100).url()}
-                      alt={post.author.name || 'Autor'}
-                    />
-                  ) : null}
-                  <AvatarFallback className="bg-primary/10 text-primary">
-                    {post.author.name ? post.author.name.charAt(0) : 'A'}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <div className="font-medium">{post.author.name}</div>
-                  <div className="text-sm text-muted-foreground/70">Autor</div>
-                </div>
+        {/* Post metadata */}
+        <div className="flex flex-wrap items-center gap-6 text-muted-foreground mb-8">
+          {post.author && (
+            <div className="flex items-center gap-3">
+              <Avatar className="border-2 border-primary/10">
+                {post.author.image ? (
+                  <AvatarImage 
+                    src={urlFor(post.author.image).width(100).height(100).url()} 
+                    alt={post.author.name || 'Autor'} 
+                  />
+                ) : null}
+                <AvatarFallback className="bg-primary/10 text-primary">
+                  {post.author?.name ? post.author.name.charAt(0) : 'A'}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <div className="font-medium">{post.author.name}</div>
+                <div className="text-sm text-muted-foreground/70">Autor</div>
               </div>
-            )}
-
-            <div className="flex items-center gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <Calendar size={16} />
-                <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock size={16} />
-                <span>{post.readingTime || 5} min de leitura</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Featured Image */}
-          {mainImageUrl && (
-            <div className="w-full aspect-[16/9] relative rounded-xl overflow-hidden border shadow-sm mb-10">
-              <Image
-                src={mainImageUrl}
-                alt={post.title || 'Imagem principal'}
-                fill
-                // Para evitar warnings do Next, pode-se omitir width/height quando fill=true
-                priority
-                // quality={100} // se desejar ajustar a qualidade
-                // Caso prefira não usar fill, use width e height:
-                // width={1200}
-                // height={675}
-              />
             </div>
           )}
+
+          <div className="flex items-center gap-6 text-sm">
+            <div className="flex items-center gap-2">
+              <Calendar size={16} />
+              <time dateTime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
+            </div>
+            <div className="flex items-center gap-2">
+              <Clock size={16} />
+              <span>{post.readingTime || 5} min de leitura</span>
+            </div>
+          </div>
         </div>
+
+        {/* Featured image */}
+        {mainImageUrl && (
+          <div className="w-full aspect-[16/9] relative rounded-xl overflow-hidden border shadow-sm mb-10">
+            <Image
+              src={mainImageUrl}
+              alt={post.title || 'Imagem principal'}
+              fill
+              priority
+            />
+          </div>
+        )}
 
         {/* Post Content Container */}
         <div className="bg-card shadow-sm rounded-xl overflow-hidden border mb-12">
@@ -257,7 +244,6 @@ export default async function PostPage({ params }: PostPageProps) {
 
         {/* Tags and Author Section */}
         <div className="grid gap-8">
-          {/* Related Categories */}
           {post.categories && post.categories.length > 0 && (
             <div className="mb-8">
               <h3 className="text-lg font-semibold mb-4 flex items-center">
@@ -265,7 +251,7 @@ export default async function PostPage({ params }: PostPageProps) {
                 Assuntos relacionados
               </h3>
               <div className="flex flex-wrap gap-2">
-                {post.categories.map((category: Category) => (
+                {post.categories.map((category: any) => (
                   <Link key={category._id} href={`/blog/category/${getSlugString(category.slug)}`}>
                     <Badge variant="outline" className="hover:bg-primary/10 transition-colors">
                       {category.title}
@@ -276,15 +262,14 @@ export default async function PostPage({ params }: PostPageProps) {
             </div>
           )}
 
-          {/* Author Card */}
           {post.author && (
             <div className="p-6 bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl border mb-10">
               <div className="flex flex-col sm:flex-row items-start gap-6">
                 <Avatar className="h-16 w-16 border-2 border-primary/10">
                   {post.author.image ? (
-                    <AvatarImage
-                      src={urlFor(post.author.image).width(100).height(100).url()}
-                      alt={post.author.name || 'Autor'}
+                    <AvatarImage 
+                      src={urlFor(post.author.image).width(100).height(100).url()} 
+                      alt={post.author.name || 'Autor'} 
                     />
                   ) : null}
                   <AvatarFallback className="bg-primary/10 text-xl text-primary">
@@ -300,9 +285,7 @@ export default async function PostPage({ params }: PostPageProps) {
                       <PortableText value={post.author.bio as PortableTextBlock[]} />
                     </div>
                   ) : (
-                    <p className="mt-2 text-muted-foreground">
-                      Autor de conteúdo em nosso blog.
-                    </p>
+                    <p className="mt-2 text-muted-foreground">Autor de conteúdo em nosso blog.</p>
                   )}
                 </div>
               </div>
@@ -321,12 +304,12 @@ export default async function PostPage({ params }: PostPageProps) {
               Simule agora e descubra!
             </p>
           </div>
-          <Link
-            href="/simulador"
-            className={buttonVariants({
-              variant: 'default',
-              size: 'lg',
-              className: 'px-8 font-medium shadow-sm whitespace-nowrap',
+          <Link 
+            href="/simulador" 
+            className={buttonVariants({ 
+              variant: 'default', 
+              size: 'lg', 
+              className: 'px-8 font-medium shadow-sm whitespace-nowrap'
             })}
           >
             Simular Agora
