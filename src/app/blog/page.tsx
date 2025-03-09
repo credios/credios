@@ -22,16 +22,18 @@ export const revalidate = 3600; // Revalidar a cada hora
 export default async function BlogPage({
   searchParams,
 }: {
-  searchParams?: { category?: string };
+  searchParams: Promise<{ category?: string }>;
 }) {
+  // Resolver a Promise de searchParams
+  const { category } = await searchParams;
+  const currentCategory = category || '';
+
   // Buscar dados do Sanity
   const [posts, featuredPosts, categories] = await Promise.all([
     getAllPosts(),
     getFeaturedPosts(),
     getAllCategories(),
   ]);
-
-  const currentCategory = searchParams?.category || '';
 
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-12">
