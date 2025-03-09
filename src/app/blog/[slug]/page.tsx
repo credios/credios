@@ -14,7 +14,45 @@ import { getPostBySlug, urlFor } from '@/lib/blog/api'
 import { Separator } from '@/components/ui/separator'
 import { buttonVariants } from '@/components/ui/button'
 
-// -- Opção 1: tipagem inline no componente e no generateMetadata
+// Define proper types for the Sanity content
+interface Category {
+  _id: string;
+  title: string;
+  slug: {
+    current: string;
+  };
+}
+
+interface SanityImage {
+  _type: string;
+  asset: {
+    _ref: string;
+    _type: string;
+  };
+  alt?: string;
+}
+
+interface Author {
+  _id: string;
+  name: string;
+  image?: SanityImage;
+  bio?: PortableTextBlock[];
+}
+
+interface Post {
+  _id: string;
+  title: string;
+  slug: {
+    current: string;
+  };
+  excerpt?: string;
+  mainImage?: SanityImage;
+  publishedAt: string;
+  readingTime?: number;
+  content?: PortableTextBlock[];
+  categories?: Category[];
+  author?: Author;
+}
 
 // Export revalidate normalmente
 export const revalidate = 3600
@@ -58,7 +96,7 @@ export default async function PostPage(
   // Aqui também tipamos inline
   { params }: { params: { slug: string } }
 ) {
-  const post = await getPostBySlug(params.slug)
+  const post = await getPostBySlug(params.slug) as Post
   
   if (!post) {
     notFound()
@@ -84,7 +122,7 @@ export default async function PostPage(
       <article className="max-w-4xl mx-auto">
         {/* Categories */}
         <div className="flex flex-wrap gap-2 mb-4">
-          {post.categories?.map((category: any) => (
+          {post.categories?.map((category: Category) => (
             <Link key={category._id} href={`/blog/category/${getSlugString(category.slug)}`}>
               <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
                 {category.title}
@@ -251,7 +289,7 @@ export default async function PostPage(
                 Assuntos relacionados
               </h3>
               <div className="flex flex-wrap gap-2">
-                {post.categories.map((category: any) => (
+                {post.categories.map((category: Category) => (
                   <Link key={category._id} href={`/blog/category/${getSlugString(category.slug)}`}>
                     <Badge variant="outline" className="hover:bg-primary/10 transition-colors">
                       {category.title}
