@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 
 // Componentes do shadcn/ui
@@ -15,7 +16,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Ícones do Lucide
 import {
@@ -28,13 +28,15 @@ import {
   FileCheck,
   MapPin,
   AlertCircle,
+  DollarSign,
   Clock,
+  Percent,
+  Award,
   ShieldCheck,
   Info,
   ChevronDown,
   CheckCircle,
   Star,
-  ChevronRight,
 } from "lucide-react";
 
 // Definição dos ícones customizados
@@ -272,68 +274,78 @@ const FAQ_ITEMS: FaqItem[] = [
 
 // Animações reutilizáveis
 const fadeIn = {
-  hidden: { opacity: 0, y: 10 },
+  hidden: { opacity: 0, y: 20 },
   visible: { 
     opacity: 1, 
     y: 0, 
-    transition: { duration: 0.4, ease: "easeOut" } 
+    transition: { duration: 0.6, ease: "easeOut" } 
   }
 };
 
-// CTA card principal - otimizado para mobile
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+// CTA card principal
 const MainCtaCard = () => {
   return (
     <motion.div
-      className="relative rounded-xl overflow-hidden border border-amber-200 shadow-lg max-w-full mx-3 my-6 sm:mx-auto sm:my-10"
+      className="relative rounded-2xl overflow-hidden border border-amber-200 shadow-lg hover:shadow-xl transition-all duration-300 max-w-4xl mx-auto my-12"
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5 }}
       viewport={{ once: true }}
     >
       <div className="absolute inset-0 bg-gradient-to-br from-amber-50 to-orange-50 -z-10"></div>
-      <div className="absolute top-0 right-0 w-36 h-36 rounded-full bg-orange-400/20 -z-10 translate-x-1/3 -translate-y-1/3 blur-xl"></div>
-      <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full bg-amber-300/10 -z-10 -translate-x-1/3 translate-y-1/3 blur-2xl"></div>
+      <div className="absolute top-0 right-0 w-48 h-48 rounded-full bg-orange-400/20 -z-10 translate-x-1/3 -translate-y-1/3 blur-xl"></div>
+      <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-amber-300/10 -z-10 -translate-x-1/3 translate-y-1/3 blur-2xl"></div>
       
-      <div className="p-4 sm:p-6">
-        <div className="flex mb-3">
-          <Badge className="bg-green-500 text-white border-0 px-2 py-1 text-xs sm:text-sm flex items-center gap-1 shadow-sm">
-            <CheckCircle2 className="h-3 w-3 sm:h-4 sm:w-4" />
-            Aprovação em minutos
-          </Badge>
+      <div className="grid md:grid-cols-2 gap-6 p-6 md:p-8 items-center">
+        <div>
+          <div className="flex mb-4">
+            <Badge className="bg-green-500 text-white border-0 px-3 py-1.5 font-medium text-sm flex items-center gap-1.5 shadow-md">
+              <CheckCircle2 className="h-4 w-4" />
+              Aprovação em minutos
+            </Badge>
+          </div>
+          
+          <h3 className="text-2xl md:text-3xl font-bold mb-3 text-gray-800">Pronto para começar?</h3>
+          <p className="text-gray-600 mb-6">
+            Simule agora e descubra quanto você pode receber. O processo é rápido, seguro e sem burocracia.
+          </p>
+          
+          <a href="/simular" className="block w-full md:w-auto cursor-pointer">
+            <Button className="w-full md:w-auto bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium py-4 px-8 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 cursor-pointer text-lg">
+              Simular sem compromisso
+            </Button>
+          </a>
+          
+          <p className="text-xs text-gray-500 mt-3 flex items-center">
+            <AlertCircle className="h-3 w-3 mr-1.5" /> 
+            Consulta não afeta seu score de crédito
+          </p>
         </div>
         
-        <h3 className="text-xl font-bold mb-2 text-gray-800">Pronto para começar?</h3>
-        <p className="text-sm text-gray-600 mb-4">
-          Simule agora e descubra quanto você pode receber. O processo é rápido, seguro e sem burocracia.
-        </p>
-        
-        <a href="/simular" className="block w-full cursor-pointer">
-          <Button className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium py-3 rounded-lg shadow-md text-base">
-            Simular sem compromisso
-          </Button>
-        </a>
-        
-        <p className="text-xs text-gray-500 mt-2 flex items-center">
-          <AlertCircle className="h-3 w-3 mr-1" /> 
-          Consulta não afeta seu score de crédito
-        </p>
+        <div className="relative h-64 rounded-xl overflow-hidden shadow-md hidden md:block">
+          <Image
+            src="/images/woman-smiling.png" 
+            alt="Cliente satisfeita com empréstimo na conta de luz"
+            fill
+            className="object-cover object-center"
+          />
+        </div>
       </div>
     </motion.div>
   );
 };
 
-// Sticky CTA para mobile
-const MobileStickyButton = () => {
-  return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-3 bg-white border-t border-gray-200 md:hidden">
-      <Button className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-4 rounded-lg shadow-lg">
-        Simular agora
-      </Button>
-    </div>
-  );
-};
-
-// Componentes Reutilizáveis - Otimizados para mobile
+// Componentes Reutilizáveis
 const SectionHeading = ({ 
   title, 
   description, 
@@ -344,21 +356,21 @@ const SectionHeading = ({
   badge?: string 
 }) => (
   <motion.div 
-    className="mb-5 sm:mb-8 text-center px-4"
+    className="mb-10 text-center"
     initial="hidden"
     whileInView="visible"
-    viewport={{ once: true, margin: "-50px" }}
+    viewport={{ once: true, margin: "-100px" }}
     variants={fadeIn}
   >
     {badge && (
-      <Badge className="mb-3 px-2 py-1 bg-orange-100 text-orange-700 border-none text-xs font-medium">
+      <Badge className="mb-4 px-3 py-1.5 bg-orange-100 text-orange-700 hover:bg-orange-200 border-none font-medium">
         {badge}
       </Badge>
     )}
-    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-3 bg-gradient-to-r from-orange-600 to-amber-500 bg-clip-text text-transparent">
+    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-orange-600 to-amber-500 bg-clip-text text-transparent">
       {title}
     </h2>
-    <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">
+    <p className="text-gray-600 max-w-2xl mx-auto text-base sm:text-lg">
       {description}
     </p>
   </motion.div>
@@ -376,28 +388,27 @@ const SubSectionHeading = ({
   icon?: React.ReactNode
 }) => (
   <motion.div 
-    className="mb-6 sm:mb-10 text-center px-4"
+    className="mb-10 md:mb-16 text-center"
     initial="hidden"
     whileInView="visible"
-    viewport={{ once: true, margin: "-50px" }}
+    viewport={{ once: true, margin: "-100px" }}
     variants={fadeIn}
   >
     {eyebrow && (
-      <div className="mb-2 flex justify-center items-center gap-1.5">
+      <div className="mb-3 flex justify-center items-center gap-2">
         {icon && <span className="text-orange-500">{icon}</span>}
-        <span className="text-orange-600 font-bold uppercase tracking-wide text-xs">{eyebrow}</span>
+        <span className="text-orange-600 font-bold uppercase tracking-wide text-sm">{eyebrow}</span>
       </div>
     )}
-    <h2 className="text-xl sm:text-2xl font-bold mb-2">
+    <h2 className="text-2xl sm:text-3xl font-bold mb-3">
       {title}
     </h2>
-    <p className="text-gray-600 max-w-2xl mx-auto text-sm">
+    <p className="text-gray-600 max-w-2xl mx-auto text-base">
       {description}
     </p>
   </motion.div>
 );
 
-// Advantage Card otimizado para swipe horizontal em mobile
 const AdvantageCard = ({ 
   item, 
   index 
@@ -406,7 +417,7 @@ const AdvantageCard = ({
   index: number 
 }) => {
   const cardRef = useRef(null);
-  const isInView = useInView(cardRef, { once: true, margin: "-50px" });
+  const isInView = useInView(cardRef, { once: true, margin: "-100px" });
   
   const colorMap: Record<string, string> = {
     emerald: "group-hover:from-emerald-500 group-hover:to-emerald-600",
@@ -420,51 +431,54 @@ const AdvantageCard = ({
   return (
     <motion.div
       ref={cardRef}
-      className="h-full min-w-[280px] sm:min-w-0 snap-center"
+      className="h-full"
       variants={fadeIn}
       custom={index}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
       transition={{ delay: index * 0.1 }}
-      whileHover={{ y: -5, transition: { duration: 0.2 } }}
+      whileHover={{ y: -10, transition: { duration: 0.2 } }}
     >
-      <Card className={`h-full border-0 shadow-md overflow-hidden group relative bg-gradient-to-br ${item.backgroundColor || "from-gray-50 to-gray-100"}`}>
+      <Card className={`h-full border-0 shadow-lg shadow-gray-200/50 hover:shadow-xl transition-all duration-500 overflow-hidden group relative bg-gradient-to-br ${item.backgroundColor || "from-gray-50 to-gray-100"}`}>
         {/* Overlay effect on hover */}
         <div className={`absolute inset-0 bg-gradient-to-br ${accentColor} opacity-0 group-hover:opacity-95 transition-opacity duration-500 z-10`}></div>
         
         {/* Card content with overlay effect */}
         <div className="absolute inset-0 bg-[url('/images/dot-pattern.svg')] opacity-5"></div>
         
-        <CardHeader className="relative z-20 p-4">
+        {/* Top corner accent */}
+        <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-orange-400/20 to-transparent rounded-bl-full"></div>
+        
+        <CardHeader className="relative z-20">
           <div className="flex justify-between items-start">
-            <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-white shadow-sm">
+            <div className="w-16 h-16 rounded-xl flex items-center justify-center bg-white shadow-md transform group-hover:scale-110 transition-all duration-300 group-hover:shadow-lg">
               <div className="group-hover:text-white transition-colors duration-300">
                 {item.icon}
               </div>
             </div>
             
             {item.highlight && (
-              <Badge className="bg-orange-500 text-white border-0 px-2 py-1 text-xs uppercase font-semibold tracking-wide group-hover:bg-white group-hover:text-orange-600 transition-colors duration-300">
+              <Badge className="bg-orange-500 text-white border-0 px-3 py-1.5 text-xs uppercase font-semibold tracking-wide group-hover:bg-white group-hover:text-orange-600 transition-colors duration-300">
                 {item.highlight}
               </Badge>
             )}
           </div>
           
-          <CardTitle className="text-lg font-bold mt-3 group-hover:text-white transition-colors duration-300">
+          <CardTitle className="text-2xl font-bold mt-4 group-hover:text-white transition-colors duration-300">
             {item.title}
           </CardTitle>
           
-          <CardDescription className="text-sm mt-1 group-hover:text-white/90 transition-colors duration-300">
+          <CardDescription className="text-base mt-2 group-hover:text-white/90 transition-colors duration-300">
             {item.description}
           </CardDescription>
         </CardHeader>
         
-        <CardContent className="relative z-20 pt-0 p-4">
+        <CardContent className="relative z-20">
           {item.stats && (
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3 mt-2">
               {item.stats.map((stat, i) => (
-                <div key={i} className="bg-white/80 group-hover:bg-white/20 p-2 rounded-lg transition-colors duration-300">
-                  <p className="text-lg font-bold text-orange-600 group-hover:text-white transition-colors duration-300">
+                <div key={i} className="bg-white/80 group-hover:bg-white/20 p-3 rounded-lg transition-colors duration-300">
+                  <p className="text-2xl font-bold text-orange-600 group-hover:text-white transition-colors duration-300">
                     {stat.value}
                   </p>
                   <p className="text-xs text-gray-600 group-hover:text-white/80 transition-colors duration-300">
@@ -476,14 +490,14 @@ const AdvantageCard = ({
           )}
         </CardContent>
         
-        <CardFooter className="pt-0 z-20 relative p-4">
+        <CardFooter className="pt-0 z-20 relative">
           {item.action && (
             <a 
               href={item.actionUrl || "#"} 
-              className="inline-flex items-center pl-0 text-orange-600 hover:text-orange-700 font-medium transition-colors duration-300 group-hover:text-white text-sm cursor-pointer"
+              className="inline-flex items-center pl-0 text-orange-600 hover:text-orange-700 font-medium transition-colors duration-300 group-hover:text-white cursor-pointer"
             >
               {item.action} 
-              <ArrowRight className="ml-1 h-3 w-3 group-hover:translate-x-1 transition-transform duration-300" />
+              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
             </a>
           )}
         </CardFooter>
@@ -492,304 +506,275 @@ const AdvantageCard = ({
   );
 };
 
-// Componente de processo (Como funciona) otimizado para mobile
-const ProcessStep = ({ step, index }: { step: ProcessStep, index: number }) => {
-  return (
-    <motion.div 
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
-      viewport={{ once: true }}
-      className="mb-3 last:mb-0"
-    >
-      <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 hover:bg-white hover:border-blue-200 hover:shadow-sm transition-all duration-300">
-        <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-blue-100 text-blue-600 border border-blue-200">
-            <span className="font-bold text-sm">0{index + 1}</span>
-          </div>
-          
-          <div className="flex-grow">
-            <div className="flex flex-wrap items-start justify-between gap-1">
-              <h4 className="text-base font-bold text-gray-800">
-                {step.title}
-              </h4>
-              
-              {step.duration && (
-                <Badge className="bg-blue-100 text-blue-600 border border-blue-200 text-xs py-0 px-1.5">
-                  <Clock className="h-3 w-3 mr-1" /> {step.duration}
-                </Badge>
-              )}
-            </div>
-            
-            <p className="text-xs text-gray-600 mt-1">
-              {step.description}
-            </p>
-            
-            {step.details && (
-              <details className="mt-2 text-xs">
-                <summary className="cursor-pointer text-blue-600 font-medium flex items-center">
-                  <span>Ver detalhes</span>
-                  <ChevronDown className="h-3 w-3 ml-1 inline" />
-                </summary>
-                <div className="mt-2 pt-2 border-t border-blue-100">
-                  <ul className="space-y-1.5">
-                    {step.details.map((detail, i) => (
-                      <li key={i} className="flex items-start text-gray-600">
-                        <CheckCircle className="h-3 w-3 mr-1.5 text-blue-500 mt-0.5 flex-shrink-0" />
-                        <span>{detail}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </details>
-            )}
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
 // Main Component
 export default function CrediosLoanSection() {
   // Estados
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState("vantagens");
   
   return (
-    <section className="w-full overflow-hidden pb-16">
+    <section className="w-full overflow-hidden">
       {/* SEÇÃO PRINCIPAL - VANTAGENS */}
-      <div className="py-8 sm:py-12 bg-gradient-to-b from-white via-gray-50 to-white">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 relative">
+      <div className="py-16 bg-gradient-to-b from-white via-gray-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           {/* Elementos decorativos de background */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-orange-100 rounded-full opacity-10 blur-3xl -z-10 transform translate-x-1/3 -translate-y-1/4"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-100 rounded-full opacity-10 blur-3xl -z-10 transform -translate-x-1/3 translate-y-1/4"></div>
+          <div className="absolute top-0 right-0 w-96 h-96 bg-orange-100 rounded-full opacity-10 blur-3xl -z-10 transform translate-x-1/3 -translate-y-1/4"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-100 rounded-full opacity-10 blur-3xl -z-10 transform -translate-x-1/3 translate-y-1/4"></div>
+          <div className="absolute top-1/3 left-1/4 w-64 h-64 bg-purple-100 rounded-full opacity-10 blur-3xl -z-10"></div>
           
           {/* Título da seção principal */}
           <SectionHeading 
             badge="Solução financeira inovadora"
             title="Empréstimo na Conta de Luz"
-            description="A maneira mais inteligente e rápida para conseguir o crédito que você precisa, sem complicações."
+            description="A maneira mais inteligente e rápida para conseguir o crédito que você precisa, sem complicações ou burocracia."
           />
           
-          {/* Tabs para navegação */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full my-6">
-            <TabsList className="w-full max-w-md mx-auto">
-              <TabsTrigger value="vantagens" className="w-1/2">Vantagens</TabsTrigger>
-              <TabsTrigger value="como-funciona" className="w-1/2">Como Funciona</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="vantagens" className="mt-4">
-              {/* Conteúdo de vantagens */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {ADVANTAGES.map((item, index) => (
-                  <AdvantageCard key={index} item={item} index={index} />
-                ))}
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="como-funciona" className="mt-4">
-              {/* Conteúdo de como funciona */}
-              <div className="space-y-4">
-                {HOW_IT_WORKS.map((step, index) => (
-                  <ProcessStep key={index} step={step} index={index} />
-                ))}
-              </div>
-            </TabsContent>
-          </Tabs>
-          
-          {/* CTA PRINCIPAL - Posicionado acima das vantagens em mobile */}
-          <div className="mb-8 md:hidden">
-            <MainCtaCard />
-          </div>
-          
-          {/* Subseção de Vantagens - Horizontal Swipe em Mobile */}
-          <div className="mt-6 sm:mt-10">
+          {/* Subseção de Vantagens */}
+          <div className="mt-16">
             <SubSectionHeading 
               eyebrow="Por que escolher a Credios" 
               icon={<Star className="h-4 w-4" />}
               title="Vantagens exclusivas para você"
-              description="Descomplicamos o acesso ao crédito para resolver sua necessidade financeira."
+              description="Descomplicamos o acesso ao crédito para que você resolva sua necessidade financeira com rapidez e segurança."
             />
             
-            {/* Swipable container para mobile */}
-            <div className="overflow-x-auto md:overflow-visible pb-4 -mx-3 px-3 snap-x snap-mandatory flex md:block md:pb-0 md:px-0 md:mx-0 scrollbar-hide">
-              <div className="flex md:grid md:grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4">
-                {ADVANTAGES.map((item, index) => (
-                  <AdvantageCard key={index} item={item} index={index} />
-                ))}
-              </div>
-            </div>
-            
-            {/* Indicator dots for mobile */}
-            <div className="flex justify-center space-x-2 mt-1 md:hidden">
-              {ADVANTAGES.map((_, i) => (
-                <div 
-                  key={i} 
-                  className={`w-2 h-2 rounded-full ${i === 0 ? 'bg-orange-500' : 'bg-gray-300'}`}
-                ></div>
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 lg:gap-8"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+            >
+              {ADVANTAGES.map((item, index) => (
+                <AdvantageCard key={index} item={item} index={index} />
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
       
-      {/* CTA PRINCIPAL para desktop */}
-      <div className="hidden md:block">
-        <MainCtaCard />
-      </div>
+      {/* CTA PRINCIPAL */}
+      <MainCtaCard />
       
       {/* SEÇÃO COMO FUNCIONA */}
-      <div className="py-8 sm:py-12 bg-blue-50">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 relative">
+      <div className="py-16 bg-blue-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           {/* Subseção de Como Funciona */}
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto text-center">
             <motion.div 
-              className="flex justify-center mb-2"
-              initial={{ opacity: 0, y: -10 }}
+              className="flex justify-center mb-3"
+              initial={{ opacity: 0, y: -20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4 }}
+              transition={{ duration: 0.5 }}
               viewport={{ once: true }}
             >
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-100 rounded-full text-blue-600 border border-blue-200">
-                <Zap className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="text-xs font-medium uppercase tracking-wide">Processo descomplicado</span>
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-100 rounded-full text-blue-600 border border-blue-200">
+                <Zap className="h-4 w-4" />
+                <span className="text-sm font-medium uppercase tracking-wide">Processo descomplicado</span>
               </div>
             </motion.div>
             
             <motion.h2 
-              className="text-xl sm:text-2xl font-bold mb-2 text-center text-gray-800"
-              initial={{ opacity: 0, y: -5 }}
+              className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6 text-gray-800"
+              initial={{ opacity: 0, y: -10 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
               viewport={{ once: true }}
             >
               Como funciona o empréstimo na conta de luz
             </motion.h2>
             
             <motion.p 
-              className="text-gray-600 mb-6 max-w-3xl mx-auto text-sm text-center px-4"
-              initial={{ opacity: 0, y: -5 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              Obtenha crédito em 4 etapas simples, usando sua conta de luz como garantia, sem consultas ao SPC/Serasa.
-            </motion.p>
-            
-            {/* Process Timeline - Mobile Optimized */}
-            <div className="md:hidden">
-              {HOW_IT_WORKS.map((step, index) => (
-                <ProcessStep 
-                  key={index} 
-                  step={step} 
-                  index={index} 
-                />
-              ))}
-            </div>
-            
-            {/* Vantagens e Informações Importantes - Tabs em Mobile */}
-            <motion.div 
-              className="max-w-3xl mx-auto mb-6"
-              initial={{ opacity: 0, y: 10 }}
+              className="text-gray-600 mb-8 max-w-3xl mx-auto"
+              initial={{ opacity: 0, y: -10 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              <Tabs defaultValue="vantagens" className="w-full">
-                <TabsList className="w-full grid grid-cols-2 mb-3">
-                  <TabsTrigger value="vantagens">Vantagens</TabsTrigger>
-                  <TabsTrigger value="informacoes">Informações</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="vantagens" className="bg-white p-4 rounded-lg border border-blue-100 shadow-sm">
-                  <div className="flex items-center mb-2">
-                    <ShieldCheck className="h-4 w-4 text-blue-500 mr-2" />
-                    <h4 className="font-semibold text-gray-800 text-sm">Vantagens exclusivas</h4>
-                  </div>
-                  <ul className="space-y-2">
-                    {[
-                      "Aprovação imediata em 30 segundos",
-                      "Disponível mesmo para negativados",
-                      "Não precisa comprovar renda",
-                      "Processo 100% digital pelo celular"
-                    ].map((item, i) => (
-                      <motion.li 
-                        key={i} 
-                        className="flex items-start text-gray-600 text-xs"
-                        initial={{ opacity: 0, x: -5 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: 0.1 * i }}
-                        viewport={{ once: true }}
-                      >
-                        <CheckCircle className="h-3 w-3 mr-1.5 text-blue-500 mt-0.5 flex-shrink-0" />
-                        <span>{item}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </TabsContent>
-                
-                <TabsContent value="informacoes" className="bg-white p-4 rounded-lg border border-blue-100 shadow-sm">
-                  <div className="flex items-center mb-2">
-                    <AlertCircle className="h-4 w-4 text-blue-500 mr-2" />
-                    <h4 className="font-semibold text-gray-800 text-sm">Informações importantes</h4>
-                  </div>
-                  <ul className="space-y-2">
-                    {[
-                      "É necessário ser o titular da conta de luz",
-                      "As parcelas são incluídas na fatura de energia",
-                      "Valor liberado de até R$ 3.300",
-                      "Parcele em até 12 vezes"
-                    ].map((item, i) => (
-                      <motion.li 
-                        key={i} 
-                        className="flex items-start text-gray-600 text-xs"
-                        initial={{ opacity: 0, x: -5 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: 0.1 * i }}
-                        viewport={{ once: true }}
-                      >
-                        <Info className="h-3 w-3 mr-1.5 text-blue-500 mt-0.5 flex-shrink-0" />
-                        <span>{item}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </TabsContent>
-              </Tabs>
-            </motion.div>
+              Obtenha crédito em 4 etapas simples pelo seu celular. Usando sua conta de luz como garantia, dispensamos consultas ao SPC/Serasa. Ideal para negativados, com parcelas incluídas na sua fatura mensal de energia e disponível em 9 estados.
+            </motion.p>
             
-            {/* Box de disponibilidade regional - Compact mobile */}
             <motion.div 
-              className="max-w-3xl mx-auto mb-6"
-              initial={{ opacity: 0, y: 10 }}
+              className="bg-white p-8 rounded-2xl border border-blue-100 mb-12 shadow-lg max-w-3xl mx-auto"
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
+              transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <div className="bg-slate-100 rounded-lg overflow-hidden shadow-sm border border-slate-200">
-                <div className="flex items-start p-3 sm:p-4">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mr-3">
-                    <MapPin className="h-4 w-4 text-blue-600" />
+              <div className="flex items-center justify-center mb-6">
+                <div className="w-10 h-10 flex items-center justify-center bg-blue-100 text-blue-600 rounded-full mr-3 border border-blue-200">
+                  <Zap className="h-5 w-5" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-800">Conheça nossas etapas simplificadas</h3>
+              </div>
+              
+              <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+                Com nosso processo 100% digital, você obtém empréstimo sem sair de casa. Não é preciso comprovação de renda ou análise de crédito tradicional – a conta de luz é sua garantia. Aprovação imediata e dinheiro no mesmo dia direto na sua conta.
+              </p>
+              
+              <div className="space-y-5 max-w-2xl mx-auto">
+                {HOW_IT_WORKS.map((step, index) => (
+                  <motion.div 
+                    key={index} 
+                    className="relative"
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                    viewport={{ once: true }}
+                  >
+                    {index < HOW_IT_WORKS.length - 1 && (
+                      <div className="absolute left-6 top-12 bottom-0 w-0.5 bg-blue-200 hidden md:block"></div>
+                    )}
+                    
+                    <motion.div 
+                      className="bg-blue-50 border border-blue-100 rounded-xl p-5 transition-all duration-300 hover:bg-white hover:border-blue-200 hover:shadow-md group"
+                      whileHover={{ 
+                        y: -5,
+                        scale: 1.02,
+                        transition: { duration: 0.2 }
+                      }}
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center bg-blue-100 text-blue-600 border border-blue-200 group-hover:bg-blue-200 transition-colors duration-300">
+                          <span className="font-bold text-lg">0{index + 1}</span>
+                        </div>
+                        
+                        <div className="flex-grow">
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <h4 className="text-lg font-bold text-gray-800 group-hover:text-blue-700 transition-colors duration-300">
+                              {step.title}
+                            </h4>
+                            
+                            {step.duration && (
+                              <Badge className="bg-blue-100 text-blue-600 border border-blue-200 group-hover:bg-blue-200 transition-colors duration-300">
+                                <Clock className="h-3 w-3 mr-1" /> {step.duration}
+                              </Badge>
+                            )}
+                          </div>
+                          
+                          <p className="text-gray-600 mt-1">
+                            {step.description}
+                          </p>
+                          
+                          {step.details && (
+                            <div className="mt-3 pt-3 border-t border-blue-100">
+                              <ul className="space-y-2">
+                                {step.details.map((detail, i) => (
+                                  <li key={i} className="flex items-start text-gray-600 text-sm">
+                                    <CheckCircle className="h-4 w-4 mr-2 text-blue-500 mt-0.5 flex-shrink-0" />
+                                    <span>{detail}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+            
+            <motion.div 
+              className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-5 mb-12"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <motion.div 
+                className="bg-white p-5 rounded-xl border border-blue-100 shadow-sm"
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              >
+                <div className="flex items-center mb-3">
+                  <ShieldCheck className="h-5 w-5 text-blue-500 mr-2" />
+                  <h4 className="font-semibold text-gray-800">Vantagens exclusivas</h4>
+                </div>
+                <ul className="space-y-2">
+                  {[
+                    "Aprovação imediata em 30 segundos",
+                    "Disponível mesmo para negativados",
+                    "Não precisa comprovar renda",
+                    "Processo 100% digital pelo celular"
+                  ].map((item, i) => (
+                    <motion.li 
+                      key={i} 
+                      className="flex items-start text-gray-600 text-sm"
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: 0.1 * i }}
+                      viewport={{ once: true }}
+                    >
+                      <CheckCircle className="h-4 w-4 mr-2 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span>{item}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
+              
+              <motion.div 
+                className="bg-white p-5 rounded-xl border border-blue-100 shadow-sm"
+                whileHover={{ y: -5, transition: { duration: 0.2 } }}
+              >
+                <div className="flex items-center mb-3">
+                  <AlertCircle className="h-5 w-5 text-blue-500 mr-2" />
+                  <h4 className="font-semibold text-gray-800">Informações importantes</h4>
+                </div>
+                <ul className="space-y-2">
+                  {[
+                    "É necessário ser o titular da conta de luz",
+                    "As parcelas são incluídas na fatura de energia",
+                    "Valor liberado de até R$ 3.300",
+                    "Parcele em até 12 vezes"
+                  ].map((item, i) => (
+                    <motion.li 
+                      key={i} 
+                      className="flex items-start text-gray-600 text-sm"
+                      initial={{ opacity: 0, x: -10 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: 0.1 * i }}
+                      viewport={{ once: true }}
+                    >
+                      <Info className="h-4 w-4 mr-2 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span>{item}</span>
+                    </motion.li>
+                  ))}
+                </ul>
+              </motion.div>
+            </motion.div>
+            
+            {/* Box de disponibilidade regional */}
+            <motion.div 
+              className="max-w-3xl mx-auto mb-12"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              viewport={{ once: true }}
+            >
+              <div className="bg-slate-100 rounded-xl overflow-hidden shadow-sm border border-slate-200">
+                <div className="flex items-start p-5 md:p-6">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mr-4">
+                    <MapPin className="h-5 w-5 text-blue-600" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold text-gray-800">Disponibilidade regional</h3>
-                    <p className="text-xs text-gray-600">Estados com empréstimo na conta de luz</p>
+                    <h3 className="text-lg font-bold text-gray-800 mb-1">Disponibilidade regional</h3>
+                    <p className="text-sm text-gray-600">Estados onde oferecemos o serviço de empréstimo na conta de luz</p>
                   </div>
                 </div>
                 
-                <div className="px-3 pb-3 sm:px-4 sm:pb-4">
-                  {/* Grid for states - scrollable in mobile */}
-                  <div className="grid grid-cols-3 gap-1.5 mb-3 max-h-32 overflow-y-auto pb-1">
+                <div className="p-5 md:p-6 pt-0">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3 mb-4">
                     {AVAILABLE_STATES.map((state, index) => (
                       <motion.div 
                         key={state.name} 
-                        initial={{ opacity: 0, scale: 0.95 }}
+                        className="relative"
+                        initial={{ opacity: 0, scale: 0.9 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.3, delay: index * 0.05 }}
                         viewport={{ once: true }}
                       >
-                        <div className="bg-white border border-slate-200 rounded px-1.5 py-1.5 text-center">
-                          <span className="font-medium text-gray-700 text-xs">
+                        <div className="bg-white border border-slate-200 rounded-lg px-2 py-3 flex items-center justify-center text-center">
+                          <span className="font-medium text-gray-700">
                             {state.name}
                           </span>
                         </div>
@@ -797,10 +782,11 @@ export default function CrediosLoanSection() {
                     ))}
                   </div>
                   
-                  <div className="flex items-start gap-2 pt-2 border-t border-slate-200">
-                    <Info className="h-3 w-3 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <p className="text-xs text-gray-600">
-                      Parceria da <span className="font-bold text-gray-700">Credios</span> com a <span className="font-bold text-gray-700">Crefaz</span>. <a href="/simulacao" className="text-blue-600 hover:text-blue-800 font-medium transition-colors cursor-pointer">Ver cidades disponíveis →</a>
+                  <div className="flex items-start gap-3 pt-3 border-t border-slate-200">
+                    <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <p className="text-sm text-gray-600">
+                      O crédito na conta de luz é uma parceria da <span className="font-bold text-gray-700">Credios</span> com a <span className="font-bold text-gray-700">Crefaz</span> e está disponível na 
+                      maioria das cidades dos estados listados. <a href="/simulacao" className="text-blue-600 hover:text-blue-800 font-medium transition-colors cursor-pointer">Consulte disponibilidade durante a simulação →</a>
                     </p>
                   </div>
                 </div>
@@ -810,153 +796,198 @@ export default function CrediosLoanSection() {
         </div>
       </div>
       
-      {/* SEÇÃO FAQ - Compact para Mobile */}
-      <div className="py-8 sm:py-12 bg-white">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 relative">
+      {/* SEÇÃO FAQ */}
+      <div className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           {/* Elementos decorativos */}
           <div className="absolute top-1/4 right-0 w-64 h-64 bg-blue-100/30 rounded-full -z-10 blur-3xl"></div>
+          <div className="absolute bottom-1/4 left-0 w-64 h-64 bg-purple-100/30 rounded-full -z-10 blur-3xl"></div>
           
           {/* Subseção de Perguntas Frequentes */}
           <div>
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              className="mb-6 text-center"
+              className="mb-10 md:mb-16 text-center"
             >
-              <div className="mb-2 flex justify-center items-center gap-1.5">
+              <div className="mb-3 flex justify-center items-center gap-2">
                 <motion.span 
                   className="text-blue-600"
                   animate={{ rotate: [0, 10, 0, -10, 0] }}
                   transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
                 >
-                  <AlertCircle className="h-4 w-4" />
+                  <AlertCircle className="h-5 w-5" />
                 </motion.span>
-                <span className="text-blue-600 font-bold uppercase tracking-wide text-xs">Dúvidas comuns</span>
+                <span className="text-blue-600 font-bold uppercase tracking-wide text-sm">Dúvidas comuns</span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold mb-2 text-gray-800">
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-gray-800">
                 Perguntas Frequentes
               </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto text-sm">
-                Respostas para as dúvidas mais comuns sobre o empréstimo.
+              <p className="text-gray-600 max-w-2xl mx-auto text-base">
+                Encontre respostas para as dúvidas mais comuns sobre o empréstimo na conta de luz.
               </p>
             </motion.div>
             
-            <div className="max-w-3xl mx-auto">
-              <div className="space-y-2">
-                {FAQ_ITEMS.slice(0, 4).map((item, index) => (
-                  <motion.div 
-                    key={index}
-                    initial={{ opacity: 0, y: 5 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                    className="overflow-hidden"
-                  >
-                    <Card className={`border overflow-hidden transition-all duration-300 ${expandedFaq === index ? 'shadow-md' : 'shadow-sm'} hover:shadow-md`}>
-                      <motion.button
-                        onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
-                        className={`w-full p-3 flex justify-between items-center text-left font-medium transition-colors duration-300 cursor-pointer ${
-                          expandedFaq === index ? "bg-blue-50/70" : "bg-white hover:bg-gray-50"
-                        }`}
-                        aria-expanded={expandedFaq === index}
-                        whileHover={{ backgroundColor: expandedFaq === index ? "" : "rgba(243, 244, 246, 1)" }}
-                      >
-                        <span className={`text-sm transition-colors duration-300 ${expandedFaq === index ? "text-blue-700" : "text-gray-800"}`}>
-                          {item.question}
-                        </span>
-                        <motion.div 
-                          className={`flex-shrink-0 ml-2 p-1 rounded-full transition-colors duration-300 ${
-                            expandedFaq === index ? "bg-blue-200" : "bg-gray-100 hover:bg-blue-100"
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div className="lg:col-span-2">
+                <div className="space-y-3">
+                  {FAQ_ITEMS.map((item, index) => (
+                    <motion.div 
+                      key={index}
+                      initial={{ opacity: 0, y: 10 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      viewport={{ once: true }}
+                      className="overflow-hidden"
+                    >
+                      <Card className={`border overflow-hidden transition-all duration-300 ${expandedFaq === index ? 'shadow-md' : 'shadow-sm'} hover:shadow-md`}>
+                        <motion.button
+                          onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                          className={`w-full p-4 flex justify-between items-center text-left font-medium transition-colors duration-300 cursor-pointer ${
+                            expandedFaq === index ? "bg-blue-50/70" : "bg-white hover:bg-gray-50"
                           }`}
-                          animate={{ rotate: expandedFaq === index ? 180 : 0 }}
-                          transition={{ duration: 0.3 }}
+                          aria-expanded={expandedFaq === index}
+                          whileHover={{ backgroundColor: expandedFaq === index ? "" : "rgba(243, 244, 246, 1)" }}
                         >
-                          <ChevronDown 
-                            className={`h-3 w-3 transition-colors duration-300 ${
-                              expandedFaq === index ? "text-blue-600" : "text-gray-500"
-                            }`} 
-                          />
-                        </motion.div>
-                      </motion.button>
-                      
-                      <AnimatePresence initial={false}>
-                        {expandedFaq === index && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                          <span className={`text-base transition-colors duration-300 ${expandedFaq === index ? "text-blue-700" : "text-gray-800"}`}>
+                            {item.question}
+                          </span>
+                          <motion.div 
+                            className={`flex-shrink-0 ml-4 p-1 rounded-full transition-colors duration-300 ${
+                              expandedFaq === index ? "bg-blue-200" : "bg-gray-100 hover:bg-blue-100"
+                            }`}
+                            animate={{ rotate: expandedFaq === index ? 180 : 0 }}
+                            transition={{ duration: 0.3 }}
                           >
-                            <CardContent className="px-3 pt-0 pb-3">
-                              <Separator className="mb-2 mt-1" />
-                              <p className="text-xs text-gray-700 leading-relaxed">{item.answer}</p>
-                            </CardContent>
+                            <ChevronDown 
+                              className={`h-4 w-4 transition-colors duration-300 ${
+                                expandedFaq === index ? "text-blue-600" : "text-gray-500"
+                              }`} 
+                            />
                           </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </Card>
-                  </motion.div>
-                ))}
+                        </motion.button>
+                        
+                        <AnimatePresence initial={false}>
+                          {expandedFaq === index && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.3, ease: "easeInOut" }}
+                            >
+                              <CardContent className="px-4 pt-0 pb-4">
+                                <Separator className="mb-3 mt-1" />
+                                <p className="text-sm text-gray-700 leading-relaxed">{item.answer}</p>
+                              </CardContent>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </Card>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
               
-              {/* Ver mais FAQs link */}
-              <div className="text-center mt-4">
-                <a href="/faq" className="text-blue-600 text-sm font-medium inline-flex items-center hover:text-blue-800 transition-colors">
-                  Ver mais perguntas frequentes
-                  <ChevronRight className="h-4 w-4 ml-1" />
-                </a>
+              <div className="space-y-6">
+                <motion.div
+                  initial={{ opacity: 0, x: 30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6 }}
+                  viewport={{ once: true }}
+                  whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                >
+                  <Card className="border shadow-md hover:shadow-lg transition-shadow duration-300 bg-gradient-to-br from-blue-50 to-blue-100/50 border-blue-200">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-base font-bold text-blue-800 flex items-center">
+                        <Award className="h-5 w-5 mr-2 text-blue-600" />
+                        Benefícios do empréstimo na conta de luz
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2.5">
+                        {[
+                          { icon: <Clock className="h-4 w-4 text-green-500" />, text: "Aprovação em menos de 30 segundos" },
+                          { icon: <ShieldCheck className="h-4 w-4 text-green-500" />, text: "Não consulta SPC/Serasa" },
+                          { icon: <DollarSign className="h-4 w-4 text-green-500" />, text: "Não precisa comprovar renda" },
+                          { icon: <Percent className="h-4 w-4 text-green-500" />, text: "Taxas competitivas no mercado" },
+                          { icon: <Award className="h-4 w-4 text-green-500" />, text: "Mais de 200 mil clientes satisfeitos" },
+                        ].map((item, index) => (
+                          <motion.li 
+                            key={index} 
+                            className="flex items-center gap-2.5"
+                            initial={{ opacity: 0, x: 20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            transition={{ delay: index * 0.1, duration: 0.5 }}
+                            viewport={{ once: true }}
+                          >
+                            <div className="w-7 h-7 bg-green-50 rounded-full flex items-center justify-center">
+                              {item.icon}
+                            </div>
+                            <span className="text-sm">{item.text}</span>
+                          </motion.li>
+                        ))}
+                      </ul>
+                      
+                      <Separator className="my-5" />
+                      
+                      <p className="text-center text-sm text-gray-500">
+                        Ainda tem dúvidas? <a href="/contato" className="font-medium text-blue-600 hover:text-blue-800 transition-colors duration-200 cursor-pointer">Fale conosco</a>
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
               </div>
             </div>
           </div>
         </div>
       </div>
       
-      {/* CTA SECUNDÁRIO - Compact para Mobile */}
+      {/* CTA SECUNDÁRIO */}
       <motion.div 
-        className="py-8 sm:py-10"
-        initial={{ opacity: 0, y: 10 }}
+        className="py-12"
+        initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.6 }}
         viewport={{ once: true }}
       >
         <motion.div 
-          className="max-w-4xl mx-auto px-3 sm:px-6"
+          className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8"
         >
           <motion.div 
-            className="bg-blue-500 rounded-lg overflow-hidden shadow-lg border border-blue-400"
+            className="bg-blue-500 rounded-xl overflow-hidden shadow-lg border border-blue-400"
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
           >
-            <div className="px-4 py-6 sm:px-8 sm:py-8 text-center">
+            <div className="px-6 py-10 sm:px-10 sm:py-12 text-center">
               <motion.h3 
-                className="text-xl sm:text-2xl font-bold mb-2 text-white"
-                initial={{ opacity: 0, y: -5 }}
+                className="text-2xl md:text-3xl font-bold mb-3 text-white"
+                initial={{ opacity: 0, y: -10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
                 viewport={{ once: true }}
               >
                 Resolva sua necessidade financeira hoje
               </motion.h3>
               <motion.p 
-                className="text-white opacity-90 mb-5 max-w-2xl mx-auto text-sm"
-                initial={{ opacity: 0, y: -5 }}
+                className="text-white opacity-90 mb-8 max-w-2xl mx-auto"
+                initial={{ opacity: 0, y: -10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.2 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
                 viewport={{ once: true }}
               >
-                Mais de 200 mil clientes já escolheram o empréstimo na conta de luz.
+                Mais de 200 mil clientes já escolheram o empréstimo na conta de luz. Junte-se a eles e tenha acesso ao crédito que você precisa.
               </motion.p>
               
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, delay: 0.3 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
                 viewport={{ once: true }}
                 className="inline-block"
               >
                 <a href="/simular" className="inline-block cursor-pointer">
-                  <Button className="bg-white text-blue-600 hover:bg-blue-50 cursor-pointer px-6 py-2 sm:py-3 text-base font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+                  <Button className="bg-white text-blue-600 hover:bg-blue-50 cursor-pointer px-8 py-3 text-lg font-medium rounded-full shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300">
                     Simular agora
                   </Button>
                 </a>
@@ -965,9 +996,6 @@ export default function CrediosLoanSection() {
           </motion.div>
         </motion.div>
       </motion.div>
-      
-      {/* Sticky CTA Button para Mobile */}
-      <MobileStickyButton />
     </section>
   );
 }
