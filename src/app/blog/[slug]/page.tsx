@@ -48,12 +48,14 @@ interface Post {
 
 export const revalidate = 3600;
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const { slug } = params;
-  const post = await getPostBySlug(slug) as Post | null;
-
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug) as Post;
+  
   if (!post) {
-    notFound();
+    return {
+      title: 'Post não encontrado',
+    }
   }
 
   const ogImages = post.mainImage
@@ -78,12 +80,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function PostPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
-  const post = await getPostBySlug(slug) as Post | null;
-
+export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const post = await getPostBySlug(slug) as Post;
+  
   if (!post) {
-    notFound();
+    notFound()
   }
 
   // Para debugging, você pode comentar esta linha em ambiente de desenvolvimento

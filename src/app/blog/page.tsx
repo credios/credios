@@ -24,8 +24,8 @@ export default async function BlogPage({
 }: {
   searchParams: Promise<{ category?: string }>;
 }) {
-  // Resolver a Promise de searchParams
-  const { category } = await searchParams;
+  const params = await searchParams;
+  const category = params.category;
   const currentCategory = category || '';
 
   // Buscar dados do Sanity

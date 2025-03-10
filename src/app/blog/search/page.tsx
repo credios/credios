@@ -19,12 +19,12 @@ export const metadata: Metadata = {
 export const revalidate = 0; // Sem cache para resultados de busca
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const { q } = await searchParams; // Resolvendo a Promise
-  const query = q || '';
+  const params = await searchParams;
+  const searchQuery = params.q || '';
   
   // Buscar posts que correspondem à consulta
-  const searchPattern = `*${query}*`;
-  const posts = query ? await client.fetch(
+  const searchPattern = `*${searchQuery}*`;
+  const posts = searchQuery ? await client.fetch(
     `*[_type == "post" && (
       title match "${searchPattern}" || 
       excerpt match "${searchPattern}" || 
@@ -63,7 +63,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       
       <header className="mb-12">
         <h1 className="text-3xl font-bold mb-6">
-          Resultados para “{query}”
+          Resultados para “{searchQuery}”
         </h1>
         <SearchForm />
       </header>
@@ -73,7 +73,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       ) : (
         <div className="text-center py-12">
           <p className="text-lg text-muted-foreground mb-4">
-            Nenhum resultado encontrado para “{query}”
+            Nenhum resultado encontrado para “{searchQuery}”
           </p>
           <p className="text-muted-foreground">
             Tente buscar por termos diferentes ou navegue por todas as categorias.
