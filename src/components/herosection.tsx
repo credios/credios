@@ -358,11 +358,11 @@ const HeroSection: React.FC = () => {
     })
   };
   
-  // Lista de recursos/benefícios
+  // Lista de recursos/benefícios - ALTERAÇÃO PRINCIPAL AQUI
   const recursos = [
     { 
       icon: <Shield className="h-5 w-5" />, 
-      title: "Negativado?", 
+      title: "Aceita Negativados", // Alterado de "Negativado?" para "Aceita Negativados"
       text: "Aprovamos mesmo com nome no SPC/Serasa" 
     },
     { 
@@ -591,7 +591,7 @@ const HeroSection: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, delay: 0.3 }}
                   >
-                    {/* Recursos compactos em linha (apenas 2) para mobile */}
+                    {/* Recursos compactos em linha (apenas 2) para mobile - COM ALTERAÇÃO */}
                     <div className="flex gap-3 mb-4">
                       {recursosMobile.map((recurso, i) => (
                         <motion.div 
@@ -607,7 +607,15 @@ const HeroSection: React.FC = () => {
                               {recurso.icon}
                             </div>
                             <div>
-                              <h3 className="font-medium text-sm text-white">{recurso.title}</h3>
+                              {/* Customização especial para o recurso de negativados */}
+                              {i === 0 ? (
+                                <h3 className="font-medium text-sm text-white flex items-center">
+                                  <span className="whitespace-nowrap">Aceita Negativados</span>
+                                  <BadgeCheck className="h-4 w-4 text-green-300 ml-1" />
+                                </h3>
+                              ) : (
+                                <h3 className="font-medium text-sm text-white">{recurso.title}</h3>
+                              )}
                             </div>
                           </div>
                         </motion.div>
