@@ -1,7 +1,5 @@
 // app/api/enviar-formulario/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
 import * as nodemailer from 'nodemailer';
 
 // Constantes
@@ -19,38 +17,6 @@ function validateFile(file: File): string | null {
   }
   
   return null;
-}
-
-// Função para salvar arquivos
-async function saveFormFile(file: File, name: string): Promise<string> {
-  try {
-    // Validar arquivo
-    const validationError = validateFile(file);
-    if (validationError) {
-      throw new Error(validationError);
-    }
-    
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    
-    // Criar pasta se não existir
-    const uploadDir = join(process.cwd(), 'uploads');
-    try {
-      await mkdir(uploadDir, { recursive: true });
-    } catch (error) {
-      console.error('Erro ao criar diretório:', error);
-      throw new Error('Erro ao criar diretório para salvar arquivos');
-    }
-    
-    const filename = `${name}-${Date.now()}.${file.name.split('.').pop()}`;
-    const filepath = join(uploadDir, filename);
-    await writeFile(filepath, buffer);
-    
-    return filepath;
-  } catch (error) {
-    console.error('Erro ao salvar arquivo:', error);
-    throw error;
-  }
 }
 
 // Configuração do transporte de email
@@ -103,36 +69,27 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Processar arquivos com tratamento de erro
-    const arquivos: { tipo: string; caminho: string }[] = [];
+    // Validar os arquivos
+    const validationErrors = [];
+    const docFrenteError = validateFile(documentoFrente);
+    const docVersoError = validateFile(documentoVerso);
+    const faturaError = validateFile(faturaEnergia);
     
-    try {
-      if (documentoFrente) {
-        const caminho = await saveFormFile(documentoFrente, 'doc-frente');
-        arquivos.push({ tipo: 'Documento (Frente)', caminho });
-      }
-      
-      if (documentoVerso) {
-        const caminho = await saveFormFile(documentoVerso, 'doc-verso');
-        arquivos.push({ tipo: 'Documento (Verso)', caminho });
-      }
-      
-      if (faturaEnergia) {
-        const caminho = await saveFormFile(faturaEnergia, 'fatura');
-        arquivos.push({ tipo: 'Fatura de Energia', caminho });
-      }
-    } catch (error) {
-      console.error('Erro ao processar arquivos:', error);
+    if (docFrenteError) validationErrors.push(`Documento (Frente): ${docFrenteError}`);
+    if (docVersoError) validationErrors.push(`Documento (Verso): ${docVersoError}`);
+    if (faturaError) validationErrors.push(`Fatura de Energia: ${faturaError}`);
+    
+    if (validationErrors.length > 0) {
       return NextResponse.json(
-        { 
-          success: false, 
-          message: error instanceof Error 
-            ? error.message 
-            : 'Erro ao processar os arquivos. Verifique o tamanho e formato dos arquivos.' 
-        },
+        { success: false, message: validationErrors.join('. ') },
         { status: 400 }
       );
     }
+    
+    // Preparar arquivos para envio por email
+    const docFrenteBuffer = Buffer.from(await documentoFrente.arrayBuffer());
+    const docVersoBuffer = Buffer.from(await documentoVerso.arrayBuffer());
+    const faturaBuffer = Buffer.from(await faturaEnergia.arrayBuffer());
     
     // Capturar cliente ID se fornecido na URL
     const clienteId = formData.get('clienteId') as string | null;
@@ -143,7 +100,7 @@ export async function POST(request: NextRequest) {
       ? `Novo formulário de empréstimo - ${nomeCompleto} (ID: ${clienteId})`
       : `Novo formulário de empréstimo - ${nomeCompleto}`;
     
-    // Enviar email com os dados
+    // Enviar email com os dados e arquivos anexados
     try {
       await transporter.sendMail({
         from: process.env.EMAIL_FROM || 'noreply@credios.com.br',
@@ -168,15 +125,29 @@ export async function POST(request: NextRequest) {
           <p><strong>Referência 2:</strong> ${referencia2Nome} - ${referencia2Telefone}</p>
           
           <h2>Arquivos</h2>
-          <p>Os arquivos foram salvos no servidor. Veja os caminhos abaixo:</p>
-          <ul>
-            ${arquivos.map(arq => `<li>${arq.tipo}: ${arq.caminho}</li>`).join('')}
-          </ul>
+          <p>Os arquivos foram anexados a este email.</p>
         `,
+        attachments: [
+          {
+            filename: `doc-frente-${nomeCompleto}.${documentoFrente.name.split('.').pop()}`,
+            content: docFrenteBuffer
+          },
+          {
+            filename: `doc-verso-${nomeCompleto}.${documentoVerso.name.split('.').pop()}`,
+            content: docVersoBuffer
+          },
+          {
+            filename: `fatura-${nomeCompleto}.${faturaEnergia.name.split('.').pop()}`,
+            content: faturaBuffer
+          }
+        ]
       });
     } catch (error) {
       console.error('Erro ao enviar email:', error);
-      // Não retornamos erro aqui, pois o form já foi processado, apenas logamos o erro
+      return NextResponse.json(
+        { success: false, message: 'Erro ao enviar email com os documentos. Por favor, tente novamente.' },
+        { status: 500 }
+      );
     }
     
     // Retornar sucesso
