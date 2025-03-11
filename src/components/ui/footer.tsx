@@ -135,7 +135,7 @@ const Footer: React.FC = () => {
           <div>
             <Link href="/" className="inline-block mb-6">
               <Image
-                src="/logo.svg"
+                src="/credios-logo-branco.svg"
                 alt="Credios"
                 width={140}
                 height={50}
