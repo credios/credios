@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import FormularioLuz from '@/components/formularioluz';
 
 export const metadata = {
@@ -8,7 +9,9 @@ export const metadata = {
 export default function AprovacaoEmprestimoPage() {
   return (
     <main>
-      <FormularioLuz />
+      <Suspense fallback={<div className="p-8 text-center">Carregando formulário...</div>}>
+        <FormularioLuz />
+      </Suspense>
     </main>
   );
 }
