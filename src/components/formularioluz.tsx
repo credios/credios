@@ -1,7 +1,7 @@
 "use client";
-import React, { useState, ChangeEvent, FormEvent, KeyboardEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent, KeyboardEvent, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle, Upload, Info, Shield, Clock, FileCheck, ArrowRight, AlertCircle } from 'lucide-react';
+import { CheckCircle, Upload, Info, Shield, Clock, FileCheck, ArrowRight, AlertCircle,  Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -52,13 +52,25 @@ interface FileUploadProps {
   value: File | null;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   error?: string;
+  isUploading?: boolean;
 }
 
+// Constantes
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB em bytes
+
 const FormularioLuz = () => {
-  // Capturar parâmetros da URL para identificação do cliente
+  // States para gerenciar os parâmetros da URL
+  const [clienteId, setClienteId] = useState<string | null>(null);
+  const [clienteNome, setClienteNome] = useState<string | null>(null);
   const searchParams = useSearchParams();
-  const clienteId = searchParams.get('cliente');
-  const clienteNome = searchParams.get('nome');
+  
+  // Capturar parâmetros da URL de forma segura
+  useEffect(() => {
+    if (searchParams) {
+      setClienteId(searchParams.get('cliente'));
+      setClienteNome(searchParams.get('nome'));
+    }
+  }, [searchParams]);
 
   const [progress, setProgress] = useState<number>(0);
   const [step, setStep] = useState<number>(1);
@@ -67,6 +79,11 @@ const FormularioLuz = () => {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  
+  // States para controle de upload de cada arquivo
+  const [uploadingFrente, setUploadingFrente] = useState<boolean>(false);
+  const [uploadingVerso, setUploadingVerso] = useState<boolean>(false);
+  const [uploadingFatura, setUploadingFatura] = useState<boolean>(false);
   
   // Form state
   const [formData, setFormData] = useState<FormData>({
@@ -86,14 +103,60 @@ const FormularioLuz = () => {
     concordaTermos: false
   });
   
+  // Validação de arquivo
+  const validateFile = (file: File): string | null => {
+    if (file.size > MAX_FILE_SIZE) {
+      return `O arquivo excede o tamanho máximo de 2MB. Tamanho atual: ${(file.size / (1024 * 1024)).toFixed(2)}MB`;
+    }
+    
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+    if (!allowedTypes.includes(file.type)) {
+      return 'Formato de arquivo não suportado. Use JPG, PNG ou PDF.';
+    }
+    
+    return null;
+  };
+  
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked, files } = e.target;
     
     if (type === 'file' && files?.[0]) {
-      setFormData(prev => ({
-        ...prev,
-        [name]: files[0]
-      }));
+      const file = files[0];
+      
+      // Validar o arquivo antes de processar
+      const fileError = validateFile(file);
+      if (fileError) {
+        setErrors(prev => ({ ...prev, [name]: fileError }));
+        return;
+      }
+      
+      // Limpar erro se existir
+      if (errors[name as keyof FormErrors]) {
+        setErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors[name as keyof FormErrors];
+          return newErrors;
+        });
+      }
+      
+      // Definir estado de upload
+      if (name === 'documentoFrente') setUploadingFrente(true);
+      if (name === 'documentoVerso') setUploadingVerso(true);
+      if (name === 'faturaEnergia') setUploadingFatura(true);
+      
+      // Simular verificação do arquivo (em produção, esta etapa poderia pré-processar o arquivo)
+      setTimeout(() => {
+        setFormData(prev => ({
+          ...prev,
+          [name]: file
+        }));
+        
+        // Finalizar estado de upload
+        if (name === 'documentoFrente') setUploadingFrente(false);
+        if (name === 'documentoVerso') setUploadingVerso(false);
+        if (name === 'faturaEnergia') setUploadingFatura(false);
+      }, 1000); // Simulação de 1 segundo para verificação do arquivo
+      
     } else if (type === 'checkbox') {
       setFormData(prev => ({
         ...prev,
@@ -214,11 +277,22 @@ const FormularioLuz = () => {
       if (formData.documentoVerso) data.append('documentoVerso', formData.documentoVerso);
       if (formData.faturaEnergia) data.append('faturaEnergia', formData.faturaEnergia);
       
-      // Enviar dados para a API
+      // Enviar dados para a API com timeout para evitar hanging requests
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 segundos timeout
+      
       const response = await fetch('/api/enviar-formulario', {
         method: 'POST',
         body: data,
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao processar formulário.');
+      }
       
       const result = await response.json();
       
@@ -231,7 +305,11 @@ const FormularioLuz = () => {
       }
     } catch (error) {
       console.error('Erro:', error);
-      setSubmitError('Erro na conexão. Por favor, tente novamente em alguns instantes.');
+      if (error instanceof Error) {
+        setSubmitError(error.message || 'Erro na conexão. Por favor, tente novamente em alguns instantes.');
+      } else {
+        setSubmitError('Erro inesperado. Por favor, tente novamente em alguns instantes.');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -248,36 +326,46 @@ const FormularioLuz = () => {
   };
   
   // Função para exibir o upload de arquivo
-  const FileUpload = ({ label, name, explanation, value, onChange, error }: FileUploadProps) => (
+  const FileUpload = ({ label, name, explanation, value, onChange, error, isUploading = false }: FileUploadProps) => (
     <div className="mb-6 w-full">
       <Label htmlFor={name} className="text-base font-medium text-gray-800 mb-1 block">
         {label}
       </Label>
       <div className="relative">
         <motion.div 
-          whileHover={{ scale: 1.02 }}
-          className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition-colors ${value ? 'border-green-500 bg-green-50' : error ? 'border-red-300 bg-red-50' : 'border-gray-300'}`}
+          whileHover={{ scale: isUploading ? 1 : 1.02 }}
+          className={`border-2 border-dashed rounded-lg p-6 text-center ${isUploading ? 'cursor-wait' : 'cursor-pointer'} hover:border-blue-500 transition-colors ${value ? 'border-green-500 bg-green-50' : error ? 'border-red-300 bg-red-50' : 'border-gray-300'}`}
         >
           <input
             type="file"
             id={name}
             name={name}
             onChange={onChange}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-            accept="image/*"
+            className={`absolute inset-0 w-full h-full opacity-0 ${isUploading ? 'cursor-wait' : 'cursor-pointer'}`}
+            accept="image/jpeg,image/png,image/jpg,application/pdf"
+            disabled={isUploading}
           />
           <div className="flex flex-col items-center justify-center gap-2">
-            {value ? (
+            {isUploading ? (
+              <>
+                <Loader2 className="h-10 w-10 text-blue-500 animate-spin" />
+                <p className="text-sm font-medium text-blue-700">Verificando arquivo...</p>
+              </>
+            ) : value ? (
               <>
                 <CheckCircle className="h-10 w-10 text-green-500" />
                 <p className="text-sm font-medium text-green-700">Arquivo selecionado</p>
                 <p className="text-xs text-gray-500">{value.name}</p>
+                <p className="text-xs text-gray-500">
+                  {(value.size / (1024 * 1024)).toFixed(2)}MB
+                </p>
               </>
             ) : (
               <>
                 <Upload className="h-10 w-10 text-blue-500" />
                 <p className="text-sm font-medium">Clique ou arraste o arquivo aqui</p>
                 <p className="text-xs text-gray-500">Formatos aceitos: JPG, PNG, PDF</p>
+                <p className="text-xs text-gray-500">Tamanho máximo: 2MB</p>
               </>
             )}
           </div>
@@ -470,6 +558,7 @@ const FormularioLuz = () => {
                   value={formData.documentoFrente}
                   onChange={handleChange}
                   error={errors.documentoFrente}
+                  isUploading={uploadingFrente}
                 />
                 
                 <FileUpload
@@ -479,6 +568,7 @@ const FormularioLuz = () => {
                   value={formData.documentoVerso}
                   onChange={handleChange}
                   error={errors.documentoVerso}
+                  isUploading={uploadingVerso}
                 />
                 
                 <FileUpload
@@ -488,6 +578,7 @@ const FormularioLuz = () => {
                   value={formData.faturaEnergia}
                   onChange={handleChange}
                   error={errors.faturaEnergia}
+                  isUploading={uploadingFatura}
                 />
                 
                 <div className="flex justify-between mt-8">
@@ -503,6 +594,7 @@ const FormularioLuz = () => {
                     type="button" 
                     onClick={handleNextStep}
                     className="bg-blue-600 hover:bg-blue-700 cursor-pointer"
+                    disabled={uploadingFrente || uploadingVerso || uploadingFatura}
                   >
                     Continuar <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -778,6 +870,7 @@ const FormularioLuz = () => {
                     onClick={handlePrevStep}
                     variant="outline"
                     className="border-gray-300 cursor-pointer"
+                    disabled={isSubmitting}
                   >
                     Voltar
                   </Button>
@@ -786,7 +879,12 @@ const FormularioLuz = () => {
                     className="bg-green-600 hover:bg-green-700 cursor-pointer"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? 'Enviando...' : 'Finalizar Contratação'}
+                    {isSubmitting ? (
+                      <div className="flex items-center">
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Enviando...
+                      </div>
+                    ) : 'Finalizar Contratação'}
                   </Button>
                 </div>
               </motion.div>
