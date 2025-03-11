@@ -3,13 +3,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import * as nodemailer from 'nodemailer';
 
 // Constantes
-const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB em bytes
+const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB em bytes
 const ALLOWED_FILE_TYPES = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
 
 // Função para validar arquivo
 function validateFile(file: File): string | null {
   if (file.size > MAX_FILE_SIZE) {
-    return `O arquivo excede o tamanho máximo de 2MB`;
+    return `O arquivo excede o tamanho máximo de 3MB`;
   }
   
   if (!ALLOWED_FILE_TYPES.includes(file.type)) {

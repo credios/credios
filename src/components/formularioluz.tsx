@@ -56,7 +56,7 @@ interface FileUploadProps {
 }
 
 // Constantes
-const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB em bytes
+const MAX_FILE_SIZE = 3 * 1024 * 1024; // 2MB em bytes
 
 const FormularioLuz = () => {
   // States para gerenciar os parâmetros da URL
@@ -106,7 +106,7 @@ const FormularioLuz = () => {
   // Validação de arquivo
   const validateFile = (file: File): string | null => {
     if (file.size > MAX_FILE_SIZE) {
-      return `O arquivo excede o tamanho máximo de 2MB. Tamanho atual: ${(file.size / (1024 * 1024)).toFixed(2)}MB`;
+      return `O arquivo excede o tamanho máximo de 23MB. Tamanho atual: ${(file.size / (1024 * 1024)).toFixed(2)}MB`;
     }
     
     const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
