@@ -158,3 +158,69 @@
 .animation-delay-3000 {
   animation-delay: 3s;
 }
+
+/* Variáveis de cor personalizadas */
+:root {
+  /* Tons de azul */
+  --blue-dark: #1E3A8A;
+  --blue-primary: #2563EB;
+  --blue-light: #60A5FA;
+  --blue-pale: #DBEAFE;
+  
+  /* Tons de laranja */
+  --orange-dark: #EA580C;
+  --orange-primary: #F97316;
+  --orange-light: #FB923C;
+  --orange-pale: #FFEDD5;
+  
+  /* Tons de cinza */
+  --gray-light: #F1F5F9;
+  --gray-medium: #CBD5E1;
+  --gray-text: #64748B;
+}
+
+/* Classes para fundos */
+.bg-blue-dark { background-color: var(--blue-dark); }
+.bg-blue-primary { background-color: var(--blue-primary); }
+.bg-blue-light { background-color: var(--blue-light); }
+.bg-blue-pale { background-color: var(--blue-pale); }
+.bg-orange-dark { background-color: var(--orange-dark); }
+.bg-orange-primary { background-color: var(--orange-primary); }
+.bg-orange-light { background-color: var(--orange-light); }
+.bg-orange-pale { background-color: var(--orange-pale); }
+.bg-gray-light { background-color: var(--gray-light); }
+.bg-gray-medium { background-color: var(--gray-medium); }
+
+/* Gradientes */
+.bg-gradient-blue {
+  background-image: linear-gradient(to right, var(--blue-dark), var(--blue-primary), var(--blue-light));
+}
+.bg-gradient-blue-subtle {
+  background-image: linear-gradient(to bottom right, var(--blue-pale), var(--blue-light)/20);
+}
+.bg-gradient-orange {
+  background-image: linear-gradient(to right, var(--orange-dark), var(--orange-primary));
+}
+
+/* Classes para texto */
+.text-blue-dark { color: var(--blue-dark); }
+.text-blue-primary { color: var(--blue-primary); }
+.text-blue-light { color: var(--blue-light); }
+.text-orange-dark { color: var(--orange-dark); }
+.text-orange-primary { color: var(--orange-primary); }
+.text-gray-text { color: var(--gray-text); }
+
+/* Classes para bordas */
+.border-blue-pale { border-color: var(--blue-pale); }
+.border-blue-light { border-color: var(--blue-light); }
+.border-orange-pale { border-color: var(--orange-pale); }
+.border-gray-medium { border-color: var(--gray-medium); }
+
+/* Utilidades para texto com gradiente */
+.text-gradient-blue {
+  background-image: linear-gradient(to right, var(--blue-dark), var(--blue-primary), var(--blue-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}

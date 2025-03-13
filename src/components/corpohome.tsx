@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 
@@ -48,46 +48,18 @@ import {
   Instagram,
   Calendar,
   Shield,
+  Building,
+  Briefcase,
+  Calculator,
+  Percent,
+  Smartphone,
+  CreditCardIcon,
+  Award,
+  Clock3,
+  Home,
+  DollarSign,
+  Bolt,
 } from "lucide-react";
-
-// Ícones personalizados
-const Calculator = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <rect x="4" y="2" width="16" height="20" rx="2" />
-    <line x1="8" x2="16" y1="6" y2="6" />
-    <line x1="8" x2="8" y1="14" y2="14" />
-    <line x1="12" x2="12" y1="14" y2="14" />
-    <line x1="16" x2="16" y1="14" y2="14" />
-    <line x1="8" x2="8" y1="18" y2="18" />
-    <line x1="12" x2="12" y1="18" y2="18" />
-    <line x1="16" x2="16" y1="18" y2="18" />
-  </svg>
-);
-
-const Search = ({ className }: { className?: string }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth={2}
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <circle cx="11" cy="11" r="8" />
-    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-  </svg>
-);
 
 // Interfaces
 interface AdvantageItem {
@@ -104,6 +76,7 @@ interface AdvantageItem {
   backgroundColor?: string;
   accentColor?: string;
   image?: string;
+  product?: string;
 }
 
 interface ProcessStep {
@@ -118,6 +91,7 @@ interface FaqItem {
   question: string;
   answer: string;
   keywords?: string[];
+  category?: string;
 }
 
 interface TestimonialItem {
@@ -129,226 +103,273 @@ interface TestimonialItem {
   source?: string;
   date?: string;
   verified?: boolean;
+  product?: string;
+}
+
+interface ProductFeature {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  highlight: string;
+  buttonText: string;
+  buttonUrl: string;
+  bgClass: string;
+  stats: {
+    value: string;
+    label: string;
+  }[];
 }
 
 // Dados para as vantagens
 const ADVANTAGES: AdvantageItem[] = [
   {
-    icon: <CheckCircle2 className="h-8 w-8 text-emerald-500" />,
-    title: "Aprovação imediata",
-    description:
-      "Resultado na hora e dinheiro no mesmo dia direto no seu PIX. Esqueça a burocracia dos bancos tradicionais.",
-    highlight: "30 segundos",
-    action: "Simular agora",
-    actionUrl: "/simular",
-    stats: [
-      { value: "30s", label: "Aprovação" },
-      { value: "100%", label: "Digital" },
-    ],
-    backgroundColor: "from-emerald-50 to-teal-50",
-    accentColor: "emerald",
-    image: "/images/aprovacao-imediata.png",
-  },
-  {
     icon: <Zap className="h-8 w-8 text-amber-500" />,
-    title: "Até R$ 3.300 liberados",
+    title: "Atendimento 24h",
     description:
-      "Acesse o valor que você precisa sem complicação, mesmo se estiver com restrições no nome.",
-    highlight: "Sem burocracia",
-    action: "Ver condições",
-    actionUrl: "/condicoes",
+      "Nossos serviços funcionam 24 horas por dia, 7 dias por semana, permitindo que você solicite seu empréstimo a qualquer momento.",
+    highlight: "100% Digital",
+    action: "Conheça a Credios",
+    actionUrl: "/sobre",
     stats: [
-      { value: "R$3.300", label: "Valor máximo" },
-      { value: "12×", label: "Parcelamento" },
+      { value: "24/7", label: "Disponibilidade" },
+      { value: "100%", label: "Online" },
     ],
     backgroundColor: "from-amber-50 to-yellow-50",
     accentColor: "amber",
-    image: "/images/Frame 13.png",
+    image: "/images/atendimento-24h.png",
   },
   {
-    icon: <ThumbsUp className="h-8 w-8 text-blue-500" />,
-    title: "Disponível para negativados",
+    icon: <Smartphone className="h-8 w-8 text-emerald-500" />,
+    title: "Processo simplificado",
     description:
-      "Seu histórico de crédito não é um problema. Avaliamos seu perfil de forma personalizada.",
-    highlight: "Sem consulta",
-    action: "Verificar elegibilidade",
-    actionUrl: "/elegibilidade",
+      "Contratação rápida e descomplicada, direto pelo seu celular. Sem filas, sem burocracia e sem precisar sair de casa.",
+    highlight: "Fácil e rápido",
+    action: "Veja como funciona",
+    actionUrl: "/como-funciona",
     stats: [
-      { value: "0", label: "Consultas SPC" },
-      { value: "95%", label: "Taxa de aprovação" },
+      { value: "5min", label: "Contratação" },
+      { value: "0", label: "Burocracia" },
+    ],
+    backgroundColor: "from-emerald-50 to-teal-50",
+    accentColor: "emerald",
+    image: "/images/processo-simplificado.png",
+  },
+  {
+    icon: <CreditCardIcon className="h-8 w-8 text-blue-500" />,
+    title: "Crédito acessível",
+    description:
+      "Opções de crédito adequadas para quem precisa, mesmo sem comprovação de renda. Inclusão financeira para todos os brasileiros.",
+    highlight: "Inclusivo",
+    action: "Descubra opções",
+    actionUrl: "/produtos",
+    stats: [
+      { value: "R$ 3,3 mil", label: "Até na conta de luz" },
+      { value: "R$ 20 mil", label: "Até no FGTS" },
     ],
     backgroundColor: "from-blue-50 to-indigo-50",
     accentColor: "blue",
-    image: "/images/sem-restricoes.png",
+    image: "/images/credito-acessivel.png",
   },
   {
-    icon: <Lightbulb className="h-8 w-8 text-purple-500" />,
-    title: "100% digital e seguro",
+    icon: <Shield className="h-8 w-8 text-purple-500" />,
+    title: "Segurança garantida",
     description:
-      "Todo o processo é feito pelo seu celular com criptografia avançada e proteção de dados.",
-    highlight: "Rápido e prático",
-    action: "Conhecer o processo",
-    actionUrl: "/processo",
+      "Seus dados estão protegidos com a mais alta tecnologia de segurança digital. Todas as transações são criptografadas e seguras.",
+    highlight: "Protegido",
+    action: "Ver política de privacidade",
+    actionUrl: "/privacidade",
     stats: [
-      { value: "24h", label: "Atendimento" },
-      { value: "SSL", label: "Criptografia" },
+      { value: "100%", label: "Criptografado" },
+      { value: "Seguro", label: "Ambiente" },
     ],
     backgroundColor: "from-purple-50 to-fuchsia-50",
     accentColor: "purple",
-    image: "/images/seguranca-digital.png",
+    image: "/images/seguranca-garantida.png",
   },
 ];
 
-// Dados para o processo
-const HOW_IT_WORKS: ProcessStep[] = [
+// Produtos principais
+const MAIN_PRODUCTS: ProductFeature[] = [
   {
-    title: "Simulação rápida",
-    description: "Informe apenas seu CPF e descubra quanto você pode receber sem afetar seu score de crédito",
-    icon: <Calculator className="h-6 w-6" />,
-    details: [
-      "Resultado na hora e sem compromisso",
-      "Não consultamos SPC/Serasa",
-      "Escolha o valor ideal para seu orçamento"
-    ],
-    duration: "30 segundos"
+    icon: <Bolt className="h-10 w-10 text-yellow-500" />,
+    title: "Empréstimo na Conta de Luz",
+    description: "Crédito pessoal usando sua fatura de energia como garantia. Ideal para quem não possui conta em banco ou tem restrições de crédito.",
+    highlight: "Nosso carro-chefe",
+    buttonText: "Simular na Conta de Luz",
+    buttonUrl: "/simular-conta-luz",
+    bgClass: "from-yellow-400 to-amber-500",
+    stats: [
+      { value: "R$ 3.300", label: "Valor máximo" },
+      { value: "Sem", label: "Comprovação de renda" },
+      { value: "12×", label: "Parcelamento" },
+    ]
   },
   {
-    title: "Documentação simples",
-    description: "Apenas fotos do seu documento e da sua conta de luz mais recente, sem burocracia",
-    icon: <FileCheck className="h-6 w-6" />,
+    icon: <Briefcase className="h-10 w-10 text-blue-500" />,
+    title: "Antecipação do FGTS",
+    description: "Receba hoje o valor de seus saques-aniversário futuros, com as melhores taxas do mercado e sem comprometer sua renda mensal.",
+    highlight: "Taxas competitivas",
+    buttonText: "Simular FGTS",
+    buttonUrl: "/simular-fgts",
+    bgClass: "from-blue-400 to-indigo-500",
+    stats: [
+      { value: "R$ 20.000", label: "Valor máximo" },
+      { value: "1,49%", label: "Taxa a partir de" },
+      { value: "10×", label: "Saques antecipados" },
+    ]
+  }
+];
+
+// Dados para o processo simplificado
+const HOW_IT_WORKS: ProcessStep[] = [
+  {
+    title: "Simulação e escolha",
+    description: "Simule qualquer um de nossos produtos e encontre as melhores ofertas do mercado",
+    icon: <Calculator className="h-6 w-6" />,
     details: [
-      "RG ou CNH (frente e verso)",
-      "Conta de luz recente em seu nome",
-      "Sem comprovante de renda ou fiador"
+      "Simulação gratuita em menos de 2 minutos",
+      "Melhores taxas do mercado comparadas para você",
+      "Opções disponíveis mesmo para negativados"
     ],
     duration: "2 minutos"
   },
   {
-    title: "Análise inteligente",
-    description: "Nossa tecnologia avalia seu perfil de forma personalizada e segura",
-    icon: <Search className="h-6 w-6" />,
+    title: "Contratação digital",
+    description: "Todo o processo é feito pelo celular, sem papel, sem burocracia e sem sair de casa",
+    icon: <Smartphone className="h-6 w-6" />,
     details: [
-      "Tecnologia exclusiva com IA",
-      "Verificação rápida 24h por dia",
-      "Sistema anti-fraude para sua proteção"
+      "Tire fotos dos documentos pelo celular",
+      "Assinatura digital do contrato",
+      "Atendimento disponível 24 horas por dia"
     ],
     duration: "5 minutos"
   },
   {
-    title: "Dinheiro no PIX",
-    description: "Crédito liberado via PIX diretamente na sua conta bancária no mesmo dia",
-    icon: <CreditCard className="h-6 w-6" />,
+    title: "Dinheiro na conta",
+    description: "Após aprovação, o dinheiro é enviado via PIX diretamente para sua conta em questão de minutos",
+    icon: <DollarSign className="h-6 w-6" />,
     details: [
-      "Transferência instantânea para você",
-      "Confirmação por e-mail e SMS",
-      "Suporte após a liberação do crédito"
+      "Sem taxas de transferência",
+      "Aprovação normalmente no mesmo dia",
+      "Acompanhe todo o processo pelo aplicativo"
     ],
     duration: "Mesmo dia"
-  },
-];
-
-// Estados disponíveis
-const AVAILABLE_STATES = [
-  { name: "Bahia", abbr: "BA" },
-  { name: "Ceará", abbr: "CE" },
-  { name: "Pernambuco", abbr: "PE" },
-  { name: "Rio Grande do Norte", abbr: "RN" },
-  { name: "Goiás", abbr: "GO" },
-  { name: "São Paulo", abbr: "SP" },
-  { name: "Rio de Janeiro", abbr: "RJ" },
-  { name: "Paraná", abbr: "PR" },
-  { name: "Rio Grande do Sul", abbr: "RS" },
+  }
 ];
 
 // FAQ
 const FAQ_ITEMS: FaqItem[] = [
   {
-    question: "É necessário ser o titular da conta de luz?",
-    answer: "Sim, é obrigatório que você seja o titular da conta de luz para solicitar o empréstimo. A conta de energia serve como sua garantia, por isso precisamos que esteja no seu nome.",
-    keywords: ["titular", "conta", "energia"]
+    question: "O que é a Credios?",
+    answer: "A Credios é uma plataforma de crédito digital que atua como correspondente bancário, conectando pessoas a soluções financeiras. Oferecemos empréstimos na conta de luz e antecipação do FGTS de forma 100% digital, com atendimento 24h por dia, 7 dias por semana, pelo celular.",
+    keywords: ["credios", "plataforma", "correspondente"],
+    category: "empresa"
   },
   {
-    question: "Posso pedir empréstimo mesmo estando negativado?",
-    answer: "Sim! Uma das grandes vantagens do empréstimo na conta de luz é que ele está disponível mesmo para quem está com restrições no nome. Não consultamos SPC/Serasa durante a análise.",
-    keywords: ["negativado", "restrição", "nome sujo"]
+    question: "Como a Credios garante a segurança dos meus dados?",
+    answer: "Utilizamos tecnologia de criptografia avançada para proteger todos os seus dados pessoais e financeiros. Nossas conexões são seguras (HTTPS) e seguimos rigorosamente a Lei Geral de Proteção de Dados (LGPD). Todos os parceiros financeiros da Credios são instituições autorizadas pelo Banco Central do Brasil.",
+    keywords: ["segurança", "dados", "criptografia"],
+    category: "empresa"
   },
   {
-    question: "Como funciona o pagamento das parcelas?",
-    answer: "O valor das parcelas é incluído diretamente na sua fatura mensal de energia elétrica. Assim, você paga tudo de uma vez, sem precisar se preocupar com boletos extras ou datas diferentes.",
-    keywords: ["parcelas", "pagamento", "energia"]
+    question: "Quais documentos preciso para solicitar um empréstimo na Credios?",
+    answer: "Para o empréstimo na conta de luz, você precisará de um documento de identificação com foto (RG ou CNH) e sua conta de luz mais recente. Para a antecipação do FGTS, é necessário documento de identificação e estar com a modalidade saque-aniversário ativada. Todo o processo é feito pelo celular, sem necessidade de enviar documentos físicos.",
+    keywords: ["documentos", "requisitos", "solicitação"],
+    category: "empresa"
   },
   {
-    question: "Preciso comprovar renda para solicitar?",
-    answer: "Não é necessário comprovar renda. O empréstimo na conta de luz também está disponível para autônomos e profissionais liberais, sem burocracia de comprovação de rendimentos.",
-    keywords: ["renda", "comprovação", "autônomos"]
+    question: "O que é o empréstimo na conta de luz?",
+    answer: "É um empréstimo pessoal em que você utiliza a sua fatura de energia elétrica como garantia. Basta você ser o titular da sua conta de luz para poder contratar até R$ 3.300,00, sem burocracia e sem necessidade de comprovar renda. As parcelas serão incluídas na sua fatura mensal de energia.",
+    keywords: ["conta de luz", "fatura", "energia"],
+    category: "conta-luz"
   },
   {
-    question: "Em quais estados o serviço está disponível?",
-    answer: "O empréstimo na conta de luz está disponível na maioria das cidades dos estados: Bahia, Ceará, Pernambuco, Rio Grande do Norte, Goiás, São Paulo, Rio de Janeiro, Paraná e Rio Grande do Sul.",
-    keywords: ["cidades", "estados", "disponibilidade"]
+    question: "Em quais estados o empréstimo na conta de luz está disponível?",
+    answer: "Atualmente, o empréstimo na conta de luz está disponível na maioria das cidades dos seguintes estados: Bahia, Ceará, Pernambuco, Rio Grande do Norte, Goiás, São Paulo, Rio de Janeiro, Paraná e Rio Grande do Sul. A disponibilidade pode variar de acordo com a distribuidora de energia da sua região.",
+    keywords: ["estados", "disponibilidade", "regiões"],
+    category: "conta-luz"
   },
   {
-    question: "Em quanto tempo o dinheiro cai na minha conta?",
-    answer: "Após a aprovação, o dinheiro é transferido via PIX para sua conta no mesmo dia. Na maioria dos casos, a liberação ocorre em poucas horas após a aprovação da documentação.",
-    keywords: ["prazo", "liberação", "dinheiro"]
+    question: "O que é o empréstimo com garantia do FGTS?",
+    answer: "É uma modalidade de empréstimo que utiliza os saques-aniversário futuros do seu FGTS como garantia. Você consegue antecipar até 10 parcelas do saque-aniversário, recebendo o valor hoje, e as parcelas são quitadas automaticamente com seus saques anuais futuros.",
+    keywords: ["saque-aniversário", "garantia", "FGTS"],
+    category: "fgts"
+  },
+  {
+    question: "Quais são as taxas de juros praticadas pela Credios?",
+    answer: "A Credios trabalha com diversas instituições financeiras parceiras, cada uma com suas próprias taxas. Para o empréstimo na conta de luz, as taxas são fixadas pela financeira Crefaz. Já para antecipação do FGTS, comparamos as ofertas de vários bancos para você escolher a melhor condição, com taxas a partir de 1,49% ao mês. Você pode verificar as taxas exatas fazendo uma simulação gratuita em nosso site.",
+    keywords: ["taxas", "juros", "condições"],
+    category: "empresa"
+  },
+  {
+    question: "Como faço para acompanhar minha solicitação de empréstimo?",
+    answer: "Você pode acompanhar todo o processo através do nosso aplicativo ou site, na área 'Minha Conta'. Além disso, enviamos atualizações por e-mail e SMS em cada etapa do processo, desde a aprovação até a liberação do dinheiro. Nosso atendimento também está disponível 24h por dia, 7 dias por semana, para tirar suas dúvidas.",
+    keywords: ["acompanhamento", "status", "solicitação"],
+    category: "empresa"
   }
 ];
 
-// Depoimentos atualizados com mais detalhes para parecerem legítimos
+// Depoimentos
 const TESTIMONIALS: TestimonialItem[] = [
   {
-    name: "Maria S. Santos",
-    location: "Salvador, BA",
+    name: "Ricardo Almeida",
+    location: "Belo Horizonte, MG",
     rating: 5,
-    comment: "Precisava de dinheiro rápido para uma emergência médica. Em menos de 3 horas o valor já estava na minha conta. Processo super simples!",
-    source: "Instagram",
-    date: "22/02/2025",
-    verified: true
+    comment: "Processo super rápido! Consegui R$ 8.000 em menos de 2 horas, sem burocracia. A Credios comparou as taxas de vários bancos e escolhi a melhor.",
+    source: "Facebook",
+    date: "15/02/2025",
+    verified: true,
+    product: "FGTS"
   },
   {
-    name: "Carlos Roberto",
+    name: "Carla Mendes",
     location: "São Paulo, SP",
     rating: 5,
-    comment: "Estava negativado e nenhum banco queria me dar crédito. A Credios me aprovou em minutos e resolveu meu problema. Recomendo demais!",
-    source: "Facebook",
-    date: "15/01/2025",
-    verified: true
+    comment: "Precisava de dinheiro para reformar minha casa. A antecipação do FGTS foi a solução perfeita, não comprometeu meu salário e consegui taxas muito melhores que no banco.",
+    source: "Instagram",
+    date: "03/01/2025",
+    verified: true,
+    product: "FGTS"
   },
   {
-    name: "Ana L. Ferreira",
+    name: "Amanda Oliveira",
+    location: "Salvador, BA",
+    rating: 5,
+    comment: "Nunca imaginei que seria tão fácil conseguir um empréstimo usando minha conta de luz! Solicitei de noite e no dia seguinte o dinheiro já estava na minha conta. Recomendo muito!",
+    source: "Google",
+    date: "05/02/2025",
+    verified: true,
+    product: "Conta de Luz"
+  },
+  {
+    name: "José Carlos",
     location: "Fortaleza, CE",
     rating: 4,
-    comment: "Atendimento muito bom e rápido. Consegui o valor que precisava sem burocracia. Só acho que poderia ter uma parcela menor na conta de luz.",
+    comment: "O empréstimo na conta de luz foi perfeito para mim, que precisava de dinheiro rápido e não tinha carteira assinada. Em menos de 24h resolvi meu problema financeiro.",
     source: "WhatsApp",
-    date: "03/03/2025",
-    verified: true
+    date: "12/03/2025",
+    verified: true,
+    product: "Conta de Luz"
   },
   {
-    name: "Roberto Pereira",
-    location: "Rio de Janeiro, RJ",
+    name: "Marcelo Souza",
+    location: "Brasília, DF",
     rating: 5,
-    comment: "Minha simulação foi aprovada em 40 segundos! Mandei os documentos pelo celular e no mesmo dia o dinheiro já estava disponível no meu PIX.",
-    source: "Instagram",
-    date: "18/02/2025",
-    verified: true
-  },
-  {
-    name: "Juliana Menezes",
-    location: "Recife, PE",
-    rating: 5,
-    comment: "Incrível como foi rápido! Sem burocracia e sem perguntas complexas. Resolvi minha situação financeira em poucas horas.",
+    comment: "Estava precisando de dinheiro para abrir meu negócio. Consegui antecipar 10 parcelas do meu FGTS com uma taxa excelente. Super recomendo!",
     source: "Facebook",
-    date: "05/03/2025",
-    verified: true
+    date: "05/02/2025",
+    verified: true,
+    product: "FGTS"
   },
   {
-    name: "Pedro Almeida",
-    location: "Porto Alegre, RS",
+    name: "Patrícia Oliveira",
+    location: "Curitiba, PR",
     rating: 5,
-    comment: "Super recomendo! Já tentei vários bancos mas apenas a Credios me deu a oportunidade mesmo com nome sujo. Processo seguro e rápido.",
-    source: "Google",
-    date: "20/02/2025",
-    verified: true
+    comment: "Processo 100% digital, fiz tudo pelo celular. A Credios ofereceu a taxa mais baixa do mercado e o suporte foi incrível do início ao fim.",
+    source: "Instagram",
+    date: "20/01/2025",
+    verified: true,
+    product: "FGTS"
   }
 ];
 
@@ -372,12 +393,13 @@ const staggerContainer = {
   },
 };
 
+// Hero principal
 const MainHero = () => {
   return (
-    <div className="relative py-16 overflow-hidden bg-gradient-to-b from-orange-50 via-amber-50 to-white">
+    <div className="relative py-16 overflow-hidden bg-gradient-to-b from-blue-50 via-indigo-50 to-white">
       {/* Elementos decorativos */}
-      <div className="absolute top-0 right-0 w-full h-48 bg-orange-400/10 rounded-full -z-10 blur-3xl transform translate-x-1/2 -translate-y-1/2 opacity-70"></div>
-      <div className="absolute bottom-0 left-0 w-full h-48 bg-amber-300/10 -z-10 blur-3xl transform -translate-x-1/3 translate-y-1/3 opacity-60"></div>
+      <div className="absolute top-0 right-0 w-full h-48 bg-blue-400/10 rounded-full -z-10 blur-3xl transform translate-x-1/2 -translate-y-1/2 opacity-70"></div>
+      <div className="absolute bottom-0 left-0 w-full h-48 bg-indigo-300/10 -z-10 blur-3xl transform -translate-x-1/3 translate-y-1/3 opacity-60"></div>
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-5xl mx-auto">
@@ -389,14 +411,18 @@ const MainHero = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <div className="flex space-x-2 mb-4">
-                <Badge className="bg-orange-100 hover:bg-orange-200 text-orange-600 border-none py-1.5 px-3">
+              <div className="flex flex-wrap gap-2 mb-4">
+                <Badge className="bg-blue-100 hover:bg-blue-200 text-blue-600 border-none py-1.5 px-3">
                   <Zap className="h-3.5 w-3.5 mr-1.5" />
-                  Aprovação em 30 segundos
+                  100% Digital
                 </Badge>
                 <Badge className="bg-green-100 hover:bg-green-200 text-green-600 border-none py-1.5 px-3">
-                  <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
-                  Para negativados
+                  <Clock3 className="h-3.5 w-3.5 mr-1.5" />
+                  Atendimento 24h
+                </Badge>
+                <Badge className="bg-amber-100 hover:bg-amber-200 text-amber-600 border-none py-1.5 px-3">
+                  <Smartphone className="h-3.5 w-3.5 mr-1.5" />
+                  Pelo Celular
                 </Badge>
               </div>
               
@@ -406,7 +432,7 @@ const MainHero = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                Empréstimo na conta de <span className="text-orange-500">luz</span>
+                Crédito <span className="text-blue-500">simples</span> e <span className="text-blue-500">rápido</span> para todos
               </motion.h1>
               
               <motion.p 
@@ -415,26 +441,52 @@ const MainHero = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                Crédito de até <span className="font-bold text-gray-900">R$ 3.300</span>. Sem consulta ao SPC, sem burocracia, sem comprovação de renda. Dinheiro no mesmo dia!
+                Empréstimo na conta de luz e antecipação do FGTS com a melhor experiência digital. Dinheiro na conta em até 24h, processo 100% pelo celular.
               </motion.p>
               
               <motion.div 
-                className="flex items-center gap-5 text-sm text-gray-500"
+                className="flex flex-col sm:flex-row gap-4 mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                <Button 
+                  size="lg" 
+                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-full px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 hover:scale-105 cursor-pointer"
+                >
+                  Pedir agora <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="bg-white border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-300 rounded-full px-8 py-6 text-lg cursor-pointer"
+                >
+                  Nossos produtos
+                </Button>
+              </motion.div>
+              
+              <motion.div 
+                className="flex flex-wrap items-center gap-5 text-sm text-gray-500"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.4 }}
               >
                 <div className="flex items-center gap-1.5">
-                  <Clock className="h-4 w-4 text-orange-500" />
-                  <span>Aprovação em 30s</span>
+                  <Clock className="h-4 w-4 text-blue-500" />
+                  <span>Liberação rápida</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <UserCheck className="h-4 w-4 text-orange-500" />
-                  <span>+200 mil clientes</span>
+                  <UserCheck className="h-4 w-4 text-blue-500" />
+                  <span>+100 mil clientes</span>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Lock className="h-4 w-4 text-orange-500" />
+                  <Lock className="h-4 w-4 text-blue-500" />
                   <span>100% seguro</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Award className="h-4 w-4 text-blue-500" />
+                  <span>Excelência no atendimento</span>
                 </div>
               </motion.div>
             </motion.div>
@@ -447,11 +499,11 @@ const MainHero = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <div className="relative h-[450px] w-full">
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl opacity-10 transform rotate-3"></div>
-                <div className="absolute inset-0 overflow-hidden rounded-2xl shadow-xl border border-orange-100">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl opacity-10 transform rotate-3"></div>
+                <div className="absolute inset-0 overflow-hidden rounded-2xl shadow-xl border border-blue-100">
                   <Image
-                    src="/images/Frame 13.png"
-                    alt="Pessoa sorrindo com celular após aprovação de empréstimo"
+                    src="/api/placeholder/600/450"
+                    alt="Pessoa usando celular para solicitar empréstimo pela Credios"
                     fill
                     className="object-cover"
                     priority
@@ -460,37 +512,145 @@ const MainHero = () => {
                 
                 {/* Stats pop-ups */}
                 <motion.div 
-                  className="absolute -left-6 top-20 bg-white p-3 rounded-lg shadow-lg border border-orange-100 flex items-center gap-3"
+                  className="absolute -left-6 top-20 bg-white p-3 rounded-lg shadow-lg border border-blue-100 flex items-center gap-3"
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.7, duration: 0.5 }}
                 >
-                  <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
-                    <Wallet className="h-5 w-5 text-amber-600" />
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Smartphone className="h-5 w-5 text-blue-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Liberação</p>
-                    <p className="font-semibold text-gray-800">Mesmo dia</p>
+                    <p className="text-xs text-gray-500">Processo</p>
+                    <p className="font-semibold text-gray-800">100% Digital</p>
                   </div>
                 </motion.div>
                 
                 <motion.div 
-                  className="absolute -right-6 bottom-32 bg-white p-3 rounded-lg shadow-lg border border-orange-100 flex items-center gap-3"
+                  className="absolute -right-6 bottom-32 bg-white p-3 rounded-lg shadow-lg border border-blue-100 flex items-center gap-3"
                   initial={{ x: 20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ delay: 0.9, duration: 0.5 }}
                 >
                   <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                    <Clock className="h-5 w-5 text-green-600" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-500">Taxa de aprovação</p>
-                    <p className="font-semibold text-gray-800">95%</p>
+                    <p className="text-xs text-gray-500">Aprovação</p>
+                    <p className="font-semibold text-gray-800">Em minutos</p>
                   </div>
                 </motion.div>
               </div>
             </motion.div>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Componente para exibir os produtos principais
+const ProductsSection = () => {
+  return (
+    <div className="py-16 bg-gradient-to-b from-white to-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-center mb-5">
+          <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-200 border-none font-medium py-2 px-4 text-sm rounded-full">
+            <Zap className="h-4 w-4 mr-2" />
+            Nossas soluções
+          </Badge>
+        </div>
+        
+        <motion.h2 
+          className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 text-center bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeIn}
+        >
+          Produtos financeiros para você
+        </motion.h2>
+        
+        <motion.p 
+          className="text-gray-600 max-w-2xl mx-auto text-base sm:text-lg text-center mb-12"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeIn}
+        >
+          Soluções de crédito adaptadas às suas necessidades, com processo 100% digital e aprovação rápida.
+        </motion.p>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mt-12">
+          {MAIN_PRODUCTS.map((product, index) => (
+            <motion.div 
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true }}
+              whileHover={{ y: -8, transition: { duration: 0.2 } }}
+              className="h-full group cursor-pointer"
+            >
+              <a href={product.buttonUrl} className="block h-full">
+                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden bg-white relative">
+                  {/* Barra colorida superior */}
+                  <div className={`h-2.5 w-full bg-gradient-to-r ${product.bgClass}`}></div>
+                  
+                  <div className="absolute top-0 right-0 mt-4 mr-4">
+                    <Badge className="bg-blue-100 text-blue-700 group-hover:bg-blue-200 border-none font-medium py-1.5 px-3 transition-colors duration-300">
+                      {product.highlight}
+                    </Badge>
+                  </div>
+                  
+                  <CardHeader className="pt-8">
+                    <div className="flex mb-5">
+                      <div className={`w-20 h-20 rounded-2xl flex items-center justify-center bg-gradient-to-r ${product.bgClass} shadow-md group-hover:shadow-lg transform group-hover:scale-105 transition-all duration-300`}>
+                        <div className="text-white">
+                          {product.icon}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <CardTitle className="text-2xl font-bold text-gray-800 group-hover:text-gray-900 transition-colors duration-300">
+                      {product.title}
+                    </CardTitle>
+                    
+                    <CardDescription className="text-base mt-3 text-gray-600 group-hover:text-gray-700 transition-colors duration-300">
+                      {product.description}
+                    </CardDescription>
+                  </CardHeader>
+                  
+                  <CardContent>
+                    <div className="grid grid-cols-3 gap-3 mt-2">
+                      {product.stats.map((stat, i) => (
+                        <div 
+                          key={i} 
+                          className="bg-gray-50 group-hover:bg-gray-100 p-4 rounded-lg border border-gray-100 transition-all duration-300"
+                        >
+                          <p className="text-xl font-bold text-gray-800">
+                            {stat.value}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {stat.label}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                  
+                  <CardFooter className="border-t border-gray-100 pt-5">
+                    <div 
+                      className={`w-full flex items-center justify-center py-3.5 px-4 rounded-lg bg-gradient-to-r ${product.bgClass} text-white font-semibold group-hover:shadow-md transition-all duration-300 cursor-pointer`}
+                    >
+                      {product.buttonText}
+                      <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-300" />
+                    </div>
+                  </CardFooter>
+                </Card>
+              </a>
+            </motion.div>
+          ))}
         </div>
       </div>
     </div>
@@ -515,11 +675,11 @@ const SectionHeading = ({
     variants={fadeIn}
   >
     {badge && (
-      <Badge className="mb-4 px-3 py-1.5 bg-orange-100 text-orange-700 hover:bg-orange-200 border-none font-medium">
+      <Badge className="mb-4 px-3 py-1.5 bg-blue-100 text-blue-700 hover:bg-blue-200 border-none font-medium">
         {badge}
       </Badge>
     )}
-    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-orange-600 to-amber-500 bg-clip-text text-transparent">
+    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-indigo-500 bg-clip-text text-transparent">
       {title}
     </h2>
     <p className="text-gray-600 max-w-2xl mx-auto text-base sm:text-lg">
@@ -566,7 +726,7 @@ const AdvantageCard = ({
         <div className="absolute inset-0 bg-[url('/images/dot-pattern.svg')] opacity-5"></div>
         
         {/* Top corner accent */}
-        <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-orange-400/20 to-transparent rounded-bl-full"></div>
+        <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-blue-400/20 to-transparent rounded-bl-full"></div>
         
         <CardHeader className="relative z-20">
           <div className="flex justify-between items-start">
@@ -577,7 +737,7 @@ const AdvantageCard = ({
             </div>
             
             {item.highlight && (
-              <Badge className="bg-orange-500 text-white border-0 px-3 py-1.5 text-xs uppercase font-semibold tracking-wide group-hover:bg-white group-hover:text-orange-600 transition-colors duration-300">
+              <Badge className="bg-blue-500 text-white border-0 px-3 py-1.5 text-xs uppercase font-semibold tracking-wide group-hover:bg-white group-hover:text-blue-600 transition-colors duration-300">
                 {item.highlight}
               </Badge>
             )}
@@ -597,7 +757,7 @@ const AdvantageCard = ({
             <div className="grid grid-cols-2 gap-3 mt-2">
               {item.stats.map((stat, i) => (
                 <div key={i} className="bg-white/80 group-hover:bg-white/20 p-3 rounded-lg transition-colors duration-300">
-                  <p className="text-2xl font-bold text-orange-600 group-hover:text-white transition-colors duration-300">
+                  <p className="text-2xl font-bold text-blue-600 group-hover:text-white transition-colors duration-300">
                     {stat.value}
                   </p>
                   <p className="text-xs text-gray-600 group-hover:text-white/80 transition-colors duration-300">
@@ -613,7 +773,7 @@ const AdvantageCard = ({
           {item.action && (
             <a 
               href={item.actionUrl || "#"} 
-              className="inline-flex items-center pl-0 text-orange-600 hover:text-orange-700 font-medium transition-colors duration-300 group-hover:text-white cursor-pointer"
+              className="inline-flex items-center pl-0 text-blue-600 hover:text-blue-700 font-medium transition-all duration-300 group-hover:text-white cursor-pointer hover:underline"
             >
               {item.action} 
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -642,7 +802,6 @@ const TestimonialCarousel = () => {
     
     const updateCarouselDimensions = () => {
       if (carouselRef.current) {
-        // Removemos setCarouselWidth pois não é usado
         const items = carouselRef.current.querySelectorAll('.testimonial-item');
         if (items.length > 0) {
           setItemWidth(items[0].clientWidth + 16); // Width + margin
@@ -744,7 +903,7 @@ const TestimonialCarousel = () => {
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 flex items-center justify-center text-white font-medium shadow-sm">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white font-medium shadow-sm">
                         {testimonial.name.split(" ").map(part => part[0]).join("").substring(0, 2)}
                       </div>
                       <div>
@@ -775,10 +934,11 @@ const TestimonialCarousel = () => {
                         <span>Verificado</span>
                       </span>
                     )}
-                    <span className="flex items-center gap-0.5">
-                      <Calendar className="h-3 w-3" />
-                      {testimonial.date}
-                    </span>
+                    {testimonial.product && (
+                      <Badge className="px-1.5 py-0.5 bg-blue-50 text-blue-600 text-xs rounded-sm font-normal">
+                        {testimonial.product}
+                      </Badge>
+                    )}
                   </div>
                 </CardFooter>
               </Card>
@@ -804,26 +964,46 @@ const TestimonialCarousel = () => {
     </div>
   );
 };
+
 // Main Component
-export default function CrediosLoanPage() {
+export default function CorpoHome() {
+  // Estado para controlar a categoria selecionada no FAQ
+  const [faqCategory, setFaqCategory] = useState("Todos");
+  
+  // Função para filtrar os itens do FAQ com base na categoria selecionada
+  const filteredFAQItems = useMemo(() => {
+    if (faqCategory === "Todos") {
+      return FAQ_ITEMS;
+    } else {
+      const categoryMap = {
+        "Sobre a Credios": "empresa",
+        "Conta de Luz": "conta-luz",
+        "FGTS": "fgts"
+      };
+      return FAQ_ITEMS.filter(item => item.category === categoryMap[faqCategory]);
+    }
+  }, [faqCategory]);
   return (
     <section className="w-full overflow-hidden">
       {/* HERO SECTION */}
       <MainHero />
       
+      {/* PRODUTOS PRINCIPAIS */}
+      <ProductsSection />
+      
       {/* SEÇÃO PRINCIPAL - VANTAGENS */}
       <div className="py-16 bg-gradient-to-b from-white via-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           {/* Elementos decorativos de background */}
-          <div className="absolute top-0 right-0 w-96 h-96 bg-orange-100 rounded-full opacity-10 blur-3xl -z-10 transform translate-x-1/3 -translate-y-1/4"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-100 rounded-full opacity-10 blur-3xl -z-10 transform -translate-x-1/3 translate-y-1/4"></div>
+          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-100 rounded-full opacity-10 blur-3xl -z-10 transform translate-x-1/3 -translate-y-1/4"></div>
+          <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-100 rounded-full opacity-10 blur-3xl -z-10 transform -translate-x-1/3 translate-y-1/4"></div>
           <div className="absolute top-1/3 left-1/4 w-64 h-64 bg-purple-100 rounded-full opacity-10 blur-3xl -z-10"></div>
           
           {/* Título da seção principal */}
           <SectionHeading 
-            badge="Solução financeira descomplicada"
-            title="Vantagens Exclusivas para Você"
-            description="Descomplicamos o acesso ao crédito para que você resolva sua necessidade financeira com rapidez e segurança."
+            badge="Por que escolher a Credios"
+            title="Vantagens da nossa plataforma"
+            description="Descubra por que mais de 100 mil pessoas já escolheram a Credios para obter crédito de forma rápida, segura e descomplicada."
           />
           
           {/* Subseção de Vantagens */}
@@ -866,7 +1046,7 @@ export default function CrediosLoanPage() {
               transition={{ duration: 0.5, delay: 0.1 }}
               viewport={{ once: true }}
             >
-              Como funciona o empréstimo na conta de luz
+              Como funciona a Credios
             </motion.h2>
             
             <motion.p 
@@ -876,7 +1056,7 @@ export default function CrediosLoanPage() {
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              Obtenha crédito em 4 etapas simples pelo seu celular. Usando sua conta de luz como garantia, dispensamos consultas ao SPC/Serasa. Ideal para negativados, com parcelas incluídas na sua fatura mensal de energia.
+              Do início ao fim, todo o processo é feito pelo seu celular, sem burocracia e com aprovação rápida. Você recebe o dinheiro na conta em até 24 horas.
             </motion.p>
             
             {/* Melhorado o visual do bloco Como Funciona */}
@@ -889,13 +1069,13 @@ export default function CrediosLoanPage() {
             >
               <div className="flex items-center justify-center mb-6">
                 <div className="w-12 h-12 flex items-center justify-center bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-full mr-3 shadow-md">
-                  <Zap className="h-6 w-6" />
+                  <Smartphone className="h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-800 bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">Conheça nossas etapas simplificadas</h3>
+                <h3 className="text-xl font-bold text-gray-800 bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">Quatro passos simples para obter seu crédito</h3>
               </div>
               
               <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-                Com nosso processo 100% digital, você obtém empréstimo sem sair de casa. Não é preciso comprovação de renda ou análise de crédito tradicional – a conta de luz é sua garantia. Aprovação imediata e dinheiro no mesmo dia direto na sua conta.
+                A Credios torna o processo de obtenção de crédito simples e rápido. Todo o procedimento pode ser concluído pelo seu celular, sem necessidade de documentação física ou visitas a agências.
               </p>
               
               <div className="space-y-6 max-w-2xl mx-auto relative z-10">
@@ -978,10 +1158,10 @@ export default function CrediosLoanPage() {
                 </div>
                 <ul className="space-y-2">
                   {[
-                    "Aprovação imediata em 30 segundos",
-                    "Disponível mesmo para negativados",
-                    "Não precisa comprovar renda",
-                    "Processo 100% digital pelo celular"
+                    "Processo 100% digital pelo celular",
+                    "Liberação do dinheiro em até 24h",
+                    "Atendimento 24 horas por dia",
+                    "Segurança e privacidade garantidas"
                   ].map((item, i) => (
                     <motion.li 
                       key={i} 
@@ -1008,10 +1188,10 @@ export default function CrediosLoanPage() {
                 </div>
                 <ul className="space-y-2">
                   {[
-                    "É necessário ser o titular da conta de luz",
-                    "As parcelas são incluídas na fatura de energia",
-                    "Valor liberado de até R$ 3.300",
-                    "Parcele em até 12 vezes"
+                    "Todos os dados protegidos pela LGPD",
+                    "Taxas e condições transparentes",
+                    "Aprovação sujeita a análise de crédito",
+                    "Suporte técnico disponível 24/7"
                   ].map((item, i) => (
                     <motion.li 
                       key={i} 
@@ -1029,7 +1209,7 @@ export default function CrediosLoanPage() {
               </motion.div>
             </motion.div>
             
-            {/* Box de disponibilidade regional */}
+            {/* Box de bancos parceiros */}
             <motion.div 
               className="max-w-3xl mx-auto mb-12"
               initial={{ opacity: 0, y: 20 }}
@@ -1040,29 +1220,27 @@ export default function CrediosLoanPage() {
               <div className="bg-slate-100 rounded-xl overflow-hidden shadow-sm border border-slate-200">
                 <div className="flex items-start p-5 md:p-6">
                   <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mr-4">
-                    <MapPin className="h-5 w-5 text-blue-600" />
+                    <Building className="h-5 w-5 text-blue-600" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-1">Disponibilidade regional</h3>
-                    <p className="text-sm text-gray-600">Estados onde oferecemos o serviço de empréstimo na conta de luz</p>
+                    <h3 className="text-lg font-bold text-gray-800 mb-1">Parceiros financeiros</h3>
+                    <p className="text-sm text-gray-600">Trabalhamos com instituições financeiras regulamentadas pelo Banco Central</p>
                   </div>
                 </div>
                 
                 <div className="p-5 md:p-6 pt-0">
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3 mb-4">
-                    {AVAILABLE_STATES.map((state, index) => (
+                  <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 mb-4">
+                    {Array.from({ length: 6 }).map((_, index) => (
                       <motion.div 
-                        key={state.name} 
+                        key={index} 
                         className="relative"
                         initial={{ opacity: 0, scale: 0.9 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.3, delay: index * 0.05 }}
                         viewport={{ once: true }}
                       >
-                        <div className="bg-white border border-slate-200 rounded-lg px-2 py-3 flex items-center justify-center text-center">
-                          <span className="font-medium text-gray-700">
-                            {state.name}
-                          </span>
+                        <div className="bg-white border border-slate-200 rounded-lg p-3 flex items-center justify-center shadow-sm">
+                          <div className="w-20 h-10 bg-gray-200 rounded"></div>
                         </div>
                       </motion.div>
                     ))}
@@ -1071,8 +1249,7 @@ export default function CrediosLoanPage() {
                   <div className="flex items-start gap-3 pt-3 border-t border-slate-200">
                     <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                     <p className="text-sm text-gray-600">
-                      O crédito na conta de luz é uma parceria da <span className="font-bold text-gray-700">Credios</span> com a <span className="font-bold text-gray-700">Crefaz</span> e está disponível na 
-                      maioria das cidades dos estados listados. <a href="/simulacao" className="text-blue-600 hover:text-blue-800 font-medium transition-colors cursor-pointer">Consulte disponibilidade durante a simulação →</a>
+                      A <span className="font-bold text-gray-700">Credios</span> atua como correspondente bancário, conectando você às melhores instituições financeiras do mercado. <a href="/parceiros" className="text-blue-600 hover:text-blue-800 font-medium transition-colors cursor-pointer hover:underline">Conheça nossos parceiros →</a>
                     </p>
                   </div>
                 </div>
@@ -1083,15 +1260,15 @@ export default function CrediosLoanPage() {
       </div>
       
       {/* SEÇÃO DE DEPOIMENTOS */}
-      <div className="py-16 bg-gradient-to-b from-white to-orange-50">
+      <div className="py-16 bg-gradient-to-b from-white to-blue-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionHeading 
             badge="Clientes satisfeitos"
-            title="O que dizem sobre nós"
-            description="Mais de 200 mil pessoas já resolveram sua situação financeira com o empréstimo na conta de luz da Credios."
+            title="O que dizem sobre a Credios"
+            description="Mais de 100 mil pessoas já utilizaram nossa plataforma para obter crédito. Veja o que nossos clientes estão falando."
           />
           
-          {/* Substituição da grade por carrossel */}
+          {/* Carrossel de depoimentos */}
           <TestimonialCarousel />
         </div>
       </div>
@@ -1101,7 +1278,7 @@ export default function CrediosLoanPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           {/* Elementos decorativos */}
           <div className="absolute top-1/4 right-0 w-64 h-64 bg-blue-100/30 rounded-full -z-10 blur-3xl"></div>
-          <div className="absolute bottom-1/4 left-0 w-64 h-64 bg-purple-100/30 rounded-full -z-10 blur-3xl"></div>
+          <div className="absolute bottom-1/4 left-0 w-64 h-64 bg-indigo-100/30 rounded-full -z-10 blur-3xl"></div>
           
           {/* Subseção de Perguntas Frequentes */}
           <div>
@@ -1126,14 +1303,37 @@ export default function CrediosLoanPage() {
                 Perguntas Frequentes
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto text-base">
-                Encontre respostas para as dúvidas mais comuns sobre o empréstimo na conta de luz.
+                Encontre respostas para as dúvidas mais comuns sobre a Credios e nossos produtos de crédito.
               </p>
             </motion.div>
             
             <div className="max-w-3xl mx-auto">
-              {/* FAQ com estilo melhorado e cursor adequado */}
+              {/* Filtro de categorias */}
+              <motion.div 
+                className="flex flex-wrap justify-center gap-2 mb-8"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                viewport={{ once: true }}
+              >
+                {["Todos", "Sobre a Credios", "Conta de Luz", "FGTS"].map((category) => (
+                  <button 
+                    key={category}
+                    className={`px-4 py-2 rounded-full cursor-pointer transition-all duration-300 ${
+                      faqCategory === category 
+                      ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 font-medium shadow-sm' 
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900 hover:shadow-sm'
+                    }`}
+                    onClick={() => setFaqCategory(category)}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </motion.div>
+              
+              {/* FAQ com estilo melhorado e filtragem funcional */}
               <Accordion type="single" collapsible className="space-y-4">
-                {FAQ_ITEMS.map((item, index) => (
+                {filteredFAQItems.map((item, index) => (
                   <motion.div 
                     key={index}
                     initial={{ opacity: 0, y: 10 }}
@@ -1141,18 +1341,47 @@ export default function CrediosLoanPage() {
                     transition={{ duration: 0.5, delay: index * 0.1 }}
                     viewport={{ once: true }}
                   >
-                    <AccordionItem value={`item-${index}`} className="border rounded-xl shadow-sm overflow-hidden">
-                      <AccordionTrigger className="px-4 py-4 hover:bg-slate-50 data-[state=open]:bg-blue-50/70 data-[state=open]:text-blue-700 group-hover:bg-blue-50 transition-all cursor-pointer">
-                        <span className="text-base font-medium">{item.question}</span>
+                    <AccordionItem value={`item-${index}`} className="border rounded-xl shadow-sm overflow-hidden hover:border-blue-200 transition-all duration-300">
+                      <AccordionTrigger className="px-4 py-4 hover:bg-slate-50 data-[state=open]:bg-blue-50/70 data-[state=open]:text-blue-700 transition-all duration-300 cursor-pointer">
+                        <div className="flex items-center">
+                          {item.category === "empresa" && (
+                            <Badge className="mr-3 bg-blue-100 text-blue-700 border-none py-1 px-2">Credios</Badge>
+                          )}
+                          {item.category === "conta-luz" && (
+                            <Badge className="mr-3 bg-amber-100 text-amber-700 border-none py-1 px-2">Conta de Luz</Badge>
+                          )}
+                          {item.category === "fgts" && (
+                            <Badge className="mr-3 bg-indigo-100 text-indigo-700 border-none py-1 px-2">FGTS</Badge>
+                          )}
+                          <span className="text-base font-medium text-left">{item.question}</span>
+                        </div>
                       </AccordionTrigger>
                       
-                      <AccordionContent className="px-4 pb-4 pt-0 text-gray-600">
-                        <Separator className="mb-3" />
+                      <AccordionContent className="px-4 pb-6 pt-2 text-gray-600 data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
+                        <Separator className="mb-4" />
                         <p className="text-sm leading-relaxed">{item.answer}</p>
                       </AccordionContent>
                     </AccordionItem>
                   </motion.div>
                 ))}
+                
+                {filteredFAQItems.length === 0 && (
+                  <motion.div 
+                    className="text-center py-8"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <Info className="h-12 w-12 text-blue-300 mx-auto mb-4" />
+                    <p className="text-gray-500">Nenhuma pergunta encontrada nesta categoria.</p>
+                    <button
+                      onClick={() => setFaqCategory("Todos")}
+                      className="mt-2 text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                    >
+                      Ver todas as perguntas
+                    </button>
+                  </motion.div>
+                )}
               </Accordion>
             </div>
           </div>
@@ -1160,7 +1389,7 @@ export default function CrediosLoanPage() {
       </div>
       
       {/* CTA FINAL (estilo bentobox) */}
-      <div className="py-16 bg-gradient-to-r from-orange-500 to-amber-500">
+      <div className="py-16 bg-gradient-to-r from-blue-500 to-indigo-500">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div 
             className="text-center mb-10"
@@ -1170,10 +1399,10 @@ export default function CrediosLoanPage() {
             viewport={{ once: true }}
           >
             <h3 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-              Resolva sua necessidade financeira hoje!
+              Crédito acessível e sem burocracia
             </h3>
             <p className="text-white/90 max-w-2xl mx-auto text-lg">
-              Mais de 200 mil pessoas já escolheram o empréstimo na conta de luz da Credios. Junte-se a eles e tenha acesso ao crédito que você precisa.
+              Escolha a solução que melhor atende suas necessidades e solicite agora mesmo. Todo o processo é feito pelo celular!
             </p>
           </motion.div>
           
@@ -1190,24 +1419,50 @@ export default function CrediosLoanPage() {
             >
               <div className="p-6 md:p-8 flex flex-col h-full">
                 <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center shadow-md">
-                    <Zap className="h-6 w-6 text-orange-600" />
+                  <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center shadow-md">
+                    <Smartphone className="h-6 w-6 text-blue-600" />
                   </div>
                   <Badge className="ml-4 bg-green-100 text-green-700 px-3 py-1 border-0">
                     <CheckCircle2 className="w-3.5 h-3.5 mr-1" />
-                    Aprovação em 30 segundos
+                    100% pelo celular
                   </Badge>
                 </div>
                 
-                <h4 className="text-2xl font-bold text-gray-800 mb-3">Simule e descubra seu limite</h4>
+                <h4 className="text-2xl font-bold text-gray-800 mb-3">Escolha a melhor opção para você</h4>
                 <p className="text-gray-600 mb-6">
-                  Descubra quanto você pode receber sem compromisso. A consulta não afeta seu score de crédito e você recebe o resultado na hora.
+                  Temos soluções de crédito para diferentes necessidades. Faça uma simulação gratuita e descubra quanto você pode receber.
                 </p>
                 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  <div className="p-4 border border-amber-100 rounded-xl bg-amber-50">
+                    <div className="flex items-center mb-2">
+                      <Bolt className="h-5 w-5 text-amber-500 mr-2" />
+                      <h5 className="font-semibold text-gray-800">Conta de Luz</h5>
+                    </div>
+                    <p className="text-gray-600 text-sm mb-3">Até R$ 3.300 usando sua fatura como garantia.</p>
+                    <a href="/simular-conta-luz" className="text-sm text-amber-600 hover:text-amber-700 font-medium flex items-center cursor-pointer">
+                      Simular agora
+                      <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                    </a>
+                  </div>
+                  
+                  <div className="p-4 border border-blue-100 rounded-xl bg-blue-50">
+                    <div className="flex items-center mb-2">
+                      <Briefcase className="h-5 w-5 text-blue-500 mr-2" />
+                      <h5 className="font-semibold text-gray-800">FGTS</h5>
+                    </div>
+                    <p className="text-gray-600 text-sm mb-3">Antecipe saques-aniversário até R$ 20.000.</p>
+                    <a href="/simular-fgts" className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center cursor-pointer">
+                      Simular agora
+                      <ArrowRight className="ml-1 h-3.5 w-3.5" />
+                    </a>
+                  </div>
+                </div>
+                
                 <div className="mt-auto">
-                  <a href="/simular" className="block cursor-pointer">
-                    <Button className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-lg py-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 cursor-pointer">
-                      Simular agora sem compromisso
+                  <a href="/produtos" className="block cursor-pointer">
+                    <Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-lg py-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 cursor-pointer">
+                      Conhecer todos os produtos
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </Button>
                   </a>
@@ -1232,18 +1487,18 @@ export default function CrediosLoanPage() {
               >
                 <div className="flex items-center mb-4">
                   <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-md">
-                    <MessageCircle className="h-5 w-5 text-orange-600" />
+                    <MessageCircle className="h-5 w-5 text-blue-600" />
                   </div>
-                  <h5 className="ml-3 text-white font-semibold">Atendimento ao cliente</h5>
+                  <h5 className="ml-3 text-white font-semibold">Atendimento personalizado</h5>
                 </div>
                 
                 <p className="text-white/90 text-sm mb-4">
-                  Precisa de ajuda? Nossa equipe está pronta para responder suas dúvidas.
+                  Dúvidas sobre nossos produtos? Nossa equipe está disponível 24h para ajudar você.
                 </p>
                 
-                <a href="https://wa.me/552130300606" className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer">
+                <a href="https://wa.me/5511999999999" className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer">
                   <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className=""><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-                  Falar pelo WhatsApp
+                  Falar com consultor
                 </a>
               </motion.div>
               
@@ -1258,15 +1513,15 @@ export default function CrediosLoanPage() {
                 <div className="flex justify-between items-center mb-2">
                   <div className="flex items-center">
                     <Shield className="h-5 w-5 text-white mr-2" />
-                    <h5 className="text-white font-medium">Segurança garantida</h5>
+                    <h5 className="text-white font-medium">Por que escolher a Credios</h5>
                   </div>
                 </div>
                 
                 <ul className="space-y-2 mb-4">
                   {[
-                    "Criptografia de ponta a ponta",
-                    "Proteção de dados completa",
-                    "Transações 100% seguras"
+                    "Processo 100% digital pelo celular",
+                    "Atendimento 24h todos os dias",
+                    "Dinheiro na conta em até 24h"
                   ].map((item, i) => (
                     <li key={i} className="flex items-center text-white/90 text-sm">
                       <CheckCircle className="h-3.5 w-3.5 mr-1.5 text-green-400 flex-shrink-0" />
@@ -1287,12 +1542,12 @@ export default function CrediosLoanPage() {
               whileHover={{ y: -5, transition: { duration: 0.2 } }}
             >
               <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-md mr-4">
-                <CheckCircle2 className="h-6 w-6 text-green-600" />
+                <Bolt className="h-6 w-6 text-amber-500" />
               </div>
               <div>
-                <h5 className="text-white font-semibold">Sem consulta ao SPC/Serasa</h5>
+                <h5 className="text-white font-semibold">Empréstimo na Conta de Luz</h5>
                 <p className="text-white/90 text-sm">
-                  Disponível mesmo para quem está com restrições no nome.
+                  Até R$ 3.300 sem consulta ao SPC/Serasa.
                 </p>
               </div>
             </motion.div>
@@ -1306,12 +1561,12 @@ export default function CrediosLoanPage() {
               whileHover={{ y: -5, transition: { duration: 0.2 } }}
             >
               <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-md mr-4">
-                <Wallet className="h-6 w-6 text-blue-600" />
+                <Briefcase className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <h5 className="text-white font-semibold">Dinheiro no PIX</h5>
+                <h5 className="text-white font-semibold">Antecipação do FGTS</h5>
                 <p className="text-white/90 text-sm">
-                  Crédito liberado no mesmo dia direto na sua conta.
+                  Até R$ 20.000 sem comprometer seu salário.
                 </p>
               </div>
             </motion.div>
@@ -1325,12 +1580,12 @@ export default function CrediosLoanPage() {
               whileHover={{ y: -5, transition: { duration: 0.2 } }}
             >
               <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center shadow-md mr-4">
-                <Clock className="h-6 w-6 text-purple-600" />
+                <Smartphone className="h-6 w-6 text-indigo-600" />
               </div>
               <div>
-                <h5 className="text-white font-semibold">Processo 100% online</h5>
+                <h5 className="text-white font-semibold">100% Digital</h5>
                 <p className="text-white/90 text-sm">
-                  Faça tudo pelo celular em poucos minutos.
+                  Todo processo pelo celular, sem sair de casa.
                 </p>
               </div>
             </motion.div>
@@ -1344,8 +1599,25 @@ export default function CrediosLoanPage() {
             viewport={{ once: true }}
           >
             <AlertCircle className="inline-block h-3.5 w-3.5 mr-1.5 mb-0.5" />
-            Crédito sujeito à análise e aprovação. Taxa de juros conforme perfil do cliente.
+            Empréstimos sujeitos a análise e aprovação. Consulte condições específicas para cada produto.
           </motion.p>
+        </div>
+      </div>
+      
+      {/* Marcas de confiança */}
+      <div className="py-10 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-6">
+            <p className="text-sm text-gray-500 uppercase tracking-wider font-medium">Instituições parceiras</p>
+          </div>
+          
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
+            <div className="w-24 h-12 bg-gray-200 rounded opacity-70 hover:opacity-100 transition-opacity"></div>
+            <div className="w-24 h-12 bg-gray-200 rounded opacity-70 hover:opacity-100 transition-opacity"></div>
+            <div className="w-24 h-12 bg-gray-200 rounded opacity-70 hover:opacity-100 transition-opacity"></div>
+            <div className="w-24 h-12 bg-gray-200 rounded opacity-70 hover:opacity-100 transition-opacity"></div>
+            <div className="w-24 h-12 bg-gray-200 rounded opacity-70 hover:opacity-100 transition-opacity"></div>
+          </div>
         </div>
       </div>
       
@@ -1357,7 +1629,7 @@ export default function CrediosLoanPage() {
         transition={{ delay: 1, duration: 0.3 }}
       >
         <a 
-          href="https://wa.me/552130300606"
+          href="https://wa.me/5511999999999"
           className="relative flex items-center justify-center w-16 h-16 bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transition-colors duration-300 cursor-pointer"
           aria-label="Fale conosco pelo WhatsApp"
         >

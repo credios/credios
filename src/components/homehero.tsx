@@ -1,349 +1,254 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+
+import React, { useEffect } from 'react';
+import { motion, useAnimation } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { BanknoteIcon, Zap, ShieldCheck, Clock, CheckCircle, Star } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Clock, Zap, BanknoteIcon } from 'lucide-react';
+import Link from 'next/link';
 
-// Componente de título com a animação de marcação sublinhada
-const MarkedText: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [startAnimation, setStartAnimation] = useState(false);
-  
+// Animation hook for viewport detection
+const useInView = (threshold = 0.1) => {
+  const controls = useAnimation();
+  const ref = React.useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setStartAnimation(true);
-    }, 500);
-    return () => clearTimeout(timer);
-  }, []);
-  
-  return (
-    <span className="relative inline-flex flex-col">
-      <span className="relative z-10 font-extrabold">{children}</span>
-      {/* Linha de marcação animada */}
-      <div className="absolute bottom-1 left-0 w-full h-3 z-0">
-        <svg className="w-full h-full" viewBox="0 0 100 10" preserveAspectRatio="none">
-          <path
-            d="M0,5 Q25,9 50,5 T100,5"
-            fill="none"
-            stroke="#E05D00"
-            strokeWidth="6"
-            strokeLinecap="round"
-            className={`marker-path ${startAnimation ? 'animate-draw' : ''}`}
-          />
-        </svg>
-      </div>
-    </span>
-  );
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          controls.start('visible');
+        }
+      },
+      { threshold }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    
+    return () => {
+      if (ref.current) observer.unobserve(ref.current);
+    };
+  }, [controls, threshold]);
+
+  return { ref, controls };
 };
 
-// Componente para o destaque "brasileiros"
-const SpotlightBadge: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <motion.span
-    initial={{ opacity: 0, scale: 0.9 }}
-    animate={{ opacity: 1, scale: 1 }}
-    whileHover={{ scale: 1.05 }}
-    transition={{ type: "spring", stiffness: 400, damping: 10 }}
-    className="relative inline-block font-extrabold"
-  >
-    <span className="relative z-10 px-4 py-1">{children}</span>
-    <span className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-blue-400/20 rounded-lg backdrop-blur-sm border border-blue-300/30 shadow-inner z-0"></span>
-  </motion.span>
-);
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
+};
 
-// Componente para o carrossel de depoimentos
-const TestimonialCarousel: React.FC = () => {
-  const testimonials = [
-    {
-      id: 1,
-      name: "Carlos S.",
-      location: "São Paulo",
-      text: "Em menos de 24h o dinheiro caiu na minha conta. Resolveu minha situação quando mais precisei.",
-      rating: 5
-    },
-    {
-      id: 2,
-      name: "Fernanda L.",
-      location: "Rio de Janeiro",
-      text: "Mesmo com meu nome negativado, consegui o empréstimo. Processo simples e rápido!",
-      rating: 5
-    },
-    {
-      id: 3,
-      name: "Paulo M.",
-      location: "Belo Horizonte",
-      text: "Já tentei em vários bancos e sempre negaram. Na Credios foi aprovado em minutos.",
-      rating: 5
-    },
-    {
-      id: 4,
-      name: "Roberta K.",
-      location: "Salvador",
-      text: "O empréstimo na conta de luz foi perfeito para mim. Parcelas que cabem no meu orçamento.",
-      rating: 5
-    },
-    {
-      id: 5,
-      name: "Marcelo T.",
-      location: "Brasília",
-      text: "Atendimento excepcional e processo transparente. Recomendo a todos.",
-      rating: 5
+const stagger = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
     }
-  ];
-
-  return (
-    <div className="w-full overflow-hidden px-4 py-6">
-      <div className="testimonial-carousel-container">
-        <div className="testimonial-track flex animate-testimonial-scroll">
-          {/* Primeira cópia dos depoimentos */}
-          {testimonials.map((testimonial) => (
-            <div 
-              key={`t1-${testimonial.id}`} 
-              className="testimonial-slide flex-shrink-0 mx-4 w-80 bg-white rounded-xl border border-blue-100 shadow-md p-6 flex flex-col"
-            >
-              <div className="flex items-center mb-1">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-current text-amber-400" />
-                ))}
-              </div>
-              <p className="text-slate-700 italic mb-4">&ldquo;{testimonial.text}&rdquo;</p>
-              <div className="mt-auto">
-                <p className="font-semibold text-slate-800">{testimonial.name}</p>
-                <p className="text-sm text-slate-500">{testimonial.location}</p>
-              </div>
-            </div>
-          ))}
-          
-          {/* Segunda cópia para animação infinita */}
-          {testimonials.map((testimonial) => (
-            <div 
-              key={`t2-${testimonial.id}`} 
-              className="testimonial-slide flex-shrink-0 mx-4 w-80 bg-white rounded-xl border border-blue-100 shadow-md p-6 flex flex-col"
-            >
-              <div className="flex items-center mb-1">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-current text-amber-400" />
-                ))}
-              </div>
-              <p className="text-slate-700 italic mb-4">&ldquo;{testimonial.text}&rdquo;</p>
-              <div className="mt-auto">
-                <p className="font-semibold text-slate-800">{testimonial.name}</p>
-                <p className="text-sm text-slate-500">{testimonial.location}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+  }
 };
-
-// Estatísticas de confiança
-const TrustStats = [
-  { id: 1, number: "97%", text: "de satisfação dos clientes" },
-  { id: 2, number: "10k+", text: "brasileiros atendidos" },
-  { id: 3, number: "24h", text: "para receber o dinheiro" },
-];
 
 const HomeHero: React.FC = () => {
+  const { ref: heroRef, controls: heroControls } = useInView();
+  const { ref: statsRef, controls: statsControls } = useInView(0.2);
+
   return (
-    <section className="relative w-full overflow-hidden bg-gradient-to-b from-slate-50 to-blue-50 py-24 md:py-32">
-      {/* Background refinado */}
-      <div className="absolute inset-0 bg-grid-slate-100 [mask-image:linear-gradient(to_bottom,transparent,black,transparent)] opacity-25"></div>
+    <section className="relative overflow-hidden pt-32 pb-24 md:pt-40 md:pb-32">
+      {/* Premium gradient background with subtle grid pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-800 via-blue-700 to-blue-800 overflow-hidden">
+        {/* Subtle grid pattern overlay with glow */}
+        <div 
+          className="absolute inset-0 opacity-8" 
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, rgba(255,255,255,0.05) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(255,255,255,0.05) 1px, transparent 1px)
+            `,
+            backgroundSize: '40px 40px',
+            boxShadow: 'inset 0 0 100px rgba(255,255,255,0.05)'
+          }}
+        />
+        
+        {/* Radial dot pattern for texture */}
+        <div 
+          className="absolute inset-0 opacity-10" 
+          style={{
+            backgroundImage: 'radial-gradient(circle, rgba(255, 255, 255, 0.4) 1px, transparent 1px)',
+            backgroundSize: '30px 30px'
+          }}
+        />
+        
+        {/* Subtle ambient lighting effects */}
+        <div className="absolute top-0 right-0 w-[700px] h-[700px] rounded-full bg-blue-500/10 blur-[120px] transform translate-x-1/3 -translate-y-1/3"></div>
+        <div className="absolute bottom-0 left-0 w-[700px] h-[700px] rounded-full bg-blue-400/10 blur-[100px] transform -translate-x-1/3 translate-y-1/3"></div>
+        
+        {/* Subtle glowing spots */}
+        <div className="absolute top-1/4 right-1/4 w-24 h-24 rounded-full bg-white/5 blur-xl"></div>
+        <div className="absolute bottom-1/3 left-1/5 w-32 h-32 rounded-full bg-white/5 blur-xl"></div>
+        
+        {/* Ultra-subtle top accent line */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-300/30 to-transparent"></div>
+      </div>
       
-      {/* Formas decorativas */}
-      <div className="absolute top-20 right-8 w-96 h-96 rounded-full bg-gradient-to-br from-blue-200/20 to-purple-200/20 blur-3xl"></div>
-      <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-gradient-to-tr from-yellow-200/20 to-blue-200/20 blur-3xl"></div>
-      
-      <div className="container relative z-10 mx-auto px-4">
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-4xl mx-auto text-center mb-16"
+      <div className="container relative z-10 mx-auto px-6 sm:px-8 lg:px-12">
+        <motion.div
+          ref={heroRef}
+          variants={stagger}
+          initial="hidden"
+          animate={heroControls}
+          className="max-w-3xl mx-auto text-center"
         >
-          {/* Badge de categoria aprimorado */}
-          <motion.div 
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="mb-8"
-          >
-            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-medium text-sm border border-blue-200/50 shadow-sm">
-              <ShieldCheck className="w-4 h-4 mr-2" />
-              Crédito sem burocracia
+          {/* Refined Badge */}
+          <motion.div variants={fadeInUp} className="inline-flex mb-8">
+            <span className="inline-flex items-center gap-2 py-2 px-5 rounded-full text-sm font-medium bg-white/10 text-white backdrop-blur-sm border border-white/10">
+              <Clock size={14} className="text-blue-200" />
+              <span>Crédito aprovado em minutos</span>
             </span>
           </motion.div>
           
-          {/* Tipografia moderna e refinada com copy aprimorado */}
-          <div className="space-y-6 mb-12">
-            <motion.h1 
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-800 leading-tight"
-            >
-              A <MarkedText>solução financeira</MarkedText> que acredita em <SpotlightBadge>você</SpotlightBadge>
-            </motion.h1>
-            
-            <motion.p 
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-              className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed"
-            >
-              Desbloqueie o crédito que você merece – mesmo com nome negativado. 
-              Processo 100% digital, aprovação em minutos e dinheiro na conta em até 24h.
-            </motion.p>
-          </div>
-          
-          {/* Benefícios aprimorados com melhor copy */}
-          <motion.div 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
-            className="flex flex-wrap justify-center gap-x-8 gap-y-4 mb-12"
+          {/* Refined Typography for Main Headline */}
+          <motion.h1 
+            variants={fadeInUp}
+            className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 tracking-tight leading-[1.1] font-sans"
           >
-            <div className="flex items-center">
-              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-amber-100 text-amber-600 mr-2">
-                <Clock className="w-4 h-4" />
-              </div>
-              <span className="text-slate-700">Resposta em até 10 minutos</span>
-            </div>
+            Empréstimo simplificado <span className="text-blue-100 font-normal">para todos os brasileiros</span>
+          </motion.h1>
+          
+          {/* Refined Subheadline */}
+          <motion.p 
+            variants={fadeInUp}
+            className="text-blue-100 text-lg sm:text-xl mb-12 leading-relaxed max-w-2xl mx-auto font-normal"
+          >
+            A Credios é uma plataforma de crédito digital que conecta você às melhores opções de empréstimo, com processos 100% online e sem burocracia.
+          </motion.p>
+          
+          {/* Clean, Distinctive Buttons (not boxes) */}
+          <motion.div 
+            variants={fadeInUp}
+            className="flex flex-col sm:flex-row gap-5 justify-center mb-16"
+          >
+            {/* Empréstimo na Conta de Luz Button */}
+            <Button 
+              asChild
+              size="lg" 
+              className="bg-orange-500 hover:bg-orange-600 text-white rounded-full h-14 px-8 font-medium text-base shadow-lg hover:shadow-xl transition-all duration-300 group border border-orange-400"
+            >
+              <Link href="/emprestimo-conta-luz">
+                <Zap className="mr-2 h-5 w-5 text-white" />
+                <span>Empréstimo na Conta de Luz</span>
+                <ArrowRight className="ml-2 h-5 w-5 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
+              </Link>
+            </Button>
             
-            <div className="flex items-center">
-              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-green-100 text-green-600 mr-2">
-                <CheckCircle className="w-4 h-4" />
-              </div>
-              <span className="text-slate-700">Sem consulta ao SPC/Serasa</span>
-            </div>
-            
-            <div className="flex items-center">
-              <div className="flex items-center justify-center w-6 h-6 rounded-full bg-blue-100 text-blue-600 mr-2">
-                <BanknoteIcon className="w-4 h-4" />
-              </div>
-              <span className="text-slate-700">Dinheiro na conta em 24h</span>
-            </div>
+            {/* Empréstimo FGTS Button - Added the BanknoteIcon */}
+            <Button 
+              asChild
+              size="lg" 
+              className="bg-blue-500 hover:bg-blue-600 text-white rounded-full h-14 px-8 font-medium text-base shadow-lg hover:shadow-xl transition-all duration-300 group border border-blue-400"
+            >
+              <Link href="/emprestimo-fgts">
+                <BanknoteIcon className="mr-2 h-5 w-5 text-white" />
+                <span>Empréstimo FGTS</span>
+                <ArrowRight className="ml-2 h-5 w-5 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
+              </Link>
+            </Button>
           </motion.div>
           
-          {/* Botões CTA com copy mais persuasivo */}
+          {/* Enhanced Trust Badges - Now in small boxes */}
           <motion.div 
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.9, duration: 0.6 }}
-            className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
+            variants={fadeInUp}
+            className="flex flex-wrap items-center justify-center gap-6 text-blue-100 mb-20"
           >
-            <Button 
-              className="relative group bg-blue-600 hover:bg-blue-700 text-white h-14 px-6 sm:px-8 text-base font-medium rounded-xl overflow-hidden transition-all duration-300 active:scale-95 active:bg-blue-800"
-            >
-              <span className="relative z-10 flex items-center">
-                <BanknoteIcon className="mr-2 h-5 w-5 transition-transform group-hover:scale-110 duration-300" />
-                <span>Simular Empréstimo FGTS</span>
-              </span>
-              <span className="absolute inset-0 bg-gradient-to-r from-blue-700 to-blue-600 opacity-0 group-hover:opacity-100 group-active:opacity-90 transition-opacity duration-300"></span>
-              <span className="absolute bottom-0 left-0 w-full h-1 bg-blue-500 transform scale-x-0 group-hover:scale-x-100 group-active:bg-blue-400 transition-transform origin-left duration-300"></span>
-            </Button>
-            
-            <Button 
-              className="relative group bg-blue-600 hover:bg-blue-700 text-white h-14 px-6 sm:px-8 text-base font-medium rounded-xl overflow-hidden transition-all duration-300 active:scale-95 active:bg-blue-800"
-            >
-              <span className="relative z-10 flex items-center">
-                <Zap className="mr-2 h-5 w-5 transition-transform group-hover:scale-110 duration-300" />
-                <span>Crédito na Conta de Luz</span>
-              </span>
-              <span className="absolute inset-0 bg-gradient-to-r from-blue-700 to-blue-600 opacity-0 group-hover:opacity-100 group-active:opacity-90 transition-opacity duration-300"></span>
-              <span className="absolute bottom-0 left-0 w-full h-1 bg-blue-500 transform scale-x-0 group-hover:scale-x-100 group-active:bg-blue-400 transition-transform origin-left duration-300"></span>
-            </Button>
+            <div className="flex items-center gap-3 py-2 px-4 rounded-lg bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors duration-300">
+              <ShieldCheck size={16} className="text-blue-200" />
+              <span className="text-sm font-medium">Site 100% seguro</span>
+            </div>
+            <div className="flex items-center gap-3 py-2 px-4 rounded-lg bg-white/5 border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors duration-300">
+              <Zap size={16} className="text-blue-200" />
+              <span className="text-sm font-medium">Sem burocracia</span>
+            </div>
           </motion.div>
         </motion.div>
         
-        {/* Nova seção de confiança e autoridade */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.1, duration: 0.8 }}
-          className="text-center mb-14"
+        {/* Refined Statistics - Subtle with Proper Icon Contrast */}
+        <motion.div
+          ref={statsRef}
+          variants={stagger}
+          initial="hidden"
+          animate={statsControls}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
         >
-          <h2 className="text-2xl font-bold text-slate-800 mb-8">Por que milhares de brasileiros confiam na Credios</h2>
+          <motion.div 
+            variants={fadeInUp}
+            className="relative group"
+          >
+            <div className="absolute inset-0 bg-white/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="p-8 text-center relative">
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
+                  <ShieldCheck className="h-6 w-6 text-blue-200" />
+                </div>
+              </div>
+              
+              <h3 className="text-4xl font-bold text-white mb-2">10k+</h3>
+              <p className="text-blue-200 font-medium">Clientes satisfeitos</p>
+              
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            </div>
+          </motion.div>
           
-          {/* Estatísticas de confiança */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            {TrustStats.map((stat) => (
-              <motion.div
-                key={stat.id}
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 1.2 + stat.id * 0.1 }}
-                className="bg-white rounded-lg border border-blue-100 shadow-sm p-6"
-              >
-                <p className="text-3xl font-bold text-blue-600 mb-2">{stat.number}</p>
-                <p className="text-slate-600">{stat.text}</p>
-              </motion.div>
-            ))}
-          </div>
+          <motion.div 
+            variants={fadeInUp}
+            className="relative group"
+          >
+            <div className="absolute inset-0 bg-white/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="p-8 text-center relative">
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
+                  <Clock className="h-6 w-6 text-blue-200" />
+                </div>
+              </div>
+              
+              <h3 className="text-4xl font-bold text-white mb-2">5 min</h3>
+              <p className="text-blue-200 font-medium">Tempo de aprovação</p>
+              
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            </div>
+          </motion.div>
           
-          {/* Carrossel de depoimentos real */}
-          <TestimonialCarousel />
+          <motion.div 
+            variants={fadeInUp}
+            className="relative group"
+          >
+            <div className="absolute inset-0 bg-white/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="p-8 text-center relative">
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
+                  <Zap className="h-6 w-6 text-blue-200" />
+                </div>
+              </div>
+              
+              <h3 className="text-4xl font-bold text-white mb-2">100%</h3>
+              <p className="text-blue-200 font-medium">Digital e sem burocracia</p>
+              
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-0.5 bg-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            </div>
+          </motion.div>
         </motion.div>
       </div>
-
-      {/* Animações e estilos */}
-      <style jsx global>{`
-        @keyframes drawMarker {
-          0% {
-            stroke-dashoffset: 110;
-            opacity: 0;
+      
+      {/* CSS for additional animations */}
+      <style jsx>{`
+        @keyframes subtleFloat {
+          0%, 100% {
+            transform: translateY(0);
           }
-          20% {
-            opacity: 1;
-          }
-          100% {
-            stroke-dashoffset: 0;
-            opacity: 1;
+          50% {
+            transform: translateY(-5px);
           }
         }
         
-        .marker-path {
-          stroke-dasharray: 110;
-          stroke-dashoffset: 110;
-          opacity: 0;
-        }
-        
-        .animate-draw {
-          animation: drawMarker 1.2s ease-in-out forwards;
-        }
-        
-        .bg-grid-slate-100 {
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239fa6b2' fill-opacity='0.1'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        }
-        
-        /* Animação do carrossel de depoimentos */
-        @keyframes testimonial-scroll {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-100%);
-          }
-        }
-        
-        .testimonial-carousel-container {
-          width: 100%;
-          overflow: hidden;
-        }
-        
-        .testimonial-track {
-          width: max-content;
-          animation: testimonial-scroll 35s linear infinite;
-        }
-        
-        .testimonial-track:hover {
-          animation-play-state: paused;
-        }
-        
-        /* Melhorando animação em telas menores */
-        @media (max-width: 768px) {
-          .testimonial-track {
-            animation-duration: 25s;
-          }
+        .subtle-float {
+          animation: subtleFloat 5s ease-in-out infinite;
         }
       `}</style>
     </section>

@@ -178,7 +178,7 @@ export default function Navbar() {
   const emprestimoOptions = [
     {
       name: "Empréstimo na Conta de Luz",
-      href: "/emprestimo-conta-luz",
+      href: "/emprestimo-na-conta-de-luz",
       description: "Até R$ 3.300 sem consulta ao SPC/Serasa",
       icon: <Lightbulb size={18} className="text-amber-500" />,
       isPopular: true,
@@ -240,7 +240,7 @@ export default function Navbar() {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <NavLink href="/sobre" icon={<Info size={16} />}>
+                <NavLink href="/sobre-nos" icon={<Info size={16} />}>
                   Sobre
                 </NavLink>
               </NavigationMenuItem>

@@ -213,20 +213,11 @@ const Footer: React.FC = () => {
               Certificações
             </h3>
             <div className="flex flex-wrap gap-4 mb-6">
-              <div className="bg-white/10 p-2 rounded">
+              <div className="bg-slate-800/10 p-2 rounded">
                 <Image
-                  src="/ssl-secure.svg" // Adicione este ícone aos seus ativos
-                  alt="SSL Secure"
-                  width={60}
-                  height={30}
-                  className="object-contain"
-                />
-              </div>
-              <div className="bg-white/10 p-2 rounded">
-                <Image
-                  src="/pci-compliant.svg" // Adicione este ícone aos seus ativos
-                  alt="PCI Compliant"
-                  width={60}
+                  src="/images/reclame-aqui.svg" // Adicione este ícone aos seus ativos
+                  alt="Verificação Reclame Aqui"
+                  width={70}
                   height={30}
                   className="object-contain"
                 />
