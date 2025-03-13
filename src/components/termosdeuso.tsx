@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Shield, Check, AlertCircle, Mail, Building, BookOpen } from 'lucide-react';
+import { FileText, Mail, BookOpen } from 'lucide-react';
 
 // Componente para títulos de seção
 const SectionTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => {

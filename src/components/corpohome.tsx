@@ -27,11 +27,7 @@ import {
 import {
   CheckCircle2,
   Zap,
-  ThumbsUp,
-  Lightbulb,
   ArrowRight,
-  CreditCard,
-  FileCheck,
   MapPin,
   AlertCircle,
   Clock,
@@ -40,23 +36,19 @@ import {
   CheckCircle,
   Star,
   UserCheck,
-  Wallet,
   Lock,
   MessageCircle,
   ThumbsUpIcon,
   Facebook,
   Instagram,
-  Calendar,
   Shield,
   Building,
   Briefcase,
   Calculator,
-  Percent,
   Smartphone,
   CreditCardIcon,
   Award,
   Clock3,
-  Home,
   DollarSign,
   Bolt,
 } from "lucide-react";
@@ -975,12 +967,18 @@ export default function CorpoHome() {
     if (faqCategory === "Todos") {
       return FAQ_ITEMS;
     } else {
-      const categoryMap = {
+      const categoryMap: Record<string, string> = {
         "Sobre a Credios": "empresa",
         "Conta de Luz": "conta-luz",
         "FGTS": "fgts"
       };
-      return FAQ_ITEMS.filter(item => item.category === categoryMap[faqCategory]);
+      
+      // Verifica se a categoria existe no mapa
+      if (faqCategory in categoryMap) {
+        return FAQ_ITEMS.filter(item => item.category === categoryMap[faqCategory as keyof typeof categoryMap]);
+      }
+      
+      return FAQ_ITEMS;
     }
   }, [faqCategory]);
   return (
