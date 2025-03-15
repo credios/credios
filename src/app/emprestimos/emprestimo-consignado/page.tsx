@@ -541,7 +541,7 @@ const ContactForm = () => {
           <input type="hidden" name="_subject" value="Nova solicitação de Empréstimo Consignado" />
           <input type="hidden" name="_captcha" value="false" />
           <input type="hidden" name="_template" value="table" />
-          <input type="hidden" name="_next" value={window.location.href} />
+          {typeof window !== 'undefined' && <input type="hidden" name="_next" value={window.location.href} />}
           
           <div className="space-y-6">
             <div className={`transition-all duration-300 ${activeField === 'fullName' ? 'transform -translate-y-1' : ''}`}>
@@ -727,20 +727,24 @@ const HeroSection = () => {
   
   // Update mouse position when mouse moves
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      mouseX.set(e.clientX - window.innerWidth / 2);
-      mouseY.set(e.clientY - window.innerHeight / 2);
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    if (typeof window !== 'undefined') { // Verificação de ambiente
+      const handleMouseMove = (e: MouseEvent) => {
+        mouseX.set(e.clientX - window.innerWidth / 2);
+        mouseY.set(e.clientY - window.innerHeight / 2);
+        setMousePosition({ x: e.clientX, y: e.clientY });
+      };
+      
+      window.addEventListener('mousemove', handleMouseMove);
+      return () => window.removeEventListener('mousemove', handleMouseMove);
+    }
   }, [mouseX, mouseY]);
   
   const scrollToForm = () => {
-    const formElement = document.getElementById('contato-form');
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: 'smooth' });
+    if (typeof window !== 'undefined') { // Verificação de ambiente
+      const formElement = document.getElementById('contato-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
   
@@ -1330,9 +1334,11 @@ const TestimonialCarousel = () => {
 // Comparativo de taxas
 const ComparisonSection = () => {
   const scrollToForm = () => {
-    const formElement = document.getElementById('contato-form');
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: 'smooth' });
+    if (typeof window !== 'undefined') { // Verificação de ambiente
+      const formElement = document.getElementById('contato-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
   
@@ -1529,9 +1535,11 @@ const AdvantageCard = ({
   const accentColor = colorMap[accentColorKey];
   
   const scrollToForm = () => {
-    const formElement = document.getElementById('contato-form');
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: 'smooth' });
+    if (typeof window !== 'undefined') { // Verificação de ambiente
+      const formElement = document.getElementById('contato-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
 
@@ -1620,9 +1628,11 @@ const EligibilityGroupsSection = () => {
   const isInView = useInView(categoryRef, { once: true, margin: "-50px" });
   
   const scrollToForm = () => {
-    const formElement = document.getElementById('contato-form');
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: 'smooth' });
+    if (typeof window !== 'undefined') { // Verificação de ambiente
+      const formElement = document.getElementById('contato-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
 
@@ -1826,9 +1836,11 @@ const EligibilityGroupsSection = () => {
 // Como funciona com design melhorado
 const HowItWorksSection = () => {
   const scrollToForm = () => {
-    const formElement = document.getElementById('contato-form');
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: 'smooth' });
+    if (typeof window !== 'undefined') { // Verificação de ambiente
+      const formElement = document.getElementById('contato-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
   
@@ -1942,9 +1954,11 @@ const HowItWorksSection = () => {
 // Seção de depoimentos
 const TestimonialsSection = () => {
   const scrollToForm = () => {
-    const formElement = document.getElementById('contato-form');
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: 'smooth' });
+    if (typeof window !== 'undefined') { // Verificação de ambiente
+      const formElement = document.getElementById('contato-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
   
@@ -2040,9 +2054,11 @@ const TestimonialsSection = () => {
 // FAQ com schema markup
 const FAQSection = () => {
   const scrollToForm = () => {
-    const formElement = document.getElementById('contato-form');
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: 'smooth' });
+    if (typeof window !== 'undefined') { // Verificação de ambiente
+      const formElement = document.getElementById('contato-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
   
@@ -2120,9 +2136,11 @@ const FAQSection = () => {
 // Outras opções de empréstimo
 const OtherOptionsSection = () => {
   const scrollToForm = () => {
-    const formElement = document.getElementById('contato-form');
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: 'smooth' });
+    if (typeof window !== 'undefined') { // Verificação de ambiente
+      const formElement = document.getElementById('contato-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
   
@@ -2218,9 +2236,11 @@ const FloatingWhatsAppButton = () => {
   const [isHovered, setIsHovered] = useState(false);
   
   const scrollToForm = () => {
-    const formElement = document.getElementById('contato-form');
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: 'smooth' });
+    if (typeof window !== 'undefined') { // Verificação de ambiente
+      const formElement = document.getElementById('contato-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
   
@@ -2282,9 +2302,11 @@ const FloatingWhatsAppButton = () => {
 // CTA Final aprimorado
 const FinalCTA = () => {
   const scrollToForm = () => {
-    const formElement = document.getElementById('contato-form');
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: 'smooth' });
+    if (typeof window !== 'undefined') { // Verificação de ambiente
+      const formElement = document.getElementById('contato-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
   
@@ -2436,15 +2458,17 @@ const TESTIMONIALS: TestimonialItem[] = [
 // Componente Principal
 export default function EmprestimoConsignado() {
   const scrollToForm = () => {
-    const formElement = document.getElementById('contato-form');
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: 'smooth' });
+    if (typeof window !== 'undefined') { // Verificação de ambiente
+      const formElement = document.getElementById('contato-form');
+      if (formElement) {
+        formElement.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
   
   useEffect(() => {
     // Verifica se há um hash #contato na URL e rola para o formulário
-    if (window.location.hash === '#contato') {
+    if (typeof window !== 'undefined' && window.location.hash === '#contato') {
       scrollToForm();
     }
   }, []);
