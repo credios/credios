@@ -31,6 +31,12 @@ interface FormData {
   saldoFgts: string;
 }
 
+// Interface para resposta do FormSubmit
+interface FormSubmitResponse {
+  success: boolean;
+  message?: string;
+}
+
 const HeroFgts: React.FC = () => {
   // Estado para o overlay de carregamento
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -48,6 +54,9 @@ const HeroFgts: React.FC = () => {
   // Estado para o resultado da simulação
   const [mostrarResultado, setMostrarResultado] = useState<boolean>(false);
   const [valorAprovado, setValorAprovado] = useState<string>("R$ 0,00");
+  
+  // Estado para mensagens de erro
+  const [erroEnvio, setErroEnvio] = useState<string>("");
 
   // Função para validar o formulário
   const validarFormulario = (): boolean => {
@@ -151,22 +160,94 @@ const HeroFgts: React.FC = () => {
     return Math.round(valorAntecipavel); // Arredonda para um número inteiro
   };
 
+  // Função para enviar dados para FormSubmit
+  const enviarDadosFormulario = async (valorCalculado: number) => {
+    try {
+      // Preparar dados do formulário para envio
+      const formSubmitData = {
+        nome: formData.nome,
+        telefone: formData.telefone,
+        saldoFgts: formData.saldoFgts,
+        valorAprovado: `R$ ${valorCalculado.toLocaleString("pt-BR")},00`,
+        dataHora: new Date().toLocaleString('pt-BR'),
+        tipoFormulario: 'Antecipação FGTS',
+        _subject: "Nova simulação de empréstimo FGTS - Credios",
+        _captcha: "false",
+        _template: "table",
+        _replyto: "noreply@credios.com.br",
+      };
+
+      // Enviar dados para FormSubmit
+      const response = await fetch("https://formsubmit.co/ajax/simulador@credios.com.br", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(formSubmitData)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro no envio: ${response.status}`);
+      }
+
+      const result: FormSubmitResponse = await response.json();
+      
+      if (result.success) {
+        return true;
+      } else {
+        throw new Error('Falha no envio do formulário.');
+      }
+    } catch (error) {
+      console.error('Erro ao enviar formulário:', error);
+      setErroEnvio('Ocorreu um erro no envio, mas sua simulação foi realizada com sucesso.');
+      
+      // Tentar novamente uma vez em caso de falha
+      try {
+        const formSubmitData = {
+          nome: formData.nome,
+          telefone: formData.telefone,
+          saldoFgts: formData.saldoFgts,
+          valorAprovado: `R$ ${valorCalculado.toLocaleString("pt-BR")},00`,
+          dataHora: new Date().toLocaleString('pt-BR'),
+          tipoFormulario: 'Antecipação FGTS (segunda tentativa)',
+          _subject: "Nova simulação de empréstimo FGTS - Credios",
+          _captcha: "false",
+          _template: "table",
+        };
+        
+        await fetch("https://formsubmit.co/ajax/simulador@credios.com.br", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(formSubmitData)
+        });
+      } catch (e) {
+        console.error('Falha na segunda tentativa de envio:', e);
+      }
+      
+      return true; // Continua mesmo com falha para não prejudicar UX
+    }
+  };
+
   // Função para simular o empréstimo
   const simularEmprestimo = () => {
     if (validarFormulario()) {
       setIsLoading(true);
       
-      // Simulação de chamada à API (em produção, isso seria uma chamada real)
-      setTimeout(() => {
-        setIsLoading(false);
-        
+      // Timeout para simular processamento e proporcionar uma melhor experiência de usuário
+      setTimeout(async () => {
         // Calcula valor antecipável com base no saldo informado
         const valorCalculado = calcularValorAntecipavel(formData.saldoFgts);
         
-        setValorAprovado(`R$ ${valorCalculado.toLocaleString("pt-BR")},00`);
+        // Enviar dados para FormSubmit e esperar resultado
+        await enviarDadosFormulario(valorCalculado);
         
-        // Mostra o resultado
+        setValorAprovado(`R$ ${valorCalculado.toLocaleString("pt-BR")},00`);
         setMostrarResultado(true);
+        setIsLoading(false);
       }, 2000);
     }
   };
@@ -470,6 +551,17 @@ const HeroFgts: React.FC = () => {
                           </div>
                         </motion.div>
                         
+                        {/* Mensagem de erro de envio, se houver */}
+                        {erroEnvio && (
+                          <motion.div 
+                            className="mb-6 px-4 py-3 bg-yellow-50 text-yellow-800 rounded-lg text-sm"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                          >
+                            {erroEnvio}
+                          </motion.div>
+                        )}
+                        
                         <motion.div
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -596,7 +688,8 @@ const HeroFgts: React.FC = () => {
                                 inputMode="tel"
                               />
                               <Phone className="h-5 w-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
-                            </div>{errors.telefone && (
+                            </div>
+                            {errors.telefone && (
                               <motion.p 
                                 className="text-sm text-red-600 flex items-center gap-1.5"
                                 initial={{ opacity: 0, x: -10 }}

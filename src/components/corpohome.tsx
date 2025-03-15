@@ -3,6 +3,8 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
+import Link from "next/link"
+
 
 // Componentes do shadcn/ui
 import {
@@ -27,6 +29,7 @@ import {
 import {
   CheckCircle2,
   Zap,
+  Wallet,
   ArrowRight,
   MapPin,
   AlertCircle,
@@ -128,7 +131,7 @@ const ADVANTAGES: AdvantageItem[] = [
     ],
     backgroundColor: "from-amber-50 to-yellow-50",
     accentColor: "amber",
-    image: "/images/atendimento-24h.png",
+    image: "/images/image001.jpg",
   },
   {
     icon: <Smartphone className="h-8 w-8 text-emerald-500" />,
@@ -183,7 +186,11 @@ const ADVANTAGES: AdvantageItem[] = [
 // Produtos principais
 const MAIN_PRODUCTS: ProductFeature[] = [
   {
-    icon: <Bolt className="h-10 w-10 text-yellow-500" />,
+    icon: (
+      <div className="relative inline-flex items-center justify-center w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm p-2">
+        <Bolt className="h-8 w-8 text-white" strokeWidth={2.5} />
+      </div>
+    ),
     title: "Empréstimo na Conta de Luz",
     description: "Crédito pessoal usando sua fatura de energia como garantia. Ideal para quem não possui conta em banco ou tem restrições de crédito.",
     highlight: "Nosso carro-chefe",
@@ -197,7 +204,11 @@ const MAIN_PRODUCTS: ProductFeature[] = [
     ]
   },
   {
-    icon: <Briefcase className="h-10 w-10 text-blue-500" />,
+    icon: (
+      <div className="relative inline-flex items-center justify-center w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm p-2">
+        <Wallet className="h-8 w-8 text-white" strokeWidth={2.5} />
+      </div>
+    ),
     title: "Antecipação do FGTS",
     description: "Receba hoje o valor de seus saques-aniversário futuros, com as melhores taxas do mercado e sem comprometer sua renda mensal.",
     highlight: "Taxas competitivas",
@@ -494,7 +505,7 @@ const MainHero = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl opacity-10 transform rotate-3"></div>
                 <div className="absolute inset-0 overflow-hidden rounded-2xl shadow-xl border border-blue-100">
                   <Image
-                    src="/api/placeholder/600/450"
+                    src="/images/image001.jpg"
                     alt="Pessoa usando celular para solicitar empréstimo pela Credios"
                     fill
                     className="object-cover"
@@ -1438,7 +1449,7 @@ export default function CorpoHome() {
                       <h5 className="font-semibold text-gray-800">Conta de Luz</h5>
                     </div>
                     <p className="text-gray-600 text-sm mb-3">Até R$ 3.300 usando sua fatura como garantia.</p>
-                    <a href="/simular-conta-luz" className="text-sm text-amber-600 hover:text-amber-700 font-medium flex items-center cursor-pointer">
+                    <a href="/emprestimo-na-conta-de-luz" className="text-sm text-amber-600 hover:text-amber-700 font-medium flex items-center cursor-pointer">
                       Simular agora
                       <ArrowRight className="ml-1 h-3.5 w-3.5" />
                     </a>
@@ -1450,7 +1461,7 @@ export default function CorpoHome() {
                       <h5 className="font-semibold text-gray-800">FGTS</h5>
                     </div>
                     <p className="text-gray-600 text-sm mb-3">Antecipe saques-aniversário até R$ 20.000.</p>
-                    <a href="/simular-fgts" className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center cursor-pointer">
+                    <a href="/emprestimo-fgts" className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center cursor-pointer">
                       Simular agora
                       <ArrowRight className="ml-1 h-3.5 w-3.5" />
                     </a>

@@ -133,7 +133,7 @@ const HomeHero: React.FC = () => {
               size="lg" 
               className="bg-orange-500 hover:bg-orange-600 text-white rounded-full h-14 px-8 font-medium text-base shadow-lg hover:shadow-xl transition-all duration-300 group border border-orange-400"
             >
-              <Link href="/emprestimo-conta-luz">
+              <Link href="/emprestimo-na-conta-de-luz">
                 <Zap className="mr-2 h-5 w-5 text-white" />
                 <span>Empréstimo na Conta de Luz</span>
                 <ArrowRight className="ml-2 h-5 w-5 opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-300" />

@@ -425,7 +425,7 @@ const MainHero = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl opacity-10 transform rotate-3"></div>
                 <div className="absolute inset-0 overflow-hidden rounded-2xl shadow-xl border border-blue-100">
                   <Image
-                    src="/api/placeholder/600/450"
+                    src="/images/image002.jpg"
                     alt="Pessoa sorrindo com celular após aprovação de antecipação FGTS"
                     fill
                     className="object-cover"
