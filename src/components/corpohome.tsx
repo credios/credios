@@ -3,7 +3,6 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
-import Link from "next/link"
 
 
 // Componentes do shadcn/ui
