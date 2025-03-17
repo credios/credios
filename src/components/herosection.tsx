@@ -868,7 +868,7 @@ const HeroSection: React.FC = () => {
                               className="bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 w-full text-white rounded-xl py-7 text-xl font-semibold shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30 border-0"
                               asChild
                             >
-                              <a href="https://credios.com.br/contratacao-emprestimo-conta-luz" className="flex items-center justify-center gap-2">
+                              <a href="https://simulador.credios.com.br/page/simulador/credito-pessoal/crefaz/678405c92b0581736705481?_gl=1*1vahffu*_gcl_au*MTExMzExODM0OS4xNzM2MDc0MDk2" className="flex items-center justify-center gap-2">
                                 <span>CONTRATAR AGORA</span>
                                 <motion.span
                                   animate={{ x: [0, 5, 0] }}

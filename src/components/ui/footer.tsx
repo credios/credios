@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 
 // Importando ícones de redes sociais do Lucide React
 import {
-  Facebook,
   Instagram,
   Linkedin,
   Youtube,
@@ -105,7 +104,7 @@ const Footer: React.FC = () => {
     { href: "/sobre-nos", label: "Sobre Nós" },
     { href: "/emprestimo-fgts", label: "Empréstimo FGTS" },
     { href: "/emprestimo-na-conta-de-luz", label: "Empréstimo na Conta de Luz" },
-    { href: "/emprestimo-por-cartao-de-credito", label: "Empréstimo por Cartão de Crédito" },
+    { href: "/emprestimos", label: "Todos os Empréstimos da Credios" },
     { href: "/contato", label: "Contato" },
     { href: "/blog", label: "Blog" },
     { href: "/simulador", label: "Simulador" },
@@ -113,11 +112,10 @@ const Footer: React.FC = () => {
 
   // Ícones de redes sociais
   const socialLinks: SocialLink[] = [
-    { href: "https://facebook.com/credios", icon: Facebook, label: "Facebook" },
-    { href: "https://instagram.com/credios", icon: Instagram, label: "Instagram" },
-    { href: "https://tiktok.com/@credios", icon: TikTokIcon, label: "TikTok" },
+    { href: "https://instagram.com/credios.oficial", icon: Instagram, label: "Instagram" },
+    { href: "https://tiktok.com/@credios.oficial", icon: TikTokIcon, label: "TikTok" },
     { href: "https://linkedin.com/company/credios", icon: Linkedin, label: "LinkedIn" },
-    { href: "https://youtube.com/c/credios", icon: Youtube, label: "YouTube" },
+    { href: "https://www.youtube.com/@credios.oficial", icon: Youtube, label: "YouTube" },
   ];
 
   // Textos legais
@@ -194,7 +192,7 @@ const Footer: React.FC = () => {
             <div className="space-y-2">
               <p className="flex items-center">
                 <span className="font-medium mr-2">WhatsApp:</span>
-                (21) 4042-2018
+                (21) 3030-0606
               </p>
               <p className="flex items-center">
                 <span className="font-medium mr-2">E-mail:</span>

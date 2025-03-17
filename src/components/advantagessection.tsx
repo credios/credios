@@ -148,7 +148,7 @@ const ADVANTAGES: AdvantageItem[] = [
       "Utilize sua conta de luz como garantia e obtenha crédito imediato, sem comprometer seu salário ou benefícios.",
     highlight: "EXCLUSIVO",
     ctaText: "Simular Agora",
-    ctaUrl: "/simulacao",
+    ctaUrl: "/simulador",
   },
   {
     icon: <BadgeCheck className="h-8 w-8 text-blue-500" />,
@@ -157,7 +157,7 @@ const ADVANTAGES: AdvantageItem[] = [
       "Sem análise de score ou consulta ao SPC/Serasa. A aprovação é baseada apenas na titularidade da conta de energia.",
     highlight: "SEM BUROCRACIA",
     ctaText: "Verificar Elegibilidade",
-    ctaUrl: "/elegibilidade",
+    ctaUrl: "/simulador",
   },
   {
     icon: <Zap className="h-8 w-8 text-orange-500" />,
@@ -175,7 +175,7 @@ const ADVANTAGES: AdvantageItem[] = [
       "As parcelas são incluídas diretamente na sua fatura de energia elétrica mensal, sem boletos adicionais para gerenciar.",
     highlight: "PRÁTICO",
     ctaText: "Ver Exemplos",
-    ctaUrl: "/exemplos",
+    ctaUrl: "/simulador",
   },
 ];
 
@@ -360,7 +360,7 @@ const WhatIsLoanSection = () => {
                     </div>
                   </div>
                   <div className="flex gap-3">
-                    <Link href="/simulacao">
+                    <Link href="/simulador">
                       <Button
                         className="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 h-auto cursor-pointer"
                         aria-label="Simular empréstimo na conta de luz"
@@ -591,7 +591,7 @@ const SectionHeading = ({
           
           {/* CTA após vantagens */}
           <div className="mt-10 text-center">
-            <Link href="/simulacao">
+            <Link href="/simulador">
               <Button 
                 className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full h-auto shadow-sm cursor-pointer"
                 aria-label="Simular empréstimo agora"
@@ -725,7 +725,7 @@ const HowItWorksSection = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            <Link href="/simulacao">
+            <Link href="/simulador">
               <Button 
                 className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-full text-lg font-medium shadow-sm h-auto cursor-pointer"
                 aria-label="Solicitar empréstimo na conta de luz agora"
@@ -1139,7 +1139,7 @@ const FinalCTA = () => (
         </div>
       </div>
       
-          <Link href="/simulacao">
+          <Link href="/simulador">
             <Button
               className="bg-white text-blue-600 hover:bg-yellow-50 rounded-full px-8 py-3 text-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 font-bold h-auto cursor-pointer"
               aria-label="Solicitar seu crédito agora"
@@ -1184,7 +1184,7 @@ const FloatingWhatsAppButton = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <Link 
-              href="/whatsapp" 
+              href="https://wa.me/552130300606" 
               className="flex items-center bg-green-500 text-white rounded-full p-3 shadow-lg border-2 border-white hover:bg-green-600 transition-colors cursor-pointer"
             >
               <WhatsAppIcon className="h-6 w-6" />

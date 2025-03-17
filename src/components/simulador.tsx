@@ -15,7 +15,7 @@ const produtos = [
     icon: LightbulbIcon,
     cor: 'from-orange-400 to-amber-500',
     textoCor: 'text-orange-600',
-    link: 'https://www.crefaz.com.br/emprestimos/emprestimo-online',
+    link: 'https://simulador.credios.com.br/page/simulador/credito-pessoal/crefaz/678405c92b0581736705481?_gl=1*a6zqgz*_gcl_au*MTExMzExODM0OS4xNzM2MDc0MDk2',
     destacado: true
   },
   {
@@ -25,7 +25,7 @@ const produtos = [
     icon: Wallet,
     cor: 'from-blue-400 to-sky-500',
     textoCor: 'text-blue-600',
-    link: 'https://www.credios.com.br/simulador-fgts',
+    link: 'https://simulador.credios.com.br/page/fgts/simulation/stage-1?_gl=1*t85msk*_gcl_au*MTExMzExODM0OS4xNzM2MDc0MDk2',
     destacado: false
   }
 ];

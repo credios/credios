@@ -105,7 +105,7 @@ const ADVANTAGES: AdvantageItem[] = [
       "Resultado em segundos e dinheiro no mesmo dia. Sem esperas ou burocracia, tudo via celular.",
     highlight: "30 segundos",
     action: "Simular agora",
-    actionUrl: "/simular-fgts",
+    actionUrl: "/simulador",
     stats: [
       { value: "30s", label: "Aprovação" },
       { value: "100%", label: "Digital" },
@@ -121,7 +121,7 @@ const ADVANTAGES: AdvantageItem[] = [
       "Compare as taxas de diversos bancos de uma vez e escolha a melhor oferta para você.",
     highlight: "Taxa reduzida",
     action: "Ver condições",
-    actionUrl: "/condicoes-fgts",
+    actionUrl: "/simulador",
     stats: [
       { value: "1,49%", label: "Taxa a partir de" },
       { value: "10×", label: "Máximo de parcelas" },
@@ -137,7 +137,7 @@ const ADVANTAGES: AdvantageItem[] = [
       "Utilize até 10 saques-aniversário futuros do seu FGTS, maximizando o valor disponível para você.",
     highlight: "Valor máximo",
     action: "Verificar elegibilidade",
-    actionUrl: "/elegibilidade-fgts",
+    actionUrl: "/simulador",
     stats: [
       { value: "10×", label: "Saques antecipados" },
       { value: "R$ 20 mil", label: "Valor máximo" },
@@ -153,7 +153,7 @@ const ADVANTAGES: AdvantageItem[] = [
       "As parcelas são descontadas diretamente do seu FGTS, sem afetar seu orçamento mensal ou cartão de crédito.",
     highlight: "Sem afetar salário",
     action: "Conhecer o processo",
-    actionUrl: "/processo-fgts",
+    actionUrl: "/simulador",
     stats: [
       { value: "0%", label: "Impacto salarial" },
       { value: "Futuro", label: "Usa FGTS" },
@@ -1044,7 +1044,7 @@ export default function CrediosFgtsPage() {
                   <div className="flex items-start gap-3 pt-3 border-t border-slate-200">
                     <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
                     <p className="text-sm text-gray-600">
-                      A <span className="font-bold text-gray-700">Credios</span> compara as taxas dos principais bancos e financeiras do mercado para você escolher a melhor opção. <a href="/simulacao-fgts" className="text-blue-600 hover:text-blue-800 font-medium transition-colors cursor-pointer">Faça sua simulação e veja todas as ofertas →</a>
+                      A <span className="font-bold text-gray-700">Credios</span> compara as taxas dos principais bancos e financeiras do mercado para você escolher a melhor opção. <a href="/simulador" className="text-blue-600 hover:text-blue-800 font-medium transition-colors cursor-pointer">Faça sua simulação e veja todas as ofertas →</a>
                     </p>
                   </div>
                 </div>
@@ -1177,7 +1177,7 @@ export default function CrediosFgtsPage() {
                 </p>
                 
                 <div className="mt-auto">
-                  <a href="/simular-fgts" className="block cursor-pointer">
+                  <a href="/simulador" className="block cursor-pointer">
                     <Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white text-lg py-6 rounded-xl shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 cursor-pointer">
                       Simular antecipação do FGTS
                       <ArrowRight className="ml-2 h-5 w-5" />
@@ -1213,7 +1213,7 @@ export default function CrediosFgtsPage() {
                   Dúvidas sobre a antecipação do seu FGTS? Nossa equipe está pronta para ajudar.
                 </p>
                 
-                <a href="https://wa.me/5511999999999" className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer">
+                <a href="https://wa.me/552130300606" className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-xl shadow-md hover:shadow-lg transition-all cursor-pointer">
                   <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className=""><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
                   Falar com consultor
                 </a>
@@ -1318,23 +1318,6 @@ export default function CrediosFgtsPage() {
             <AlertCircle className="inline-block h-3.5 w-3.5 mr-1.5 mb-0.5" />
             Sujeito a análise e aprovação. Necessário estar com a modalidade saque-aniversário ativada.
           </motion.p>
-        </div>
-      </div>
-      
-      {/* Marcas de confiança */}
-      <div className="py-10 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-6">
-            <p className="text-sm text-gray-500 uppercase tracking-wider font-medium">Bancos parceiros</p>
-          </div>
-          
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16">
-            <div className="w-24 h-12 bg-gray-200 rounded opacity-70 hover:opacity-100 transition-opacity"></div>
-            <div className="w-24 h-12 bg-gray-200 rounded opacity-70 hover:opacity-100 transition-opacity"></div>
-            <div className="w-24 h-12 bg-gray-200 rounded opacity-70 hover:opacity-100 transition-opacity"></div>
-            <div className="w-24 h-12 bg-gray-200 rounded opacity-70 hover:opacity-100 transition-opacity"></div>
-            <div className="w-24 h-12 bg-gray-200 rounded opacity-70 hover:opacity-100 transition-opacity"></div>
-          </div>
         </div>
       </div>
       

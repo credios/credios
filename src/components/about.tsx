@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import { 
   Zap, 
   ShieldCheck, 
@@ -40,17 +41,17 @@ const Section: React.FC<{
       initial={{ y: 30, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay, duration: 0.6 }}
-      className={`mb-16 ${className}`}
+      className={`mb-20 ${className}`}
     >
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center gap-4 mb-6">
         {icon && (
-          <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex-shrink-0">
+          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 flex-shrink-0">
             {icon}
           </div>
         )}
         <div>
-          <GradientTitle className="text-2xl md:text-3xl mb-1">{title}</GradientTitle>
-          {subtitle && <p className="text-slate-600">{subtitle}</p>}
+          <GradientTitle className="text-3xl md:text-4xl mb-2">{title}</GradientTitle>
+          {subtitle && <p className="text-slate-600 text-lg">{subtitle}</p>}
         </div>
       </div>
       {children}
@@ -70,15 +71,15 @@ const ValueCard: React.FC<{
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay, duration: 0.5 }}
-      className="bg-white rounded-xl p-6 shadow-md border border-slate-100 flex flex-col"
+      className="bg-white rounded-xl p-8 shadow-md border border-slate-100 flex flex-col"
     >
-      <div className="flex items-center mb-3">
-        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-100 text-blue-600 mr-3">
+      <div className="flex items-center mb-4">
+        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 mr-4">
           {icon}
         </div>
-        <h3 className="font-bold text-xl text-slate-800">{title}</h3>
+        <h3 className="font-bold text-2xl text-slate-800">{title}</h3>
       </div>
-      <p className="text-slate-600">{description}</p>
+      <p className="text-slate-600 text-lg">{description}</p>
     </motion.div>
   );
 };
@@ -91,33 +92,36 @@ const ProductCard: React.FC<{
   icon: React.ReactNode;
   action: string;
   delay: number;
-}> = ({ title, description, features, icon, action, delay }) => {
+  href: string;
+}> = ({ title, description, features, icon, action, delay, href }) => {
   return (
     <motion.div
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay, duration: 0.5 }}
       whileHover={{ y: -5 }}
-      className="bg-white rounded-xl p-6 shadow-md border border-slate-100 h-full"
+      className="bg-white rounded-xl p-8 shadow-md border border-slate-100 h-full"
     >
-      <div className="flex items-center mb-3">
-        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 mr-3">
+      <div className="flex items-center mb-4">
+        <div className="flex items-center justify-center w-14 h-14 rounded-full bg-blue-100 text-blue-600 mr-4">
           {icon}
         </div>
-        <h3 className="font-bold text-xl text-slate-800">{title}</h3>
+        <h3 className="font-bold text-2xl text-slate-800">{title}</h3>
       </div>
-      <p className="text-slate-600 mb-4">{description}</p>
-      <ul className="space-y-2 mb-6">
+      <p className="text-slate-600 mb-6 text-lg">{description}</p>
+      <ul className="space-y-3 mb-8">
         {features.map((feature, index) => (
           <li key={index} className="flex items-start">
-            <CheckCircle className="w-5 h-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-            <span className="text-slate-700">{feature}</span>
+            <CheckCircle className="w-6 h-6 text-green-500 mr-3 mt-0.5 flex-shrink-0" />
+            <span className="text-slate-700 text-lg">{feature}</span>
           </li>
         ))}
       </ul>
-      <Button className="cursor-pointer w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg">
-        {action}
-      </Button>
+      <Link href={href}>
+        <Button className="cursor-pointer w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg text-lg">
+          {action}
+        </Button>
+      </Link>
     </motion.div>
   );
 };
@@ -134,19 +138,19 @@ const TimelineItem: React.FC<{
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ delay, duration: 0.5 }}
-      className="relative pl-10 pb-10 border-l-2 border-blue-200 last:border-transparent last:pb-0"
+      className="relative pl-12 pb-12 border-l-2 border-blue-200 last:border-transparent last:pb-0"
     >
-      <div className="absolute left-[-8px] top-0 w-4 h-4 rounded-full bg-blue-500"></div>
-      <div className="font-bold text-blue-600 text-lg">{year}</div>
-      <h3 className="font-bold text-slate-800 text-xl mb-2">{title}</h3>
-      <p className="text-slate-600">{description}</p>
+      <div className="absolute left-[-10px] top-0 w-5 h-5 rounded-full bg-blue-500"></div>
+      <div className="font-bold text-blue-600 text-xl">{year}</div>
+      <h3 className="font-bold text-slate-800 text-2xl mb-3">{title}</h3>
+      <p className="text-slate-600 text-lg">{description}</p>
     </motion.div>
   );
 };
 
 const SobreCredios: React.FC = () => {
   return (
-    <section className="relative w-full overflow-hidden bg-gradient-to-b from-slate-50 via-blue-50/30 to-blue-50/50 py-16 md:py-24">
+    <section className="relative w-full overflow-hidden bg-gradient-to-b from-slate-50 via-blue-50/30 to-blue-50/50 py-20 md:py-32">
       {/* Background elements */}
       <div className="absolute inset-0 bg-blue-grid [mask-image:linear-gradient(to_bottom,transparent,black,transparent)] opacity-20"></div>
       
@@ -178,23 +182,23 @@ const SobreCredios: React.FC = () => {
         className="absolute -bottom-24 -left-24 w-64 h-64 md:w-96 md:h-96 rounded-full bg-gradient-to-tr from-blue-200/20 to-indigo-200/20 blur-3xl"
       ></motion.div>
       
-      <div className="container relative z-10 mx-auto px-4">
+      <div className="container relative z-10 mx-auto px-4 md:px-6">
         {/* Cabeçalho da página */}
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
-          className="max-w-4xl mx-auto text-center mb-16"
+          className="max-w-4xl mx-auto text-center mb-20"
         >
           {/* Badge */}
           <motion.div 
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="mb-4"
+            className="mb-6"
           >
-            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-medium text-sm border border-blue-200/50 shadow-sm">
-              <Building className="w-4 h-4 mr-2" />
+            <span className="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 font-medium text-base border border-blue-200/50 shadow-sm">
+              <Building className="w-5 h-5 mr-2" />
               Sobre a Credios
             </span>
           </motion.div>
@@ -204,7 +208,7 @@ const SobreCredios: React.FC = () => {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-slate-800 leading-tight mb-4"
+            className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-slate-800 leading-tight mb-6"
           >
             Democratizando o acesso ao crédito no Brasil
           </motion.h1>
@@ -213,7 +217,7 @@ const SobreCredios: React.FC = () => {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.6 }}
-            className="text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed"
+            className="text-xl md:text-2xl text-slate-600 max-w-3xl mx-auto leading-relaxed"
           >
             A Credios nasceu para transformar a forma como os brasileiros acessam crédito, 
             oferecendo soluções financeiras inovadoras, transparentes e inclusivas.
@@ -223,23 +227,23 @@ const SobreCredios: React.FC = () => {
         {/* Quem somos */}
         <Section 
           title="Quem Somos" 
-          icon={<Building className="w-5 h-5" />}
+          icon={<Building className="w-6 h-6" />}
           delay={0.7}
         >
-          <div className="bg-white rounded-xl p-6 md:p-8 shadow-md border border-slate-100">
+          <div className="bg-white rounded-xl p-8 md:p-10 shadow-md border border-slate-100">
             <div className="max-w-3xl">
-              <p className="text-slate-700 mb-4">
+              <p className="text-slate-700 mb-6 text-lg">
                 A Credios é uma plataforma de crédito digital focada em empréstimos pessoais que 
                 atua como correspondente bancário, comercializando produtos de instituições 
                 financeiras consolidadas no mercado brasileiro.
               </p>
-              <p className="text-slate-700 mb-4">
+              <p className="text-slate-700 mb-6 text-lg">
                 Fundada com a missão de simplificar o acesso ao crédito, especialmente para 
                 brasileiros de classe C, D e E, a Credios utiliza tecnologia avançada para 
                 oferecer um processo totalmente digital, rápido e sem burocracia - disponível 
                 24 horas por dia, 7 dias por semana.
               </p>
-              <p className="text-slate-700">
+              <p className="text-slate-700 text-lg">
                 Nossa plataforma permite que o cliente faça toda a contratação de forma 
                 rápida e segura diretamente pelo celular, recebendo seu crédito em poucas horas. 
                 Acreditamos que o acesso a soluções financeiras justas e transparentes é um 
@@ -252,26 +256,26 @@ const SobreCredios: React.FC = () => {
         {/* Missão, Visão e Valores */}
         <Section 
           title="Nossa Missão, Visão e Valores" 
-          icon={<Award className="w-5 h-5" />}
+          icon={<Award className="w-6 h-6" />}
           delay={0.9}
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <ValueCard 
               title="Missão" 
               description="Democratizar o acesso ao crédito no Brasil, proporcionando soluções financeiras acessíveis e inclusivas, mesmo para quem enfrenta restrições no sistema financeiro tradicional."
-              icon={<LightbulbIcon className="w-5 h-5" />}
+              icon={<LightbulbIcon className="w-6 h-6" />}
               delay={1.0}
             />
             <ValueCard 
               title="Visão" 
               description="Ser reconhecida como a principal plataforma digital de crédito inclusivo do Brasil, transformando positivamente a vida financeira de milhões de brasileiros."
-              icon={<BarChart className="w-5 h-5" />}
+              icon={<BarChart className="w-6 h-6" />}
               delay={1.1}
             />
             <ValueCard 
               title="Valores" 
               description="Transparência, acessibilidade, inovação, simplicidade e foco no cliente são os princípios que guiam todas as nossas decisões e ações."
-              icon={<Heart className="w-5 h-5" />}
+              icon={<Heart className="w-6 h-6" />}
               delay={1.2}
             />
           </div>
@@ -281,7 +285,7 @@ const SobreCredios: React.FC = () => {
         <Section 
           title="Nossos Produtos" 
           subtitle="Soluções financeiras acessíveis para todos os brasileiros"
-          icon={<ShieldCheck className="w-5 h-5" />}
+          icon={<ShieldCheck className="w-6 h-6" />}
           delay={1.3}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -295,9 +299,10 @@ const SobreCredios: React.FC = () => {
                 "Contratação 100% digital",
                 "Aprovação rápida sem burocracia"
               ]}
-              icon={<Zap className="w-6 h-6" />}
+              icon={<Zap className="w-7 h-7" />}
               action="Saiba mais sobre o Empréstimo na Conta de Luz"
               delay={1.4}
+              href="/emprestimo-na-conta-de-luz"
             />
             <ProductCard 
               title="Empréstimo FGTS" 
@@ -309,9 +314,10 @@ const SobreCredios: React.FC = () => {
                 "Contratação 100% digital",
                 "Parcelas descontadas do FGTS"
               ]}
-              icon={<Calendar className="w-6 h-6" />}
+              icon={<Calendar className="w-7 h-7" />}
               action="Saiba mais sobre o Empréstimo FGTS"
               delay={1.5}
+              href="/emprestimo-fgts"
             />
           </div>
         </Section>
@@ -319,21 +325,21 @@ const SobreCredios: React.FC = () => {
         {/* Diferenciais */}
         <Section 
           title="Nossos Diferenciais" 
-          icon={<Award className="w-5 h-5" />}
+          icon={<Award className="w-6 h-6" />}
           delay={1.6}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <motion.div 
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 1.7, duration: 0.5 }}
-              className="bg-white rounded-xl p-6 shadow-md border border-slate-100"
+              className="bg-white rounded-xl p-8 shadow-md border border-slate-100"
             >
-              <h3 className="font-bold text-xl text-slate-800 mb-3 flex items-center">
-                <Smartphone className="w-5 h-5 text-blue-600 mr-2" />
+              <h3 className="font-bold text-2xl text-slate-800 mb-4 flex items-center">
+                <Smartphone className="w-6 h-6 text-blue-600 mr-3" />
                 100% Digital
               </h3>
-              <p className="text-slate-600">
+              <p className="text-slate-600 text-lg">
                 Todo o processo de solicitação, análise e contratação é realizado digitalmente, 
                 sem necessidade de deslocamento ou impressão de documentos. Basta ter um 
                 smartphone para acessar nossos serviços a qualquer hora do dia ou da noite.
@@ -344,13 +350,13 @@ const SobreCredios: React.FC = () => {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 1.8, duration: 0.5 }}
-              className="bg-white rounded-xl p-6 shadow-md border border-slate-100"
+              className="bg-white rounded-xl p-8 shadow-md border border-slate-100"
             >
-              <h3 className="font-bold text-xl text-slate-800 mb-3 flex items-center">
-                <Clock className="w-5 h-5 text-blue-600 mr-2" />
+              <h3 className="font-bold text-2xl text-slate-800 mb-4 flex items-center">
+                <Clock className="w-6 h-6 text-blue-600 mr-3" />
                 Rapidez e Simplicidade
               </h3>
-              <p className="text-slate-600">
+              <p className="text-slate-600 text-lg">
                 Processos simplificados e análise automatizada que permitem aprovação em 
                 minutos e liberação do crédito em até 24 horas. Acreditamos que burocracia 
                 excessiva não deveria ser um obstáculo para quem precisa de crédito.
@@ -361,13 +367,13 @@ const SobreCredios: React.FC = () => {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 1.9, duration: 0.5 }}
-              className="bg-white rounded-xl p-6 shadow-md border border-slate-100"
+              className="bg-white rounded-xl p-8 shadow-md border border-slate-100"
             >
-              <h3 className="font-bold text-xl text-slate-800 mb-3 flex items-center">
-                <ShieldCheck className="w-5 h-5 text-blue-600 mr-2" />
+              <h3 className="font-bold text-2xl text-slate-800 mb-4 flex items-center">
+                <ShieldCheck className="w-6 h-6 text-blue-600 mr-3" />
                 Crédito Inclusivo
               </h3>
-              <p className="text-slate-600">
+              <p className="text-slate-600 text-lg">
                 Desenvolvemos produtos que possibilitam acesso ao crédito mesmo para pessoas 
                 que enfrentam restrições no sistema financeiro tradicional, como negativados 
                 ou pessoas sem comprovação de renda formal.
@@ -378,13 +384,13 @@ const SobreCredios: React.FC = () => {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 2.0, duration: 0.5 }}
-              className="bg-white rounded-xl p-6 shadow-md border border-slate-100"
+              className="bg-white rounded-xl p-8 shadow-md border border-slate-100"
             >
-              <h3 className="font-bold text-xl text-slate-800 mb-3 flex items-center">
-                <Handshake className="w-5 h-5 text-blue-600 mr-2" />
+              <h3 className="font-bold text-2xl text-slate-800 mb-4 flex items-center">
+                <Handshake className="w-6 h-6 text-blue-600 mr-3" />
                 Parceria com Instituições Sólidas
               </h3>
-              <p className="text-slate-600">
+              <p className="text-slate-600 text-lg">
                 Trabalhamos em parceria com instituições financeiras consolidadas no mercado, 
                 garantindo a segurança e conformidade de todas as nossas operações, sempre 
                 de acordo com as regulamentações do Banco Central do Brasil.
@@ -397,11 +403,11 @@ const SobreCredios: React.FC = () => {
         <Section 
           title="Nossa Trajetória" 
           subtitle="Conheça os marcos importantes da história da Credios"
-          icon={<Clock className="w-5 h-5" />}
+          icon={<Clock className="w-6 h-6" />}
           delay={2.1}
         >
-          <div className="bg-white rounded-xl p-6 md:p-8 shadow-md border border-slate-100">
-            <div className="max-w-3xl ml-4">
+          <div className="bg-white rounded-xl p-8 md:p-10 shadow-md border border-slate-100">
+            <div className="max-w-3xl ml-6">
               <TimelineItem 
                 year="2020" 
                 title="Fundação da Credios" 
@@ -441,24 +447,28 @@ const SobreCredios: React.FC = () => {
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 2.7, duration: 0.6 }}
-          className="max-w-4xl mx-auto text-center bg-white rounded-xl p-8 shadow-lg border border-blue-100 mb-8"
+          className="max-w-4xl mx-auto text-center bg-white rounded-xl p-10 shadow-lg border border-blue-100 mb-12"
         >
-          <h2 className="text-2xl md:text-3xl font-bold text-slate-800 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-800 mb-6">
             Faça parte da transformação financeira
           </h2>
-          <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
             Conheça nossas soluções de crédito e descubra como a Credios pode ajudar você 
             a conquistar seus objetivos financeiros com simplicidade e segurança.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button className="cursor-pointer bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 h-12 font-medium rounded-xl shadow-md flex items-center justify-center">
-              <Zap className="mr-2 h-5 w-5" />
-              <span>Empréstimo na Conta de Luz</span>
-            </Button>
-            <Button className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 h-12 font-medium rounded-xl shadow-md flex items-center justify-center">
-              <Calendar className="mr-2 h-5 w-5" />
-              <span>Empréstimo FGTS</span>
-            </Button>
+            <Link href="/emprestimo-na-conta-de-luz">
+              <Button className="cursor-pointer bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 h-12 font-medium rounded-xl shadow-md flex items-center justify-center text-lg">
+                <Zap className="mr-2 h-5 w-5" />
+                <span>Empréstimo na Conta de Luz</span>
+              </Button>
+            </Link>
+            <Link href="/emprestimo-fgts">
+              <Button className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 h-12 font-medium rounded-xl shadow-md flex items-center justify-center text-lg">
+                <Calendar className="mr-2 h-5 w-5" />
+                <span>Empréstimo FGTS</span>
+              </Button>
+            </Link>
           </div>
         </motion.div>
       </div>
@@ -470,15 +480,9 @@ const SobreCredios: React.FC = () => {
         }
         
         @keyframes float {
-          0% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-          100% {
-            transform: translateY(0px);
-          }
+          0% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+          100% { transform: translateY(0px); }
         }
         
         .animate-float {
@@ -486,12 +490,8 @@ const SobreCredios: React.FC = () => {
         }
         
         @keyframes pulse-glow {
-          0%, 100% {
-            box-shadow: 0 0 0 rgba(59, 130, 246, 0);
-          }
-          50% {
-            box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
-          }
+          0%, 100% { box-shadow: 0 0 0 rgba(59, 130, 246, 0); }
+          50% { box-shadow: 0 0 25px rgba(59, 130, 246, 0.4); }
         }
         
         .pulse-glow {
