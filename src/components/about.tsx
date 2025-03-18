@@ -230,7 +230,7 @@ const SobreCredios: React.FC = () => {
           icon={<Building className="w-5 h-5" />}
           delay={0.7}
         >
-          <div className="bg-white rounded-xl p-6 md:p-8 shadow-md border border-slate-100 max-w-3xl mx-auto">
+          <div className="bg-white rounded-xl p-6 md:p-8 shadow-md border border-slate-100 max-w-3xl mx-left">
             <p className="text-slate-700 mb-4">
               A Credios é uma plataforma de crédito digital focada em empréstimos pessoais que 
               atua como correspondente bancário, comercializando produtos de instituições 

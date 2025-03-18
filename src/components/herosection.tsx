@@ -446,7 +446,8 @@ const HeroSection: React.FC = () => {
     { 
       icon: <Shield className="h-5 w-5" />, 
       title: "Negativado?", 
-      text: "Aprovamos mesmo com nome no SPC/Serasa" 
+      text: "Aprovamos mesmo com nome no SPC/Serasa",
+      mobileText: "Não tem problema!"
     },
     { 
       icon: <Banknote className="h-5 w-5" />, 
@@ -691,6 +692,7 @@ const HeroSection: React.FC = () => {
                             </div>
                             <div>
                               <h3 className="font-medium text-sm text-white">{recurso.title}</h3>
+                              {i === 0 && <p className="text-xs text-blue-100">{recurso.mobileText}</p>}
                             </div>
                           </div>
                         </motion.div>

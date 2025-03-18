@@ -377,12 +377,15 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
               </div>
   
               <div className="flex flex-wrap gap-4">
+              <Link href="/simulador" passHref>
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white rounded-full px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
                 >
                   Simular Agora <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
+                </Link>
+                <Link href="https://wa.me/552130300606?text=Olá,%20gostaria%20de%20falar%20com%20um%20consultor" target="_blank" rel="noopener noreferrer">
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-full px-8 py-6 text-lg flex items-center gap-2 cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden group animate-pulse animate-duration-[3000ms]"
@@ -391,6 +394,7 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
                   <WhatsAppIcon className="h-5 w-5 text-white relative z-10" /> 
                   <span className="relative z-10">Falar com Consultor</span>
                 </Button>
+                </Link>
               </div>
             </motion.div>
   
@@ -589,12 +593,15 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
               solução financeira para o seu momento. Fale conosco e descubra todas as opções disponíveis.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
+              <Link href="/simulador" passHref>
               <Button
                 size="lg"
                 className="bg-white text-indigo-700 hover:bg-gray-100 rounded-full px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
               >
                 Ver Todas as Opções
               </Button>
+              </Link>
+              <Link href="https://wa.me/552130300606?text=Olá,%20gostaria%20de%20falar%20com%20um%20consultor" target="_blank" rel="noopener noreferrer">
               <Button
                 size="lg"
                 className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-full px-8 py-6 text-lg flex items-center gap-2 cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden group animate-pulse animate-duration-[3000ms]"
@@ -603,6 +610,7 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
                 <WhatsAppIcon className="h-5 w-5 text-white relative z-10" /> 
                 <span className="relative z-10">Falar com Consultor</span>
               </Button>
+              </Link>
             </div>
           </motion.div>
         </div>
