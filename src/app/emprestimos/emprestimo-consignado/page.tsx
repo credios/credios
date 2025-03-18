@@ -3,6 +3,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import Head from "next/head";
 import { motion, useInView, useTransform, AnimatePresence, useMotionValue } from "framer-motion";
+import { Metadata } from "next";
+import { JsonLd } from "@/components/SEO/JsonLd";
 
 // Componentes do shadcn/ui
 import {
@@ -2455,6 +2457,165 @@ const TESTIMONIALS: TestimonialItem[] = [
   }
 ];
 
+// Metadados para SEO
+export const metadata: Metadata = {
+  title: "Empréstimo Consignado | Menores Taxas do Mercado | Credios",
+  description: "Empréstimo consignado com as menores taxas do mercado! Ideal para servidores públicos, aposentados e pensionistas do INSS. Aprovação mesmo para negativados. Simule online em 2 minutos.",
+  keywords: "empréstimo consignado, consignado INSS, consignado servidor público, crédito consignado, empréstimo com desconto em folha, consignado aposentado, menor taxa consignado, empréstimo consignado online",
+  authors: [{ name: "Credios" }],
+  openGraph: {
+    title: "Empréstimo Consignado | Menores Taxas do Mercado | Credios",
+    description: "Empréstimo consignado com taxas a partir de 1,25% ao mês. Ideal para servidores públicos, aposentados e pensionistas. Simule agora!",
+    url: "https://credios.com.br/emprestimos/emprestimo-consignado",
+    siteName: "Credios - Soluções de Crédito Digital",
+    images: [
+      {
+        url: "https://credios.com.br/images/og-emprestimo-consignado.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Empréstimo Consignado Credios",
+      },
+    ],
+    locale: "pt_BR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Empréstimo Consignado | Credios",
+    description: "Empréstimo consignado com as menores taxas do mercado. Aprovação facilitada para servidores, aposentados e pensionistas.",
+    images: ["https://credios.com.br/images/og-emprestimo-consignado.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  alternates: {
+    canonical: "https://credios.com.br/emprestimos/emprestimo-consignado",
+  },
+  viewport: "width=device-width, initial-scale=1",
+};
+
+// Schema JSON-LD para produto financeiro
+const financialProductJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FinancialProduct",
+  "name": "Empréstimo Consignado Credios",
+  "description": "Empréstimo consignado com as menores taxas do mercado para servidores públicos, aposentados e pensionistas do INSS.",
+  "category": "Empréstimo Consignado",
+  "url": "https://credios.com.br/emprestimos/emprestimo-consignado",
+  "offers": {
+    "@type": "Offer",
+    "priceCurrency": "BRL",
+    "availability": "https://schema.org/InStock",
+    "priceValidUntil": "2024-12-31",
+    "seller": {
+      "@type": "Organization",
+      "name": "Credios"
+    }
+  },
+  "interestRate": {
+    "@type": "QuantitativeValue",
+    "value": "1.25",
+    "minValue": "1.25",
+    "maxValue": "1.45",
+    "unitText": "PERCENT"
+  },
+  "loanTerm": {
+    "@type": "QuantitativeValue",
+    "minValue": "12",
+    "maxValue": "84",
+    "unitCode": "MON"
+  },
+  "areaServed": "BR",
+  "provider": {
+    "@type": "Organization",
+    "name": "Credios",
+    "logo": "https://credios.com.br/logo.png",
+    "url": "https://credios.com.br"
+  }
+};
+
+// Schema JSON-LD para FAQ
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "O que é empréstimo consignado?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O empréstimo consignado é uma modalidade de crédito onde as parcelas são descontadas diretamente na folha de pagamento, aposentadoria ou pensão. Por oferecer mais segurança aos bancos, conta com as menores taxas do mercado, a partir de 1,25% ao mês."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Quem pode solicitar empréstimo consignado?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Podem solicitar: servidores públicos federais, estaduais e municipais; aposentados e pensionistas do INSS; militares das Forças Armadas; e funcionários de empresas privadas conveniadas."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Qual o prazo máximo do empréstimo consignado?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O prazo máximo é de até 84 meses (7 anos) para servidores federais e aposentados do INSS, podendo variar conforme o convênio ou órgão."
+      }
+    }
+  ]
+};
+
+// Schema JSON-LD para avaliações
+const reviewsJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AggregateRating",
+  "itemReviewed": {
+    "@type": "FinancialProduct",
+    "name": "Empréstimo Consignado Credios",
+    "description": "Empréstimo consignado com as menores taxas do mercado"
+  },
+  "ratingValue": "4.8",
+  "bestRating": "5",
+  "worstRating": "1",
+  "ratingCount": "50000",
+  "reviewCount": "42500"
+};
+
+// Schema JSON-LD para breadcrumbs
+const breadcrumbJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "https://credios.com.br"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Empréstimos",
+      "item": "https://credios.com.br/emprestimos"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Empréstimo Consignado",
+      "item": "https://credios.com.br/emprestimos/emprestimo-consignado"
+    }
+  ]
+};
+
 // Componente Principal
 export default function EmprestimoConsignado() {
   const scrollToForm = () => {
@@ -2474,65 +2635,74 @@ export default function EmprestimoConsignado() {
   }, []);
   
   return (
-    <section className="w-full overflow-hidden font-sans">
-      {/* Estilos Globais */}
-      <style jsx global>{globalStyles}</style>
+    <>
+      {/* JSON-LD para SEO */}
+      <JsonLd data={financialProductJsonLd} />
+      <JsonLd data={faqJsonLd} />
+      <JsonLd data={reviewsJsonLd} />
+      <JsonLd data={breadcrumbJsonLd} />
       
-      {/* SEO Metadata */}
-      <SEOHead />
-      
-      {/* Botão de WhatsApp Fixo */}
-      <FloatingWhatsAppButton />
-      
-      {/* Hero Section */}
-      <HeroSection />
-
-      {/* Vantagens do empréstimo consignado */}
-      <div className="py-20 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-white to-transparent"></div>
-        <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-blue-100 opacity-50 blur-3xl"></div>
-        <div className="absolute top-40 -right-20 w-80 h-80 rounded-full bg-indigo-100 opacity-50 blur-3xl"></div>
+      {/* Resto do seu componente atual */}
+      <section className="w-full overflow-hidden font-sans">
+        {/* Estilos Globais */}
+        <style jsx global>{globalStyles}</style>
         
-        <div className="max-w-7xl mx-auto px-4 relative z-10">
-          <SectionHeading
-            badge="Vantagens"
-            title="Por Que Escolher o Empréstimo Consignado?"
-            description="Conheça os diferenciais que fazem do consignado a melhor opção de crédito do mercado."
-          />
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8"
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-50px" }}
-          >
-            {ADVANTAGES.map((item, index) => (
-              <AdvantageCard key={index} item={item} index={index} />
-            ))}
-          </motion.div>
+        {/* SEO Metadata */}
+        <SEOHead />
+        
+        {/* Botão de WhatsApp Fixo */}
+        <FloatingWhatsAppButton />
+        
+        {/* Hero Section */}
+        <HeroSection />
+
+        {/* Vantagens do empréstimo consignado */}
+        <div className="py-20 bg-gradient-to-b from-white to-gray-50 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-white to-transparent"></div>
+          <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-blue-100 opacity-50 blur-3xl"></div>
+          <div className="absolute top-40 -right-20 w-80 h-80 rounded-full bg-indigo-100 opacity-50 blur-3xl"></div>
+          
+          <div className="max-w-7xl mx-auto px-4 relative z-10">
+            <SectionHeading
+              badge="Vantagens"
+              title="Por Que Escolher o Empréstimo Consignado?"
+              description="Conheça os diferenciais que fazem do consignado a melhor opção de crédito do mercado."
+            />
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8"
+              variants={staggerContainer}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-50px" }}
+            >
+              {ADVANTAGES.map((item, index) => (
+                <AdvantageCard key={index} item={item} index={index} />
+              ))}
+            </motion.div>
+          </div>
         </div>
-      </div>
 
-      {/* Comparativo de taxas */}
-      <ComparisonSection />
+        {/* Comparativo de taxas */}
+        <ComparisonSection />
 
-      {/* Grupos elegíveis para consignado */}
-      <EligibilityGroupsSection />
+        {/* Grupos elegíveis para consignado */}
+        <EligibilityGroupsSection />
 
-      {/* Como funciona */}
-      <HowItWorksSection />
+        {/* Como funciona */}
+        <HowItWorksSection />
 
-      {/* Depoimentos */}
-      <TestimonialsSection />
+        {/* Depoimentos */}
+        <TestimonialsSection />
 
-      {/* FAQ */}
-      <FAQSection />
-      
-      {/* Outras opções de empréstimo */}
-      <OtherOptionsSection />
+        {/* FAQ */}
+        <FAQSection />
+        
+        {/* Outras opções de empréstimo */}
+        <OtherOptionsSection />
 
-      {/* CTA Final */}
-      <FinalCTA />
-    </section>
+        {/* CTA Final */}
+        <FinalCTA />
+      </section>
+    </>
   );
 }

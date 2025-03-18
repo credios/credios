@@ -150,7 +150,7 @@ const VerifiedBadge = () => (
         "Dinheiro via Pix em até 5 minutos direto na sua conta. Sem burocracia, sem espera. O crédito que você precisa quando mais precisa!",
       highlight: "5 MIN",
       action: "Simular Agora",
-      actionUrl: "/simular-cartao",
+      actionUrl: "https://simulador.credios.com.br/page/credito-pessoal/simular?_gl=1*7nv8ne*_gcl_au*MTExMzExODM0OS4xNzM2MDc0MDk2",
       stats: [{ value: "5 MIN", label: "Liberação Express" }],
       backgroundColor: "from-blue-50 to-indigo-50",
       accentColor: "blue",
@@ -186,7 +186,7 @@ const VerifiedBadge = () => (
         "Escolha até 12x para pagar como preferir, adaptando o empréstimo à sua realidade financeira. Você no controle, sem comprometer seu orçamento.",
       highlight: "12x",
       action: "Calcular Parcelas",
-      actionUrl: "/simular-parcelas",
+      actionUrl: "https://simulador.credios.com.br/page/credito-pessoal/simular?_gl=1*7nv8ne*_gcl_au*MTExMzExODM0OS4xNzM2MDc0MDk2",
       stats: [{ value: "12x", label: "Parcelamento Máximo" }],
       backgroundColor: "from-teal-50 to-cyan-50",
       accentColor: "teal",
@@ -457,7 +457,7 @@ const VerifiedBadge = () => (
                 className="flex flex-wrap gap-4 mb-8"
                 variants={slideInLeft}
               >
-                <Link href="/simular-cartao">
+                <Link href="https://simulador.credios.com.br/page/credito-pessoal/simular?_gl=1*7nv8ne*_gcl_au*MTExMzExODM0OS4xNzM2MDc0MDk2">
                   <Button
                     size="lg"
                     className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-full px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 font-semibold flex items-center gap-2"
@@ -946,7 +946,7 @@ const VerifiedBadge = () => (
             transition={{ duration: 0.5, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            <Link href="/simular-cartao">
+            <Link href="https://simulador.credios.com.br/page/credito-pessoal/simular?_gl=1*7nv8ne*_gcl_au*MTExMzExODM0OS4xNzM2MDc0MDk2">
               <Button 
                 size="lg" 
                 className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-full px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
@@ -1114,7 +1114,7 @@ const VerifiedBadge = () => (
               </div>
             </div>
             
-            <Link href="/simular-cartao">
+            <Link href="https://simulador.credios.com.br/page/credito-pessoal/simular?_gl=1*7nv8ne*_gcl_au*MTExMzExODM0OS4xNzM2MDc0MDk2">
               <Button
                 size="lg"
                 className="bg-white text-orange-600 hover:bg-gray-100 rounded-full px-10 py-7 text-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 font-bold flex items-center gap-2"

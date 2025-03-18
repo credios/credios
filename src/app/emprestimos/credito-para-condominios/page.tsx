@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Head from "next/head";
 import { motion, useInView, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { JsonLd } from "@/components/SEO/JsonLd";
 
 // Componentes do shadcn/ui
 import {
@@ -41,19 +42,14 @@ const globalStyles = `
 // Ícones do Lucide
 import {
   CheckCircle2,
-  Zap,
   ArrowRight,
   CheckCircle,
   Star,
   Clock,
-  LucideProps,
-  ThumbsUp,
   Calendar,
   MessageCircle,
-  ChevronRight,
   AlertCircle,
   AtSign,
-  Info,
   Building,
   BadgeCheck,
   CalendarIcon,
@@ -64,18 +60,18 @@ import {
   DollarSign,
   BarChartHorizontal,
   Tablet,
-  TrendingUp,
   Shield,
   Users,
   BadgePercent,
   Paintbrush,
   FileText,
-  RefreshCcw,
   HandCoins,
   Columns,
   LineChart,
   ClipboardList,
-  Wallet
+  Wallet,
+  LucideProps,
+  ThumbsUp
 } from "lucide-react";
 
 // Ícones de Redes Sociais
@@ -182,7 +178,7 @@ const FloatingWhatsAppButton = () => {
 // Componente Principal
 export default function CreditoCondominios() {
   return (
-    <section className="w-full overflow-hidden font-sans">
+    <section className="w-full overflow-hidden font-sans" itemScope itemType="https://schema.org/WebPage">
       {/* Estilos Globais */}
       <style jsx global>{globalStyles}</style>
       
@@ -229,9 +225,6 @@ export default function CreditoCondominios() {
 
       {/* Casos de uso */}
       <UseCasesSection />
-
-      {/* Diretório de opções para condomínios */}
-      <CreditOptionsDirectory />
 
       {/* Depoimentos */}
       <TestimonialsSection />
@@ -299,18 +292,6 @@ interface TestimonialItem {
   date?: string;
   url?: string;
   role?: string;
-}
-
-interface CreditOption {
-  id: string;
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  color: string;
-  url: string;
-  highlighted?: boolean;
-  badge?: string;
-  available: boolean;
 }
 
 interface UseCase {
@@ -502,69 +483,6 @@ const TESTIMONIALS: TestimonialItem[] = [
   },
 ];
 
-// Opções de crédito para condomínios (diretório)
-const CREDIT_OPTIONS: CreditOption[] = [
-  {
-    id: "energia-solar",
-    title: "Financiamento para Energia Solar",
-    description: "Investimento em sustentabilidade com retorno garantido. Reduza a conta de luz do condomínio em até 95%.",
-    icon: <SunIcon className="h-6 w-6" />,
-    color: "yellow",
-    url: "/credito-condominios-energia-solar",
-    highlighted: true,
-    badge: "MAIS POPULAR",
-    available: true,
-  },
-  {
-    id: "reformas",
-    title: "Crédito para Reformas e Obras",
-    description: "Financie reformas de fachada, impermeabilização, pintura e modernização de áreas comuns.",
-    icon: <Paintbrush className="h-6 w-6" />,
-    color: "blue",
-    url: "/credito-condominios-reformas",
-    highlighted: true,
-    available: true,
-  },
-  {
-    id: "portaria-remota",
-    title: "Financiamento para Portaria Remota",
-    description: "Modernize seu condomínio e reduza custos mensais com portaria virtual e automação de acesso.",
-    icon: <Tablet className="h-6 w-6" />,
-    color: "purple",
-    url: "/credito-condominios-portaria-remota",
-    highlighted: true,
-    badge: "ECONOMIA",
-    available: true,
-  },
-  {
-    id: "rescisoes",
-    title: "Crédito para Rescisões Trabalhistas",
-    description: "Solução financeira para pagamento de verbas rescisórias de funcionários sem impactar o caixa.",
-    icon: <HandCoins className="h-6 w-6" />,
-    color: "red",
-    url: "/credito-condominios-rescisoes",
-    available: true,
-  },
-  {
-    id: "inadimplencia",
-    title: "Capital de Giro para Inadimplência",
-    description: "Equilibre as finanças do condomínio em períodos de alta inadimplência sem comprometer serviços essenciais.",
-    icon: <RefreshCcw className="h-6 w-6" />,
-    color: "green",
-    url: "/credito-condominios-inadimplencia",
-    available: true,
-  },
-  {
-    id: "emergencias",
-    title: "Crédito para Emergências",
-    description: "Solução rápida para reparos urgentes, quebra de equipamentos e situações imprevistas.",
-    icon: <Zap className="h-6 w-6" />,
-    color: "orange",
-    url: "/credito-condominios-emergencias",
-    available: true,
-  },
-];
-
 // Casos de uso de crédito para condomínios
 const USE_CASES: UseCase[] = [
   {
@@ -635,20 +553,51 @@ const USE_CASES: UseCase[] = [
 
 // Componente para SEO
 const SEOHead = () => (
-  <Head>
-    <title>Crédito Para Condomínios | Empréstimo e Financiamento | Credios</title>
-    <meta 
-      name="description" 
-      content="Crédito para condomínios com aprovação rápida e sem burocracia. Financie energia solar, reformas, portaria remota e mais. Taxas a partir de 1,99% a.m. Simule agora!" 
-    />
-    <meta name="keywords" content="crédito para condomínios, empréstimo para condomínios, financiamento para condomínios, crédito energia solar condomínio, reforma de fachada condomínio, portaria remota financiamento, crédito para síndicos" />
-    <meta property="og:title" content="Crédito Para Condomínios | Empréstimo e Financiamento | Credios" />
-    <meta property="og:description" content="Crédito para condomínios com aprovação rápida e taxas a partir de 1,99% a.m. Simule agora!" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://credios.com.br/credito-condominios" />
-    <meta property="og:image" content="https://credios.com.br/images/og-credito-condominios.jpg" />
-    <script type="application/ld+json">
-      {`{
+  <>
+    <Head>
+      <title>Crédito Para Condomínios | Financiamento com Aprovação Rápida | Credios</title>
+      <meta 
+        name="description" 
+        content="Crédito para condomínios com aprovação em 48h e taxas a partir de 1,99% a.m. Financie energia solar, reformas e portaria remota. Sem garantias do síndico. Simule agora!" 
+      />
+      <meta name="robots" content="index, follow" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta charSet="utf-8" />
+      
+      {/* Keywords otimizadas */}
+      <meta name="keywords" content="crédito para condomínios, empréstimo para condomínios, financiamento para condomínios, crédito energia solar condomínio, reforma de fachada condomínio, portaria remota financiamento, crédito para síndicos, empréstimo condominial" />
+      
+      {/* Tags canônicas e idioma */}
+      <link rel="canonical" href="https://credios.com.br/emprestimos/credito-para-condominios" />
+      <meta property="og:locale" content="pt_BR" />
+      <meta name="language" content="Portuguese" />
+      
+      {/* Open Graph tags */}
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content="Crédito Para Condomínios | Financiamento com Aprovação Rápida | Credios" />
+      <meta property="og:description" content="Crédito para condomínios com aprovação em 48h e taxas a partir de 1,99% a.m. Sem garantias do síndico. Simule agora!" />
+      <meta property="og:url" content="https://credios.com.br/emprestimos/credito-para-condominios" />
+      <meta property="og:site_name" content="Credios" />
+      <meta property="og:image" content="https://credios.com.br/images/og-credito-condominios.jpg" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      
+      {/* Twitter Card tags */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="Crédito Para Condomínios | Financiamento com Aprovação Rápida | Credios" />
+      <meta name="twitter:description" content="Crédito para condomínios com aprovação em 48h e taxas a partir de 1,99% a.m. Sem garantias do síndico. Simule agora!" />
+      <meta name="twitter:image" content="https://credios.com.br/images/og-credito-condominios.jpg" />
+      
+      {/* Tags adicionais para SEO */}
+      <meta name="author" content="Credios" />
+      <meta name="rating" content="general" />
+      <meta name="revisit-after" content="7 days" />
+      <meta name="theme-color" content="#14b8a6" />
+    </Head>
+
+    {/* Schema.org para Produto Financeiro */}
+    <JsonLd
+      data={{
         "@context": "https://schema.org",
         "@type": "FinancialProduct",
         "name": "Crédito Para Condomínios Credios",
@@ -658,18 +607,25 @@ const SEOHead = () => (
           "@type": "Offer",
           "price": "10000.00",
           "priceCurrency": "BRL",
-          "availability": "https://schema.org/InStock"
+          "availability": "https://schema.org/InStock",
+          "priceValidUntil": "2024-12-31",
+          "seller": {
+            "@type": "Organization",
+            "name": "Credios",
+            "url": "https://credios.com.br"
+          }
         },
         "interestRate": {
           "@type": "QuantitativeValue",
           "value": "1.99",
           "minValue": "1.99",
-          "maxValue": "2.99"
+          "maxValue": "2.99",
+          "unitText": "PERCENT"
         },
         "loanTerm": {
           "@type": "QuantitativeValue",
           "minValue": "12",
-          "maxValue": "36",
+          "maxValue": "60",
           "unitCode": "MON"
         },
         "areaServed": "BR",
@@ -677,27 +633,83 @@ const SEOHead = () => (
           "@type": "Organization",
           "name": "Credios",
           "logo": "https://credios.com.br/logo.png",
-          "url": "https://credios.com.br"
+          "url": "https://credios.com.br",
+          "sameAs": [
+            "https://www.facebook.com/credios",
+            "https://www.instagram.com/credios",
+            "https://www.linkedin.com/company/credios"
+          ]
         }
-      }`}
-    </script>
-    <script type="application/ld+json">
-      {`{
+      }}
+    />
+
+    {/* Schema.org para FAQ */}
+    <JsonLd
+      data={{
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        "mainEntity": [
-          ${FAQ_ITEMS.map(item => `{
-            "@type": "Question",
-            "name": "${item.question}",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "${item.answer}"
-            }
-          }`).join(',')}
+        "mainEntity": FAQ_ITEMS.map(item => ({
+          "@type": "Question",
+          "name": item.question,
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": item.answer
+          }
+        }))
+      }}
+    />
+
+    {/* Schema.org para Organization */}
+    <JsonLd
+      data={{
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Credios",
+        "url": "https://credios.com.br",
+        "logo": "https://credios.com.br/logo.png",
+        "description": "Plataforma de crédito digital especializada em soluções financeiras para condomínios",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "BR"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+55-11-XXXX-XXXX",
+          "contactType": "customer service",
+          "areaServed": "BR",
+          "availableLanguage": "Portuguese"
+        }
+      }}
+    />
+
+    {/* Schema.org para BreadcrumbList */}
+    <JsonLd
+      data={{
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://credios.com.br"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Empréstimos",
+            "item": "https://credios.com.br/emprestimos"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Crédito para Condomínios",
+            "item": "https://credios.com.br/emprestimos/credito-para-condominios"
+          }
         ]
-      }`}
-    </script>
-  </Head>
+      }}
+    />
+  </>
 );
 
 // Animações
@@ -871,9 +883,9 @@ const HeroSection = () => {
             animate="visible"
             variants={scaleIn}
           >
-            {/* Card flutuante de economia */}
+            {/* Card flutuante de energia solar - Reposicionado */}
             <motion.div 
-              className="absolute -top-8 -left-8 bg-white rounded-xl shadow-xl p-4 z-20 border border-gray-100 hidden md:block"
+              className="absolute -top-8 -left-20 bg-white rounded-xl shadow-xl p-4 z-20 border border-gray-100 hidden md:block"
               animate={{ y: [0, -10, 0] }}
               transition={{ repeat: Infinity, duration: 4 }}
             >
@@ -885,9 +897,9 @@ const HeroSection = () => {
               <div className="text-lg font-bold text-gray-900">95% na conta de luz</div>
             </motion.div>
 
-            {/* Card flutuante de valor */}
+            {/* Card flutuante de financiamento - Reposicionado */}
             <motion.div 
-              className="absolute -top-8 -right-8 bg-white rounded-xl shadow-xl p-4 z-20 border border-gray-100 hidden md:block"
+              className="absolute -bottom-12 -right-16 bg-white rounded-xl shadow-xl p-4 z-20 border border-gray-100 hidden md:block"
               animate={{ y: [0, 10, 0] }}
               transition={{ repeat: Infinity, duration: 5, delay: 0.5 }}
             >
@@ -1465,206 +1477,6 @@ const HowItWorksSection = () => {
   );
 };
 
-// Diretório de opções de crédito para condomínios
-const CreditOptionsDirectory = () => {
-  const categoryRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(categoryRef, { once: true, margin: "-50px" });
-
-  // Função para obter as classes de cor
-  const getColorClasses = (color: string, type: "bg" | "text" | "border" | "hover" | "gradient") => {
-    const colorMap: Record<string, Record<string, string>> = {
-      yellow: {
-        bg: "bg-amber-100",
-        text: "text-amber-600",
-        border: "border-amber-200",
-        hover: "hover:bg-amber-600 hover:text-white",
-        gradient: "from-amber-500 to-amber-600",
-      },
-      blue: {
-        bg: "bg-blue-100",
-        text: "text-blue-600",
-        border: "border-blue-200",
-        hover: "hover:bg-blue-600 hover:text-white",
-        gradient: "from-blue-500 to-blue-600",
-      },
-      green: {
-        bg: "bg-green-100",
-        text: "text-green-600",
-        border: "border-green-200",
-        hover: "hover:bg-green-600 hover:text-white",
-        gradient: "from-green-500 to-green-600",
-      },
-      purple: {
-        bg: "bg-purple-100",
-        text: "text-purple-600",
-        border: "border-purple-200",
-        hover: "hover:bg-purple-600 hover:text-white",
-        gradient: "from-purple-500 to-purple-600",
-      },
-      orange: {
-        bg: "bg-orange-100",
-        text: "text-orange-600",
-        border: "border-orange-200",
-        hover: "hover:bg-orange-600 hover:text-white",
-        gradient: "from-orange-500 to-orange-600",
-      },
-      red: {
-        bg: "bg-red-100",
-        text: "text-red-600",
-        border: "border-red-200",
-        hover: "hover:bg-red-600 hover:text-white",
-        gradient: "from-red-500 to-red-600",
-      },
-    };
-
-    return colorMap[color]?.[type] || "";
-  };
-
-  // Card para cada opção de crédito
-  const CreditOptionCard = ({ option }: { option: CreditOption }) => {
-    const cardRef = useRef<HTMLDivElement>(null);
-
-    return (
-      <motion.div
-        ref={cardRef}
-        variants={fadeIn}
-        whileHover={{ y: -8, transition: { duration: 0.2 } }}
-        className="h-full"
-      >
-        <Link href={option.url} className="block h-full">
-          <Card
-            className={`group h-full overflow-hidden border border-gray-200/50 ${
-              option.highlighted
-                ? "shadow-md hover:shadow-xl"
-                : "shadow-sm hover:shadow-lg"
-            } transition-all duration-300 relative cursor-pointer card-clickable`}
-          >
-            {/* Card header with gradient background on hover */}
-            <div
-              className={`absolute inset-0 bg-gradient-to-br ${getColorClasses(
-                option.color,
-                "gradient"
-              )} opacity-0 group-hover:opacity-95 transition-opacity duration-300 z-10`}
-            />
-
-            {/* Not available overlay */}
-            {!option.available && (
-              <div className="absolute inset-0 bg-gray-900/70 backdrop-blur-sm z-30 flex flex-col items-center justify-center text-white p-6 text-center">
-                <Clock className="h-10 w-10 mb-3 text-gray-300" />
-                <p className="text-xl font-bold mb-2">Em Breve</p>
-                <p className="text-sm text-gray-300">
-                  Este produto estará disponível em breve. Aguarde novidades!
-                </p>
-              </div>
-            )}
-
-            {option.badge && (
-              <div className="absolute top-0 right-0 z-20">
-                <Badge
-                  className={`m-3 py-1 px-3 ${getColorClasses(
-                    option.color,
-                    "bg"
-                  )} ${getColorClasses(option.color, "text")} group-hover:bg-white`}
-                >
-                  {option.badge}
-                </Badge>
-              </div>
-            )}
-
-            <CardHeader className="relative z-20">
-              <div
-                className={`w-14 h-14 rounded-full ${getColorClasses(
-                  option.color,
-                  "bg"
-                )} ${getColorClasses(
-                  option.color,
-                  "text"
-                )} flex items-center justify-center mb-4 group-hover:bg-white/20 group-hover:text-white transition-colors duration-300`}
-              >
-                {option.icon}
-              </div>
-              <CardTitle className="text-xl text-gray-900 group-hover:text-white transition-colors duration-300">
-                {option.title}
-              </CardTitle>
-              <CardDescription className="text-gray-600 group-hover:text-white/90 transition-colors duration-300">
-                {option.description}
-              </CardDescription>
-            </CardHeader>
-
-            <CardFooter className="relative z-20 pt-0">
-              <div className="flex items-center text-sm font-medium text-gray-600 group-hover:text-white transition-colors duration-300">
-                <span>Conhecer Detalhes</span>
-                <ChevronRight className="ml-1 h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </div>
-            </CardFooter>
-          </Card>
-        </Link>
-      </motion.div>
-    );
-  };
-
-  return (
-    <div className="py-20 bg-white" id="solucoes-condominios">
-      <div className="container mx-auto px-4">
-        <SectionHeading
-          title="Opções de Crédito Para Condomínios"
-          description="Diversas soluções financeiras adaptadas às necessidades específicas do seu condomínio."
-          badge="Soluções Exclusivas"
-        />
-
-        <motion.div
-          ref={categoryRef}
-          variants={staggerContainer}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {CREDIT_OPTIONS.map((option) => (
-            <CreditOptionCard key={option.id} option={option} />
-          ))}
-        </motion.div>
-
-        {/* Informação adicional */}
-        <motion.div
-          className="mt-16 max-w-3xl mx-auto p-6 bg-gradient-to-r from-teal-50 to-emerald-50 rounded-xl shadow-sm border border-teal-100"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
-        >
-          <div className="flex items-start gap-4">
-            <div className="bg-white rounded-full p-3 shadow-sm">
-              <Info className="h-6 w-6 text-teal-500" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">
-                Facilidade e Transparência para Condomínios
-              </h3>
-              <p className="text-gray-600 mb-4">
-                Entendemos os desafios financeiros enfrentados pelos condomínios brasileiros. 
-                Nossas soluções de crédito foram desenvolvidas especificamente para atender às 
-                necessidades dos condomínios, com processos simplificados, aprovação ágil e 
-                condições especiais que respeitam as particularidades da gestão condominial.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="outline" className="bg-white/80 text-teal-600 border-teal-200">
-                  <Building className="h-3.5 w-3.5 mr-1" /> Exclusivo para condomínios
-                </Badge>
-                <Badge variant="outline" className="bg-white/80 text-emerald-600 border-emerald-200">
-                  <CheckCircle2 className="h-3.5 w-3.5 mr-1" /> Sem garantias pessoais do síndico
-                </Badge>
-                <Badge variant="outline" className="bg-white/80 text-cyan-600 border-cyan-200">
-                  <TrendingUp className="h-3.5 w-3.5 mr-1" /> Modernize seu condomínio
-                </Badge>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </div>
-  );
-};
-
 // Casos de uso para condomínios
 const UseCasesSection = () => {
   return (
@@ -1699,8 +1511,7 @@ const UseCasesSection = () => {
                 hidden: { opacity: 0, y: 20 },
                 visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
               }}
-              whileHover={{ y: -5, transition: { duration: 0.2 } }}
-              className="cursor-pointer"
+              className="h-full"
             >
               <Card className="hover:shadow-lg transition-all duration-300 h-full border bg-white flex flex-col">
                 <CardHeader className={`rounded-t-lg bg-${useCase.color}-50 border-b border-${useCase.color}-100`}>
@@ -1712,22 +1523,22 @@ const UseCasesSection = () => {
                   <CardTitle className="text-center text-lg mt-4 text-gray-800">{useCase.title}</CardTitle>
                 </CardHeader>
                 <CardContent className="pt-4 flex-grow">
-                  <p className="text-sm text-gray-600">{useCase.description}</p>
+                  <p className="text-sm text-gray-600 mb-4">{useCase.description}</p>
+                  <div className="space-y-3">
+                    {useCase.value && (
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                        <span className="text-sm font-medium text-gray-700">{useCase.value}</span>
+                      </div>
+                    )}
+                    {useCase.timeframe && (
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                        <span className="text-sm text-gray-600">{useCase.timeframe}</span>
+                      </div>
+                    )}
+                  </div>
                 </CardContent>
-                <CardFooter className="flex flex-col space-y-2 pt-0">
-                  {useCase.value && (
-                    <div className="w-full flex items-center text-sm">
-                      <Badge className={`bg-${useCase.color}-100 text-${useCase.color}-700 me-2`}>Benefício</Badge>
-                      <span className="text-gray-700 font-medium">{useCase.value}</span>
-                    </div>
-                  )}
-                  {useCase.timeframe && (
-                    <div className="w-full flex items-center text-sm">
-                      <Badge className={`bg-gray-100 text-gray-700 me-2`}>Prazo</Badge>
-                      <span className="text-gray-600">{useCase.timeframe}</span>
-                    </div>
-                  )}
-                </CardFooter>
               </Card>
             </motion.div>
           ))}

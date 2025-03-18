@@ -12,11 +12,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Empréstimo na Conta de Luz | Até R$ 3.300 | Credios",
     description: "Solicite empréstimo usando sua conta de luz como garantia. Aprovação imediata mesmo com nome negativado. Receba até R$ 3.300 via PIX em até 24h.",
-    url: "https://credios.com.br/emprestimo-conta-luz",
+    url: "https://credios.com.br/emprestimo-na-conta-de-luz",
     siteName: "Credios - Soluções de Crédito Digital",
     images: [
       {
-        url: "https://credios.com.br/images/emprestimo-conta-luz-og.jpg",
+        url: "https://credios.com.br/images/emprestimo-na-conta-de-luz-og.jpg",
         width: 1200,
         height: 630,
         alt: "Empréstimo na Conta de Luz Credios",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Empréstimo na Conta de Luz | Até R$ 3.300 | Credios",
     description: "Solicite empréstimo usando sua conta de luz. Aprovação imediata mesmo com nome negativado. Receba via PIX em até 24h.",
-    images: ["https://credios.com.br/images/emprestimo-conta-luz-og.jpg"],
+    images: ["https://credios.com.br/images/emprestimo-na-conta-de-luz-og.jpg"],
   },
   robots: {
     index: true,
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://credios.com.br/emprestimo-conta-luz",
+    canonical: "https://credios.com.br/emprestimo-na-conta-de-luz",
   },
   viewport: "width=device-width, initial-scale=1",
 };
@@ -53,7 +53,7 @@ const jsonLd = {
   "@type": "FinancialProduct",
   "name": "Empréstimo na Conta de Luz Credios",
   "description": "Empréstimo usando conta de luz como garantia, sem consulta ao SPC/Serasa, com aprovação em minutos e valores de até R$ 3.300.",
-  "url": "https://credios.com.br/emprestimo-conta-luz",
+  "url": "https://credios.com.br/emprestimo-na-conta-de-luz",
   "provider": {
     "@type": "Organization",
     "name": "Credios",

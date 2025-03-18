@@ -11,11 +11,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Empréstimo no Cartão de Crédito | Dinheiro em até 5 minutos | Credios",
     description: "Transforme seu limite do cartão de crédito em dinheiro na conta via Pix em até 5 minutos. Taxas a partir de 1,99% ao mês, aprovação instantânea.",
-    url: "https://credios.com.br/emprestimo-cartao-credito",
+    url: "https://credios.com.br/emprestimo-no-cartao-de-credito",
     siteName: "Credios - Soluções de Crédito Digital",
     images: [
       {
-        url: "https://credios.com.br/images/og-emprestimo-cartao.jpg",
+        url: "https://credios.com.br/images/og-emprestimo-no-cartao-de-credito.jpg",
         width: 1200,
         height: 630,
         alt: "Empréstimo no Cartão de Crédito Credios",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Empréstimo no Cartão de Crédito | Dinheiro em 5 minutos",
     description: "Transforme seu limite do cartão em dinheiro na conta via Pix em até 5 minutos. Simule agora!",
-    images: ["https://credios.com.br/images/og-emprestimo-cartao.jpg"],
+    images: ["https://credios.com.br/images/og-emprestimo-no-cartao-de-credito.jpg"],
   },
   robots: {
     index: true,
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://credios.com.br/emprestimo-cartao-credito",
+    canonical: "https://credios.com.br/emprestimo-no-cartao-de-credito",
   },
   viewport: "width=device-width, initial-scale=1",
 };
@@ -144,21 +144,21 @@ const processJsonLd = {
       "name": "Simule em 30 Segundos e Descubra Seu Limite",
       "text": "Insira os dados do seu cartão e descubra instantaneamente quanto crédito você pode ter. Sem afetar seu score de crédito!",
       "image": "https://credios.com.br/images/steps/step1.jpg",
-      "url": "https://credios.com.br/emprestimo-cartao-credito#simulacao"
+      "url": "https://credios.com.br/emprestimo-no-cartao-de-credito#simulacao"
     },
     {
       "@type": "HowToStep",
       "name": "Aprovação Instantânea Garantida",
       "text": "Nossa tecnologia verifica seu cartão em tempo real e aprova seu crédito na hora. Sem análise manual, sem demora!",
       "image": "https://credios.com.br/images/steps/step2.jpg",
-      "url": "https://credios.com.br/emprestimo-cartao-credito#aprovacao"
+      "url": "https://credios.com.br/emprestimo-no-cartao-de-credito#aprovacao"
     },
     {
       "@type": "HowToStep",
       "name": "Receba pelo Pix Imediatamente",
       "text": "O dinheiro cai na sua conta em minutos, pronto para usar como quiser. Sem esperar dias ou horas como nos bancos tradicionais!",
       "image": "https://credios.com.br/images/steps/step3.jpg",
-      "url": "https://credios.com.br/emprestimo-cartao-credito#recebimento"
+      "url": "https://credios.com.br/emprestimo-no-cartao-de-credito#recebimento"
     }
   ],
   "totalTime": "PT10M"
