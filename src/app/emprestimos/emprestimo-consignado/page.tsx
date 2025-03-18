@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import Head from "next/head";
 import { motion, useInView, useTransform, AnimatePresence, useMotionValue } from "framer-motion";
-import { Metadata } from "next";
 import { JsonLd } from "@/components/SEO/JsonLd";
 
 // Componentes do shadcn/ui
@@ -353,73 +351,6 @@ const pulseAnimation = {
   scale: [1, 1.05, 1],
   transition: { duration: 2, repeat: Infinity }
 };
-
-// Componente para SEO
-const SEOHead = () => (
-  <Head>
-    <title>Empréstimo Consignado | Menores Taxas do Mercado | Credios</title>
-    <meta 
-      name="description" 
-      content="Empréstimo consignado com as menores taxas do mercado! Ideal para servidores públicos, aposentados e pensionistas. Simule online em 2 minutos. Aprovado mesmo para negativados!" 
-    />
-    <meta name="keywords" content="empréstimo consignado, consignado INSS, consignado servidor público, crédito consignado, empréstimo com desconto em folha, consignado aposentado, menor taxa consignado, empréstimo consignado online" />
-    <meta property="og:title" content="Empréstimo Consignado | Menores Taxas do Mercado | Credios" />
-    <meta property="og:description" content="Empréstimo consignado com as menores taxas do mercado! Ideal para servidores públicos, aposentados e pensionistas. Simule agora!" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://credios.com.br/emprestimo-consignado" />
-    <meta property="og:image" content="https://credios.com.br/images/og-emprestimo-consignado.jpg" />
-    <script type="application/ld+json">
-      {`{
-        "@context": "https://schema.org",
-        "@type": "FinancialProduct",
-        "name": "Empréstimo Consignado Credios",
-        "description": "Empréstimo consignado com as menores taxas do mercado para servidores públicos, aposentados e pensionistas.",
-        "category": "Empréstimo Consignado",
-        "offers": {
-          "@type": "Offer",
-          "price": "5000.00",
-          "priceCurrency": "BRL",
-          "availability": "https://schema.org/InStock"
-        },
-        "interestRate": {
-          "@type": "QuantitativeValue",
-          "value": "1.3",
-          "minValue": "1.25",
-          "maxValue": "1.45"
-        },
-        "loanTerm": {
-          "@type": "QuantitativeValue",
-          "minValue": "12",
-          "maxValue": "84",
-          "unitCode": "MON"
-        },
-        "areaServed": "BR",
-        "provider": {
-          "@type": "Organization",
-          "name": "Credios",
-          "logo": "https://credios.com.br/logo.png",
-          "url": "https://credios.com.br"
-        }
-      }`}
-    </script>
-    <script type="application/ld+json">
-      {`{
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          ${FAQ_ITEMS.map(item => `{
-            "@type": "Question",
-            "name": "${item.question}",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "${item.answer}"
-            }
-          }`).join(',')}
-        ]
-      }`}
-    </script>
-  </Head>
-);
 
 // Componente de formulário de contato com formsubmit.co
 const ContactForm = () => {
@@ -2458,9 +2389,9 @@ const TESTIMONIALS: TestimonialItem[] = [
 ];
 
 // Metadados para SEO
-export const metadata: Metadata = {
+export const metadata = {
   title: "Empréstimo Consignado | Menores Taxas do Mercado | Credios",
-  description: "Empréstimo consignado com as menores taxas do mercado! Ideal para servidores públicos, aposentados e pensionistas do INSS. Aprovação mesmo para negativados. Simule online em 2 minutos.",
+  description: "Empréstimo consignado com as menores taxas do mercado! Ideal para servidores públicos, aposentados e pensionistas. Simule online em 2 minutos. Aprovado mesmo para negativados!",
   keywords: "empréstimo consignado, consignado INSS, consignado servidor público, crédito consignado, empréstimo com desconto em folha, consignado aposentado, menor taxa consignado, empréstimo consignado online",
   authors: [{ name: "Credios" }],
   openGraph: {
@@ -2646,9 +2577,6 @@ export default function EmprestimoConsignado() {
       <section className="w-full overflow-hidden font-sans">
         {/* Estilos Globais */}
         <style jsx global>{globalStyles}</style>
-        
-        {/* SEO Metadata */}
-        <SEOHead />
         
         {/* Botão de WhatsApp Fixo */}
         <FloatingWhatsAppButton />
