@@ -4,7 +4,7 @@ module.exports = {
   generateRobotsTxt: true,
   robotsTxtOptions: {
     additionalSitemaps: [
-      'https://credios.com.br/sitemap-blog.xml',
+      'https://credios.com.br/api/sitemap-blog.xml',
     ],
   },
   exclude: ['/admin', '/api/*'],
