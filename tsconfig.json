@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/emprestimo-na-conta-de-luz"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/emprestimo-na-conta-de-luz", "next-sitemap.config.js"],
   "exclude": ["node_modules"]
 }

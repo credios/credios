@@ -45,8 +45,8 @@ interface CidadeJSON {
   valor: number;
 }
 
-// Interface para resposta do FormSubmit
-interface FormSubmitResponse {
+// Interface para resposta da API
+interface ApiResponse {
   success: boolean;
   message?: string;
 }
@@ -278,50 +278,45 @@ const HeroSection: React.FC = () => {
     setMostrarSugestoes(false);
   };
 
-  // Função para enviar dados para FormSubmit
+  // Função para enviar dados para nossa API (com Nodemailer)
   const enviarDadosFormulario = async (valorCalculado: number) => {
     try {
       // Preparar dados do formulário para envio
-      const formSubmitData = {
+      const emailData = {
         nome: formData.nome,
         telefone: formData.telefone,
         cidade: formData.cidade,
         titular: formData.titular === 'sim' ? 'Sim' : 'Não',
         valorAprovado: `R$ ${valorCalculado.toLocaleString("pt-BR")},00`,
         dataHora: new Date().toLocaleString('pt-BR'),
-        tipoFormulario: 'Empréstimo na Conta de Luz',
-        _subject: "Nova simulação de empréstimo na conta de luz - Credios",
-        _captcha: "false",
-        _template: "table",
-        _replyto: "noreply@credios.com.br",
+        tipoFormulario: 'Empréstimo na Conta de Luz'
       };
 
-      // Enviar dados para FormSubmit
-      const response = await fetch("https://formsubmit.co/ajax/simulador@credios.com.br", {
+      // Enviar dados para nossa API interna que usa Nodemailer
+      const response = await fetch("/api/enviar-formulario", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Accept": "application/json"
         },
-        body: JSON.stringify(formSubmitData)
+        body: JSON.stringify(emailData)
       });
 
       if (!response.ok) {
         throw new Error(`Erro no envio: ${response.status}`);
       }
 
-      const result: FormSubmitResponse = await response.json();
+      const result: ApiResponse = await response.json();
       
       if (result.success) {
         return true;
       } else {
-        throw new Error('Falha no envio do formulário.');
+        throw new Error(result.message || 'Falha no envio do formulário.');
       }
     } catch (error) {
       console.error('Erro ao enviar formulário:', error);
       setErroEnvio('Ocorreu um erro no envio, mas sua simulação foi realizada com sucesso.');
       
-      // Tentar novamente uma vez em caso de falha
+      // Tentativa de fallback com FormSubmit em caso de falha da nossa API
       try {
         const formSubmitData = {
           nome: formData.nome,
@@ -330,7 +325,7 @@ const HeroSection: React.FC = () => {
           titular: formData.titular === 'sim' ? 'Sim' : 'Não',
           valorAprovado: `R$ ${valorCalculado.toLocaleString("pt-BR")},00`,
           dataHora: new Date().toLocaleString('pt-BR'),
-          tipoFormulario: 'Empréstimo na Conta de Luz (segunda tentativa)',
+          tipoFormulario: 'Empréstimo na Conta de Luz (fallback)',
           _subject: "Nova simulação de empréstimo na conta de luz - Credios",
           _captcha: "false",
           _template: "table",
@@ -345,7 +340,7 @@ const HeroSection: React.FC = () => {
           body: JSON.stringify(formSubmitData)
         });
       } catch (e) {
-        console.error('Falha na segunda tentativa de envio:', e);
+        console.error('Falha na tentativa de fallback:', e);
       }
       
       return true; // Continua mesmo com falha para não prejudicar UX
@@ -389,7 +384,7 @@ const HeroSection: React.FC = () => {
           }
         }
         
-        // Enviar dados para FormSubmit e esperar resultado
+        // Enviar dados para nossa API e esperar resultado
         await enviarDadosFormulario(valorAprovado);
         
         setValorAprovado(`R$ ${valorAprovado.toLocaleString("pt-BR")},00`);
