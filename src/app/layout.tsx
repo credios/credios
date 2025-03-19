@@ -15,8 +15,59 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Credios",
-  description: "Fintech de Crédito",
+  title: {
+    default: "Credios | Crédito Rápido e Fácil",
+    template: "%s | Credios"
+  },
+  description: "Credios - Crédito rápido e fácil para você que precisa de dinheiro agora",
+  keywords: "empréstimo,crédito,dinheiro,empréstimo online,crédito rápido",
+  metadataBase: new URL(process.env.SITE_URL || 'https://credios.com.br'),
+  openGraph: {
+    type: 'website',
+    siteName: 'Credios',
+    title: 'Credios | Crédito Rápido e Fácil',
+    description: 'Credios - Crédito rápido e fácil para você que precisa de dinheiro agora',
+    images: ['/logo.svg'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Credios | Crédito Rápido e Fácil',
+    description: 'Credios - Crédito rápido e fácil para você que precisa de dinheiro agora',
+    images: ['/logo.svg'],
+  },
+  viewport: 'width=device-width, initial-scale=1, maximum-scale=5',
+  themeColor: '#4e1ac3', // Ajuste para a cor principal do seu site
+  formatDetection: {
+    telephone: false,
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+  },
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+    },
+  },
+  authors: [{ name: 'Credios' }],
+  publisher: 'Credios',
+  category: 'Empréstimos e Crédito',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-icon.png',
+  },
+  verification: {
+    // Adicionar somente se você tiver estes códigos de verificação
+    // google: 'seu-código-de-verificação',
+    // yandex: 'seu-código-de-verificação',
+  },
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
@@ -25,7 +76,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
