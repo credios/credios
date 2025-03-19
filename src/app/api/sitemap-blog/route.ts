@@ -3,9 +3,9 @@ import { createClient } from 'next-sanity'
 
 // Cliente Sanity configurado
 const client = createClient({
-  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || '',
+  projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'x1awvvk0',
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
-  apiVersion: '2022-03-25',
+  apiVersion: '2025-03-09',
   useCdn: false,
 })
 
