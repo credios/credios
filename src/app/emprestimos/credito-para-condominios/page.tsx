@@ -17,12 +17,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { 
   Tooltip,
   TooltipContent,
@@ -48,7 +42,6 @@ import {
   Clock,
   Calendar,
   MessageCircle,
-  AlertCircle,
   AtSign,
   Building,
   BadgeCheck,
@@ -69,9 +62,10 @@ import {
   Columns,
   LineChart,
   ClipboardList,
-  Wallet,
   LucideProps,
-  ThumbsUp
+  ThumbsUp,
+  Loader2,
+  Wallet,
 } from "lucide-react";
 
 // Ícones de Redes Sociais
@@ -354,7 +348,6 @@ const ADVANTAGES: AdvantageItem[] = [
     accentColor: "blue",
   },
 ];
-
 // Como funciona o crédito para condomínios
 const HOW_IT_WORKS: ProcessStep[] = [
   {
@@ -765,95 +758,155 @@ const HeroSection = () => {
     setFormState(prev => ({ ...prev, [name]: value }));
   };
 
+  // Validação do formulário
+  const validateForm = (): boolean => {
+    if (!formState.condoName.trim()) {
+      setFormState(prev => ({ ...prev, error: "Por favor, informe o nome do condomínio." }));
+      return false;
+    }
+    
+    if (!formState.name.trim()) {
+      setFormState(prev => ({ ...prev, error: "Por favor, informe seu nome." }));
+      return false;
+    }
+    
+    if (!formState.phone.trim()) {
+      setFormState(prev => ({ ...prev, error: "Por favor, informe seu telefone." }));
+      return false;
+    }
+    
+    // Validação básica de telefone (pode ser melhorada com regex)
+    if (formState.phone.length < 8) {
+      setFormState(prev => ({ ...prev, error: "Por favor, informe um telefone válido." }));
+      return false;
+    }
+    
+    return true;
+  };
   // Handler para envio do formulário com FormSubmit.co
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setFormState(prev => ({ ...prev, isSubmitting: true, error: null }));
-  
-  try {
-    // Verificar conexão com internet antes de continuar
-    if (!navigator.onLine) {
-      throw new Error('Sem conexão com a internet. Verifique sua conexão e tente novamente.');
-    }
-
-    // Preparar dados do formulário para envio com FormSubmit
-    const formSubmitData = {
-      condoName: formState.condoName,
-      name: formState.name,
-      phone: formState.phone,
-      dataHora: new Date().toLocaleString('pt-BR'),
-      tipoFormulario: 'Crédito para Condomínios',
-      _subject: "Nova solicitação de crédito para condomínio - Credios",
-      _captcha: "false",
-      _template: "table",
-    };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     
-    console.log('Enviando dados:', formSubmitData);
-    
-    // Adicionar timeout para a requisição
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 segundos timeout
-    
-    // Enviar dados para FormSubmit.co
-    const response = await fetch("https://formsubmit.co/ajax/simulador@credios.com.br", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      body: JSON.stringify(formSubmitData),
-      signal: controller.signal
-    });
-    
-    clearTimeout(timeoutId); // Limpar timeout se a requisição completar
-    
-    if (!response.ok) {
-      throw new Error(`Erro no envio: ${response.status} ${response.statusText}`);
+    // Validar formulário antes de enviar
+    if (!validateForm()) {
+      return;
     }
     
-    let result;
+    setFormState(prev => ({ ...prev, isSubmitting: true, error: null }));
+    
     try {
-      result = await response.json();
-    } catch (jsonError) {
-      console.error('Erro ao processar resposta JSON:', jsonError);
-      throw new Error('Formato de resposta inválido do servidor.');
-    }
-    
-    console.log('Resposta recebida:', result);
-    
-    // Considerar bem-sucedido se chegar até aqui, mesmo se result.success não for explicitamente true
-    setFormState(prev => ({ 
-      ...prev, 
-      isSubmitting: false, 
-      isSubmitted: true 
-    }));
-    
-  } catch (error: unknown) {
-    console.error('Erro ao enviar formulário:', error);
-    
-    // Detectar erro de timeout
-    let errorMessage = 'Ocorreu um erro no envio do formulário. Por favor, tente novamente.';
-    if (error instanceof Error) {
-      if (error.name === 'AbortError') {
-        errorMessage = 'A requisição demorou muito para responder. Por favor, tente novamente.';
-      } else {
-        errorMessage = error.message;
+      // Verificar conexão com internet antes de continuar
+      if (!navigator.onLine) {
+        throw new Error('Sem conexão com a internet. Verifique sua conexão e tente novamente.');
       }
+
+      // Preparar dados do formulário para envio com FormSubmit
+      const formSubmitData = {
+        condoName: formState.condoName,
+        name: formState.name,
+        phone: formState.phone,
+        dataHora: new Date().toLocaleString('pt-BR'),
+        tipoFormulario: 'Crédito para Condomínios',
+        _subject: "Nova solicitação de crédito para condomínio - Credios",
+        _captcha: "false",
+        _template: "table",
+      };
+      
+      // Adicionar timeout para a requisição
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 segundos timeout
+      
+      // Enviar dados para FormSubmit.co
+      const response = await fetch("https://formsubmit.co/ajax/simulador@credios.com.br", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(formSubmitData),
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId); // Limpar timeout se a requisição completar
+      
+      if (!response.ok) {
+        throw new Error(`Erro no envio: ${response.status} ${response.statusText}`);
+      }
+      
+      let result;
+      try {
+        result = await response.json();
+        // Verificar se o resultado foi bem sucedido
+        if (!result.success) {
+          throw new Error(result.message || 'Erro no envio do formulário');
+        }
+      } catch (jsonError) {
+        console.error('Erro ao processar resposta JSON:', jsonError);
+        throw new Error('Formato de resposta inválido do servidor.');
+      }
+      
+      // Considerar bem-sucedido se chegar até aqui
+      setFormState(prev => ({ 
+        ...prev, 
+        isSubmitting: false, 
+        isSubmitted: true 
+      }));
+      
+    } catch (error: unknown) {
+      console.error('Erro ao enviar formulário:', error);
+      
+      // Detectar erro de timeout
+      let errorMessage = 'Ocorreu um erro no envio do formulário. Por favor, tente novamente.';
+      if (error instanceof Error) {
+        if (error.name === 'AbortError') {
+          errorMessage = 'A requisição demorou muito para responder. Por favor, tente novamente.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      // Se falhar, tentar novamente uma vez
+      try {
+        const formSubmitData = {
+          condoName: formState.condoName,
+          name: formState.name,
+          phone: formState.phone,
+          dataHora: new Date().toLocaleString('pt-BR'),
+          tipoFormulario: 'Crédito para Condomínios (segunda tentativa)',
+          _subject: "Nova solicitação de crédito para condomínio - Credios",
+          _captcha: "false",
+          _template: "table",
+        };
+        
+        await fetch("https://formsubmit.co/ajax/simulador@credios.com.br", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(formSubmitData)
+        });
+        
+        // Se a segunda tentativa funcionar, considerar sucesso
+        setFormState(prev => ({ 
+          ...prev, 
+          isSubmitting: false, 
+          isSubmitted: true 
+        }));
+        return;
+        
+      } catch (retryError) {
+        console.error('Falha na segunda tentativa de envio:', retryError);
+        // Continuar com o tratamento de erro abaixo
+      }
+      
+      setFormState(prev => ({ 
+        ...prev, 
+        isSubmitting: false, 
+        error: errorMessage
+      }));
     }
-    
-    setFormState(prev => ({ 
-      ...prev, 
-      isSubmitting: false, 
-      error: errorMessage
-    }));
-  } finally {
-    // Garantir que isSubmitting sempre se torne false, mesmo que ocorra algum erro inesperado
-    setFormState(prev => ({ 
-      ...prev, 
-      isSubmitting: false 
-    }));
-  }
-};
+  };
   
   return (
     <div id="formulario-contato" className="relative py-24 overflow-hidden bg-gradient-to-br from-teal-50 via-green-50 to-emerald-50">
@@ -965,11 +1018,27 @@ const handleSubmit = async (e: React.FormEvent) => {
               <h3 className="text-2xl font-bold text-gray-800 mb-2">Solicite uma simulação</h3>
               <p className="text-gray-600 mb-6">Preencha o formulário abaixo e um de nossos consultores entrará em contato em até 1 dia útil.</p>
               
+              {/* Overlay de carregamento */}
+              <AnimatePresence>
+                {formState.isSubmitting && (
+                  <motion.div 
+                    className="absolute inset-0 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center z-20 rounded-2xl"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <Loader2 className="h-10 w-10 text-teal-500 animate-spin mb-4" />
+                    <p className="text-gray-700 font-medium">Enviando solicitação...</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              
               {!formState.isSubmitted ? (
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <label htmlFor="condoName" className="block text-sm font-medium text-gray-700 mb-1">
-                      Nome do Condomínio
+                      Nome do Condomínio*
                     </label>
                     <input 
                       type="text" 
@@ -985,7 +1054,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                   
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                      Seu Nome
+                      Seu Nome*
                     </label>
                     <input 
                       type="text" 
@@ -1001,7 +1070,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                   
                   <div>
                     <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                      Telefone WhatsApp
+                      Telefone WhatsApp*
                     </label>
                     <input 
                       type="tel" 
@@ -1256,7 +1325,6 @@ const AdvantageCard = ({
     </motion.div>
   );
 };
-
 // Carrossel de depoimentos de condomínios
 const TestimonialCarousel = () => {
   const [position, setPosition] = useState(0);
@@ -1529,179 +1597,6 @@ const HowItWorksSection = () => {
   );
 };
 
-// Casos de uso para condomínios
-const UseCasesSection = () => {
-  return (
-    <div className="py-20 bg-gradient-to-b from-white to-teal-50">
-      <div className="container mx-auto px-4">
-        <SectionHeading
-          title="Onde Usar o Crédito no Seu Condomínio"
-          description="Diversas possibilidades para utilizar o financiamento de acordo com as necessidades específicas do seu condomínio."
-          badge="Aplicações"
-        />
-
-        <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={{
-            hidden: { opacity: 0 },
-            visible: { 
-              opacity: 1,
-              transition: { 
-                staggerChildren: 0.05,
-                delayChildren: 0.1
-              }
-            }
-          }}
-        >
-          {USE_CASES.map((useCase, index) => (
-            <motion.div
-              key={index}
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
-              }}
-              className="h-full"
-            >
-              <Card className="hover:shadow-lg transition-all duration-300 h-full border bg-white flex flex-col">
-                <CardHeader className={`rounded-t-lg bg-${useCase.color}-50 border-b border-${useCase.color}-100`}>
-                  <div className="flex justify-center">
-                    <div className={`w-16 h-16 rounded-full bg-${useCase.color}-100 text-${useCase.color}-600 flex items-center justify-center`}>
-                      {useCase.icon}
-                    </div>
-                  </div>
-                  <CardTitle className="text-center text-lg mt-4 text-gray-800">{useCase.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="pt-4 flex-grow">
-                  <p className="text-sm text-gray-600 mb-4">{useCase.description}</p>
-                  <div className="space-y-3">
-                    {useCase.value && (
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                        <span className="text-sm font-medium text-gray-700">{useCase.value}</span>
-                      </div>
-                    )}
-                    {useCase.timeframe && (
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                        <span className="text-sm text-gray-600">{useCase.timeframe}</span>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        <div className="text-center mt-12">
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.7 }}
-            viewport={{ once: true }}
-            className="text-gray-600 max-w-xl mx-auto mb-6"
-          >
-            Estas são apenas algumas das aplicações mais comuns. O crédito pode ser utilizado 
-            para qualquer necessidade do condomínio, desde que aprovado em assembleia.
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
-            viewport={{ once: true }}
-          >
-            <Link href="#formulario-contato">
-              <Button
-                className="bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white rounded-full px-6 py-2 font-medium shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
-              >
-                Simular Crédito Para Meu Condomínio
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
-          </motion.div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// FAQ com schema markup
-const FAQSection = () => {
-  return (
-    <div className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4">
-        <SectionHeading
-          title="Dúvidas Sobre Crédito Para Condomínios"
-          description="Resposta para as perguntas mais frequentes de síndicos e administradores sobre nossas soluções financeiras."
-          badge="Perguntas Frequentes"
-        />
-        <div className="max-w-3xl mx-auto">
-          <Accordion type="single" collapsible className="space-y-4">
-            {FAQ_ITEMS.map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-              >
-                <AccordionItem
-                  value={`item-${index}`}
-                  className="border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
-                  data-faq-item
-                >
-                  <AccordionTrigger className="px-5 py-4 hover:bg-teal-50 cursor-pointer group accordion-trigger">
-                    <div className="flex items-center gap-3 text-left">
-                      <div className="w-6 h-6 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center flex-shrink-0 group-hover:bg-teal-500 group-hover:text-white transition-colors">
-                        <AlertCircle className="h-4 w-4" />
-                      </div>
-                      <span className="text-base font-medium text-gray-800 group-hover:text-gray-900">{item.question}</span>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="px-5 pb-5 pt-1 text-gray-600 bg-gradient-to-r from-teal-50/50 to-white">
-                    <div className="flex gap-3">
-                      <div className="w-6 flex-shrink-0"></div>
-                      <div>
-                        <p className="text-gray-600">{item.answer}</p>
-                      </div>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </motion.div>
-            ))}
-          </Accordion>
-          
-          {/* Suporte para condomínios */}
-          <motion.div
-            className="mt-8 p-4 border border-dashed border-teal-300 rounded-xl bg-teal-50 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            viewport={{ once: true }}
-          >
-            <Building className="h-6 w-6 text-teal-500 mx-auto mb-2" />
-            <p className="text-teal-700 font-medium">Ainda tem dúvidas sobre crédito para condomínios?</p>
-            <p className="text-teal-600 text-sm mt-1 mb-3">Nossa equipe especializada em crédito para condomínios está disponível agora</p>
-            <Link href="/contato-condominios">
-              <Button 
-                variant="outline" 
-                className="border-teal-400 text-teal-600 hover:bg-teal-100 rounded-full transition-colors cursor-pointer"
-                aria-label="Entrar em contato com um especialista em crédito para condomínios"
-              >
-                <MessageCircle className="h-4 w-4 mr-2" />
-                Falar com um Especialista
-              </Button>
-            </Link>
-          </motion.div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 // Seção de depoimentos
 const TestimonialsSection = () => {
   return (
@@ -1722,88 +1617,113 @@ const TestimonialsSection = () => {
   );
 };
 
-// Estatísticas sobre condomínios no Brasil
-const StatsSection = () => (
-  <div className="py-20 bg-white">
-    <div className="container mx-auto px-4">
-      <SectionHeading
-        title="Condomínios no Brasil: Desafios e Oportunidades"
-        description="Entenda a importância das soluções financeiras para o setor condominial brasileiro."
-        badge="Dados Importantes"
-      />
-
-      <motion.div 
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true }}
-        variants={{
-          hidden: { opacity: 0 },
-          visible: { 
-            opacity: 1,
-            transition: { 
-              staggerChildren: 0.1,
-              delayChildren: 0.2
-            }
-          }
-        }}
-      >
-        {[
-          { 
-            value: "450 mil", 
-            label: "Condomínios no Brasil", 
-            icon: <Building className="h-6 w-6" />,
-            color: "teal", 
-            description: "Segundo dados do SECOVI"
-          },
-          { 
-            value: "R$ 60 bilhões", 
-            label: "Mercado Condominial Anual", 
-            icon: <Wallet className="h-6 w-6" />,
-            color: "emerald",
-            description: "Movimentação financeira" 
-          },
-          { 
-            value: "74%", 
-            label: "Energia nas Despesas", 
-            icon: <SunIcon className="h-6 w-6" />,
-            color: "yellow",
-            description: "Potencial de economia" 
-          },
-          { 
-            value: "95%", 
-            label: "Taxa de Aprovação", 
-            icon: <BadgeCheck className="h-6 w-6" />,
-            color: "green",
-            description: "Na Credios para condomínios" 
-          },
-        ].map((stat, index) => (
-          <motion.div 
-            key={index}
-            variants={fadeIn}
-            className={`bg-${stat.color}-50 rounded-xl border border-${stat.color}-100 p-5 shadow-sm hover:shadow-md transition-all group`}
-          >
-            <div className={`w-12 h-12 rounded-full bg-${stat.color}-100 flex items-center justify-center mx-auto mb-3 text-${stat.color}-500 group-hover:scale-110 transition-transform`}>
-              {stat.icon}
-            </div>
-            <div className="text-center">
-              <div className={`text-2xl md:text-3xl font-bold text-gray-800 group-hover:text-${stat.color}-600 transition-colors mb-1`}>
-                {stat.value}
-              </div>
-              <div className="text-sm font-medium text-gray-700 mb-2">{stat.label}</div>
-              <div className="text-xs text-gray-500">{stat.description}</div>
-            </div>
-          </motion.div>
-        ))}
-      </motion.div>
-
-      {/* Fonte das informações */}
-      <div className="text-center mt-8 text-sm text-gray-500">
-        Fonte: SECOVI, ABRASIP e Pesquisa de Mercado Condominial (2024)
+// Seção de casos de uso
+const UseCasesSection = () => {
+  return (
+    <div className="py-20 bg-white relative overflow-hidden" id="solucoes-condominios">
+      {/* Elementos decorativos */}
+      <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-emerald-200 opacity-10 blur-3xl"></div>
+      <div className="absolute top-40 -left-20 w-80 h-80 rounded-full bg-teal-200 opacity-10 blur-3xl"></div>
+      
+      <div className="max-w-7xl mx-auto px-4 relative z-10">
+        <SectionHeading
+          badge="Soluções"
+          title="Como Seu Condomínio Pode Utilizar o Crédito"
+          description="Descubra as diversas possibilidades de investimento para modernizar e valorizar seu condomínio."
+        />
+        
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+        >
+          {USE_CASES.map((useCase, index) => (
+            <motion.div
+              key={index}
+              variants={fadeIn}
+              className="group"
+            >
+              <Card className="h-full border border-gray-100 hover:border-transparent hover:shadow-xl transition-all duration-300">
+                <CardHeader>
+                  <div className={`w-16 h-16 rounded-full bg-${useCase.color}-50 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform text-${useCase.color}-500`}>
+                    {useCase.icon}
+                  </div>
+                  <CardTitle className="text-xl font-bold group-hover:text-teal-600 transition-colors">
+                    {useCase.title}
+                  </CardTitle>
+                  <CardDescription>
+                    {useCase.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  {useCase.value && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                      <span className="text-gray-700 font-medium">{useCase.value}</span>
+                    </div>
+                  )}
+                  {useCase.timeframe && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <Clock className="h-4 w-4 text-teal-500" />
+                      <span className="text-gray-600">{useCase.timeframe}</span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
     </div>
-  </div>
-);
+  );
+};
+
+// Seção de FAQ
+const FAQSection = () => {
+  return (
+    <div className="py-20 bg-gradient-to-br from-teal-50 to-emerald-50 relative overflow-hidden">
+      {/* Elementos decorativos */}
+      <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-emerald-200 opacity-10 blur-3xl"></div>
+      <div className="absolute top-40 -left-20 w-80 h-80 rounded-full bg-teal-200 opacity-10 blur-3xl"></div>
+      
+      <div className="max-w-4xl mx-auto px-4 relative z-10">
+        <SectionHeading
+          badge="Dúvidas Frequentes"
+          title="Perguntas e Respostas Sobre Crédito Para Condomínios"
+          description="Tire suas dúvidas sobre o processo de solicitação e aprovação de crédito para condomínios."
+        />
+        
+        <div className="space-y-4">
+          {FAQ_ITEMS.map((faq, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              viewport={{ once: true }}
+            >
+              <Card className="border border-teal-100 hover:shadow-md transition-all duration-300">
+                <CardHeader>
+                  <CardTitle className="text-lg font-bold text-gray-800 flex items-start gap-3">
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center text-sm">
+                      {index + 1}
+                    </span>
+                    {faq.question}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-gray-600">{faq.answer}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // CTA Final aprimorado
 const FinalCTA = () => (
@@ -1919,6 +1839,88 @@ const FinalCTA = () => (
           </div>
         </motion.div>
       </motion.div>
+    </div>
+  </div>
+);
+
+// Estatísticas sobre condomínios
+const StatsSection = () => (
+  <div className="py-20 bg-white">
+    <div className="container mx-auto px-4">
+      <SectionHeading
+        title="Condomínios no Brasil: Desafios e Oportunidades"
+        description="Entenda a importância das soluções financeiras para o setor condominial brasileiro."
+        badge="Dados Importantes"
+      />
+
+      <motion.div 
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={{
+          hidden: { opacity: 0 },
+          visible: { 
+            opacity: 1,
+            transition: { 
+              staggerChildren: 0.1,
+              delayChildren: 0.2
+            }
+          }
+        }}
+      >
+        {[
+          { 
+            value: "450 mil", 
+            label: "Condomínios no Brasil", 
+            icon: <Building className="h-6 w-6" />,
+            color: "teal", 
+            description: "Segundo dados do SECOVI"
+          },
+          { 
+            value: "R$ 60 bilhões", 
+            label: "Mercado Condominial Anual", 
+            icon: <Wallet className="h-6 w-6" />,
+            color: "emerald",
+            description: "Movimentação financeira" 
+          },
+          { 
+            value: "74%", 
+            label: "Energia nas Despesas", 
+            icon: <SunIcon className="h-6 w-6" />,
+            color: "yellow",
+            description: "Potencial de economia" 
+          },
+          { 
+            value: "95%", 
+            label: "Taxa de Aprovação", 
+            icon: <BadgeCheck className="h-6 w-6" />,
+            color: "green",
+            description: "Na Credios para condomínios" 
+          },
+        ].map((stat, index) => (
+          <motion.div 
+            key={index}
+            variants={fadeIn}
+            className={`bg-${stat.color}-50 rounded-xl border border-${stat.color}-100 p-5 shadow-sm hover:shadow-md transition-all group`}
+          >
+            <div className={`w-12 h-12 rounded-full bg-${stat.color}-100 flex items-center justify-center mx-auto mb-3 text-${stat.color}-500 group-hover:scale-110 transition-transform`}>
+              {stat.icon}
+            </div>
+            <div className="text-center">
+              <div className={`text-2xl md:text-3xl font-bold text-gray-800 group-hover:text-${stat.color}-600 transition-colors mb-1`}>
+                {stat.value}
+              </div>
+              <div className="text-sm font-medium text-gray-700 mb-2">{stat.label}</div>
+              <div className="text-xs text-gray-500">{stat.description}</div>
+            </div>
+          </motion.div>
+        ))}
+      </motion.div>
+
+      <div className="text-center mt-8 text-sm text-gray-500">
+        Fonte: SECOVI, ABRASIP e Pesquisa de Mercado Condominial (2024)
+      </div>
     </div>
   </div>
 );

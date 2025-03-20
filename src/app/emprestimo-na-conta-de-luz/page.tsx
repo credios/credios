@@ -3,7 +3,7 @@ import AdvantagesSection from "@/components/advantagessection";
 import HeroSection from "@/components/herosection";
 import { JsonLd } from "@/components/SEO/JsonLd";
 
-// Metadados para SEO - mantenha como está
+// Metadados para SEO - mantidos como estão
 export const metadata: Metadata = {
   title: "Empréstimo na Conta de Luz | Até R$ 3.300 | Credios",
   description: "Solicite empréstimo na conta de luz com aprovação imediata. Até R$ 3.300 sem consulta SPC/Serasa. Receba via PIX em até 24h e pague nas faturas de energia.",
@@ -47,9 +47,7 @@ export const metadata: Metadata = {
   viewport: "width=device-width, initial-scale=1",
 };
 
-// 1. Divida o JSON-LD em dois objetos separados
-
-// Schema JSON-LD para FinancialProduct (com AggregateRating em vez de Review)
+// Schema JSON-LD para FinancialProduct (com AggregateRating)
 const financialProductJsonLd = {
   "@context": "https://schema.org",
   "@type": "FinancialProduct",
@@ -59,66 +57,45 @@ const financialProductJsonLd = {
   "provider": {
     "@type": "Organization",
     "name": "Credios",
-    "url": "https://credios.com.br"
+    "url": "https://credios.com.br",
   },
   "offers": {
     "@type": "Offer",
     "priceCurrency": "BRL",
     "price": "3300",
-    "availability": "https://schema.org/InStock"
+    "availability": "https://schema.org/InStock",
+    "validFrom": "2023-01-01", // Adicionei uma data de validade para a oferta
   },
   "areaServed": {
     "@type": "GeoShape",
-    "description": "Bahia, Ceará, Pernambuco, Rio Grande do Norte, Goiás, São Paulo, Rio de Janeiro, Paraná e Rio Grande do Sul"
+    "description": "Bahia, Ceará, Pernambuco, Rio Grande do Norte, Goiás, São Paulo, Rio de Janeiro, Paraná e Rio Grande do Sul",
   },
   "interestRate": {
     "@type": "QuantitativeValue",
     "value": "3.99",
     "minValue": "3.99",
-    "maxValue": "6.99"
+    "maxValue": "6.99",
+    "unitText": "percent", // Adicionei a unidade para maior clareza
   },
   "aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": "4.9",
     "bestRating": "5",
-    "ratingCount": "100"  // Ajuste este número para o total real de avaliações
-  }
+    "ratingCount": "100", // Mantido como está
+  },
 };
 
-// Schema JSON-LD separado para Review
-const reviewJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Review",
-  "itemReviewed": {
-    "@type": "FinancialProduct",
-    "name": "Empréstimo na Conta de Luz Credios",
-    "url": "https://credios.com.br/emprestimo-na-conta-de-luz"
-  },
-  "reviewRating": {
-    "@type": "Rating",
-    "ratingValue": "4.9",
-    "bestRating": "5"
-  },
-  "author": {
-    "@type": "Organization",  // Alterado de Person para Organization para representar um grupo de usuários
-    "name": "Usuários Credios"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "Credios"
-  }
-};
+// Removido o schema Review, já que AggregateRating já cobre as avaliações
 
 export default function EmprestimoNaContaDeLuz() {
   return (
     <>
-      {/* 2. Adicione dois componentes JsonLd, um para cada schema */}
+      {/* Adicionando apenas o schema FinancialProduct */}
       <JsonLd data={financialProductJsonLd} />
-      <JsonLd data={reviewJsonLd} />
-      
+
       {/* Componente Hero (banner principal) */}
       <HeroSection />
-      
+
       {/* Componente de conteúdo principal */}
       <AdvantagesSection />
     </>

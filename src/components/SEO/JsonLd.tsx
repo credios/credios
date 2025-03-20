@@ -11,6 +11,7 @@ interface JsonLdProps {
 export function JsonLd({ data }: JsonLdProps) {
   return (
     <script
+      key="json-ld" // Adicionada uma chave única
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
     />
