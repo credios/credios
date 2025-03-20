@@ -150,12 +150,12 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
       available: true,
     },
     {
-      id: "pessoal",
-      title: "Empréstimo Pessoal",
-      description: "Crédito para usar como quiser, sem burocracia",
+      id: "condominios",
+      title: "Crédito Para Condominios",
+      description: "Empréstimos para condomínios comerciais e residenciais",
       icon: <Wallet className="h-6 w-6" />,
       color: "green",
-      url: "/emprestimos/emprestimo-pessoal",
+      url: "/emprestimos/credito-para-condominios",
       available: true,
     },
     {

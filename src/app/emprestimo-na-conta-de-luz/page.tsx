@@ -3,7 +3,7 @@ import AdvantagesSection from "@/components/advantagessection";
 import HeroSection from "@/components/herosection";
 import { JsonLd } from "@/components/SEO/JsonLd";
 
-// Metadados para SEO
+// Metadados para SEO - mantenha como está
 export const metadata: Metadata = {
   title: "Empréstimo na Conta de Luz | Até R$ 3.300 | Credios",
   description: "Solicite empréstimo na conta de luz com aprovação imediata. Até R$ 3.300 sem consulta SPC/Serasa. Receba via PIX em até 24h e pague nas faturas de energia.",
@@ -47,8 +47,10 @@ export const metadata: Metadata = {
   viewport: "width=device-width, initial-scale=1",
 };
 
-// Schema JSON-LD para FinancialProduct
-const jsonLd = {
+// 1. Divida o JSON-LD em dois objetos separados
+
+// Schema JSON-LD para FinancialProduct (com AggregateRating em vez de Review)
+const financialProductJsonLd = {
   "@context": "https://schema.org",
   "@type": "FinancialProduct",
   "name": "Empréstimo na Conta de Luz Credios",
@@ -75,25 +77,44 @@ const jsonLd = {
     "minValue": "3.99",
     "maxValue": "6.99"
   },
-  "review": {
-    "@type": "Review",
-    "reviewRating": {
-      "@type": "Rating",
-      "ratingValue": "4.9",
-      "bestRating": "5"
-    },
-    "author": {
-      "@type": "Person",
-      "name": "Usuários Credios"
-    }
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "bestRating": "5",
+    "ratingCount": "100"  // Ajuste este número para o total real de avaliações
+  }
+};
+
+// Schema JSON-LD separado para Review
+const reviewJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Review",
+  "itemReviewed": {
+    "@type": "FinancialProduct",
+    "name": "Empréstimo na Conta de Luz Credios",
+    "url": "https://credios.com.br/emprestimo-na-conta-de-luz"
+  },
+  "reviewRating": {
+    "@type": "Rating",
+    "ratingValue": "4.9",
+    "bestRating": "5"
+  },
+  "author": {
+    "@type": "Organization",  // Alterado de Person para Organization para representar um grupo de usuários
+    "name": "Usuários Credios"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Credios"
   }
 };
 
 export default function EmprestimoNaContaDeLuz() {
   return (
     <>
-      {/* JSON-LD para SEO */}
-      <JsonLd data={jsonLd} />
+      {/* 2. Adicione dois componentes JsonLd, um para cada schema */}
+      <JsonLd data={financialProductJsonLd} />
+      <JsonLd data={reviewJsonLd} />
       
       {/* Componente Hero (banner principal) */}
       <HeroSection />

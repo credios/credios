@@ -765,20 +765,57 @@ const HeroSection = () => {
     setFormState(prev => ({ ...prev, [name]: value }));
   };
 
-  // Handler para envio do formulário
-  const handleSubmit = (e: React.FormEvent) => {
+  // Handler para envio do formulário com FormSubmit.co
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormState(prev => ({ ...prev, isSubmitting: true, error: null }));
     
-    // Simulação de envio do formulário
-    setTimeout(() => {
-      // Aqui você implementaria a lógica real de envio do formulário
+    try {
+      // Preparar dados do formulário para envio com FormSubmit
+      const formSubmitData = {
+        condoName: formState.condoName,
+        name: formState.name,
+        phone: formState.phone,
+        dataHora: new Date().toLocaleString('pt-BR'),
+        tipoFormulario: 'Crédito para Condomínios',
+        _subject: "Nova solicitação de crédito para condomínio - Credios",
+        _captcha: "false",
+        _template: "table",
+      };
+      
+      // Enviar dados para FormSubmit.co
+      const response = await fetch("https://formsubmit.co/ajax/simulador@credios.com.br", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(formSubmitData)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Erro no envio: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setFormState(prev => ({ 
+          ...prev, 
+          isSubmitting: false, 
+          isSubmitted: true 
+        }));
+      } else {
+        throw new Error(result.message || 'Falha no envio do formulário.');
+      }
+    } catch (error) {
+      console.error('Erro ao enviar formulário:', error);
       setFormState(prev => ({ 
         ...prev, 
         isSubmitting: false, 
-        isSubmitted: true 
+        error: 'Ocorreu um erro no envio do formulário. Por favor, tente novamente.' 
       }));
-    }, 1500);
+    }
   };
   
   return (
@@ -883,34 +920,6 @@ const HeroSection = () => {
             animate="visible"
             variants={scaleIn}
           >
-            {/* Card flutuante de energia solar - Reposicionado */}
-            <motion.div 
-              className="absolute -top-8 -left-20 bg-white rounded-xl shadow-xl p-4 z-20 border border-gray-100 hidden md:block"
-              animate={{ y: [0, -10, 0] }}
-              transition={{ repeat: Infinity, duration: 4 }}
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <SunIcon className="h-5 w-5 text-yellow-500" />
-                <span className="text-sm font-medium text-teal-700">Energia Solar</span>
-              </div>
-              <div className="text-xs text-gray-500">Economia de até</div>
-              <div className="text-lg font-bold text-gray-900">95% na conta de luz</div>
-            </motion.div>
-
-            {/* Card flutuante de financiamento - Reposicionado */}
-            <motion.div 
-              className="absolute -bottom-12 -right-16 bg-white rounded-xl shadow-xl p-4 z-20 border border-gray-100 hidden md:block"
-              animate={{ y: [0, 10, 0] }}
-              transition={{ repeat: Infinity, duration: 5, delay: 0.5 }}
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <Building className="h-5 w-5 text-teal-500" />
-                <span className="text-sm font-medium text-teal-700">Condomínios</span>
-              </div>
-              <div className="text-xs text-gray-500">Financiamento até</div>
-              <div className="text-lg font-bold text-gray-900">R$ 500.000,00</div>
-            </motion.div>
-
             {/* Formulário de contato */}
             <motion.div 
               className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-teal-100 relative z-10 max-w-lg mx-auto"
@@ -968,6 +977,12 @@ const HeroSection = () => {
                       required
                     />
                   </div>
+                  
+                  {formState.error && (
+                    <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+                      {formState.error}
+                    </div>
+                  )}
                   
                   <Button
                     type="submit"

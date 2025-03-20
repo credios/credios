@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   viewport: "width=device-width, initial-scale=1",
 };
 
-// Schema JSON-LD para FinancialProduct
+// Schema JSON-LD para FinancialProduct - MODIFICADO: substituí "review" por "aggregateRating"
 const finProductJsonLd = {
   "@context": "https://schema.org",
   "@type": "FinancialProduct",
@@ -77,17 +77,35 @@ const finProductJsonLd = {
     "maxValue": "2.99"
   },
   "feesAndCommissionsSpecification": "Sem taxas de abertura de crédito. Juros a partir de 1,49% ao mês.",
-  "review": {
-    "@type": "Review",
-    "reviewRating": {
-      "@type": "Rating",
-      "ratingValue": "4.8",
-      "bestRating": "5"
-    },
-    "author": {
-      "@type": "Person",
-      "name": "Usuários Credios"
-    }
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "bestRating": "5",
+    "ratingCount": "120"  // Ajuste este número para o total real de avaliações
+  }
+};
+
+// ADICIONADO: Schema JSON-LD separado para Review
+const reviewJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Review",
+  "itemReviewed": {
+    "@type": "FinancialProduct",
+    "name": "Empréstimo FGTS Credios",
+    "url": "https://credios.com.br/emprestimo-fgts"
+  },
+  "reviewRating": {
+    "@type": "Rating",
+    "ratingValue": "4.8",
+    "bestRating": "5"
+  },
+  "author": {
+    "@type": "Organization",  // Alterado de Person para Organization
+    "name": "Usuários Credios"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Credios"
   }
 };
 
@@ -173,8 +191,9 @@ const processJsonLd = {
 export default function EmprestimoFGTS() {
   return (
     <>
-      {/* JSON-LD para SEO */}
+      {/* JSON-LD para SEO - MODIFICADO: adicionado o reviewJsonLd */}
       <JsonLd data={finProductJsonLd} />
+      <JsonLd data={reviewJsonLd} />
       <JsonLd data={faqJsonLd} />
       <JsonLd data={processJsonLd} />
       

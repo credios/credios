@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "../components/ui/navbar";
 import Footer from "../components/ui/footer";
+import GoogleAnalytics from "@/app/components/GoogleAnalytics";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -75,6 +77,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || '';
+
   return (
     <html lang="pt-BR">
       <body
@@ -83,6 +87,7 @@ export default function RootLayout({
         <Navbar />
         {children}
         <Footer />
+        {GA_MEASUREMENT_ID && <GoogleAnalytics GA_MEASUREMENT_ID={GA_MEASUREMENT_ID} />}
       </body>
     </html>
   );
