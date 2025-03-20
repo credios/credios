@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   viewport: "width=device-width, initial-scale=1",
 };
 
-// Schema JSON-LD para FinancialProduct (com AggregateRating)
+// Schema JSON-LD para FinancialProduct com AggregateRating
 const financialProductJsonLd = {
   "@context": "https://schema.org",
   "@type": "FinancialProduct",
@@ -64,7 +64,7 @@ const financialProductJsonLd = {
     "priceCurrency": "BRL",
     "price": "3300",
     "availability": "https://schema.org/InStock",
-    "validFrom": "2023-01-01", // Adicionei uma data de validade para a oferta
+    "validFrom": "2023-01-01",
   },
   "areaServed": {
     "@type": "GeoShape",
@@ -75,28 +75,22 @@ const financialProductJsonLd = {
     "value": "3.99",
     "minValue": "3.99",
     "maxValue": "6.99",
-    "unitText": "percent", // Adicionei a unidade para maior clareza
+    "unitText": "percent",
   },
   "aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": "4.9",
     "bestRating": "5",
-    "ratingCount": "100", // Mantido como está
+    "ratingCount": "100",
   },
 };
-
-// Removido o schema Review, já que AggregateRating já cobre as avaliações
 
 export default function EmprestimoNaContaDeLuz() {
   return (
     <>
-      {/* Adicionando apenas o schema FinancialProduct */}
+      {/* Apenas o schema FinancialProduct com AggregateRating */}
       <JsonLd data={financialProductJsonLd} />
-
-      {/* Componente Hero (banner principal) */}
       <HeroSection />
-
-      {/* Componente de conteúdo principal */}
       <AdvantagesSection />
     </>
   );
