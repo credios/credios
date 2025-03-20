@@ -4,7 +4,7 @@ import "./globals.css";
 import Navbar from "../components/ui/navbar";
 import Footer from "../components/ui/footer";
 import GoogleAnalytics from "@/app/components/GoogleAnalytics";
-
+import GoogleTagManager from "@/app/components/GoogleTagManager";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -78,6 +78,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID || '';
+  const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || '';
 
   return (
     <html lang="pt-BR">
@@ -88,6 +89,7 @@ export default function RootLayout({
         {children}
         <Footer />
         {GA_MEASUREMENT_ID && <GoogleAnalytics GA_MEASUREMENT_ID={GA_MEASUREMENT_ID} />}
+        {GTM_ID && <GoogleTagManager GTM_ID={GTM_ID} />}
       </body>
     </html>
   );
