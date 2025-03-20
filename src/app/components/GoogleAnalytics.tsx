@@ -1,34 +1,36 @@
-// app/components/GoogleAnalytics.tsx
 'use client';
 
 import Script from 'next/script';
-import { usePathname, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
-
-type GtagConfig = {
-  page_path?: string;
-  [key: string]: string | undefined;
-};
-
-declare global {
-  interface Window {
-    gtag: (
-      command: 'config',
-      targetId: string,
-      config?: GtagConfig
-    ) => void;
-  }
-}
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function GoogleAnalytics({ GA_MEASUREMENT_ID }: { GA_MEASUREMENT_ID: string }) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const [searchParams, setSearchParams] = useState<string>('');
+  
+  // Usar um método mais seguro para obter searchParams
+  useEffect(() => {
+    // Só executar no navegador
+    if (typeof window !== 'undefined') {
+      // Obter a string de query da URL do navegador
+      const queryString = window.location.search;
+      setSearchParams(queryString);
+      
+      // Setup a listener for changes
+      const handleRouteChange = () => {
+        setSearchParams(window.location.search);
+      };
+      
+      window.addEventListener('popstate', handleRouteChange);
+      return () => window.removeEventListener('popstate', handleRouteChange);
+    }
+  }, []);
 
+  // Enviar pageview quando o pathname ou searchParams mudar
   useEffect(() => {
     if (pathname && window.gtag) {
-      // Enviar um pageview quando a rota muda
       window.gtag('config', GA_MEASUREMENT_ID, {
-        page_path: pathname + searchParams.toString(),
+        page_path: pathname + searchParams,
       });
     }
   }, [pathname, searchParams, GA_MEASUREMENT_ID]);
@@ -55,4 +57,21 @@ export default function GoogleAnalytics({ GA_MEASUREMENT_ID }: { GA_MEASUREMENT_
       />
     </>
   );
+}
+
+// Adicione esta declaração global para o TypeScript reconhecer window.gtag
+declare global {
+  interface Window {
+    gtag: (
+      command: 'config' | 'js' | 'event',
+      targetId: string,
+      config?: {
+        page_path?: string;
+        [key: string]: string | undefined;
+      }
+    ) => void;
+    dataLayer: Array<{
+      [key: string]: string | number | boolean | undefined;
+    }>;
+  }
 }
