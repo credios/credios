@@ -45,6 +45,12 @@ interface CidadeJSON {
   valor: number;
 }
 
+// Interface para resposta do FormSubmit
+interface FormSubmitResponse {
+  success: boolean;
+  message?: string;
+}
+
 const HeroSection: React.FC = () => {
   // Estado para o overlay de carregamento
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -272,96 +278,126 @@ const HeroSection: React.FC = () => {
     setMostrarSugestoes(false);
   };
 
-// Função para enviar dados diretamente para FormSubmit
-const enviarDadosFormulario = async (valorCalculado: number) => {
-  try {
-    // Preparar dados do formulário para envio com parâmetros do FormSubmit
-    const formSubmitData = {
-      nome: formData.nome,
-      telefone: formData.telefone,
-      cidade: formData.cidade,
-      titular: formData.titular === 'sim' ? 'Sim' : 'Não',
-      valorAprovado: `R$ ${valorCalculado.toLocaleString("pt-BR")},00`,
-      dataHora: new Date().toLocaleString('pt-BR'),
-      tipoFormulario: 'Empréstimo na Conta de Luz',
-      _subject: "Nova simulação de empréstimo na conta de luz - Credios",
-      _captcha: "false",
-      _template: "table",
-    };
-    
-    // Enviar dados diretamente para FormSubmit.co
-    const response = await fetch("https://formsubmit.co/ajax/simulador@credios.com.br", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      body: JSON.stringify(formSubmitData)
-    });
-    
-    if (!response.ok) {
-      throw new Error(`Erro no envio: ${response.status}`);
-    }
-    
-    const result = await response.json();
-    
-    if (result.success) {
-      return true;
-    } else {
-      throw new Error(result.message || 'Falha no envio do formulário.');
-    }
-  } catch (error) {
-    console.error('Erro ao enviar formulário:', error);
-    setErroEnvio('Ocorreu um erro no envio, mas sua simulação foi realizada com sucesso.');
-    return true; // Continua mesmo com falha para não prejudicar UX
-  }
-};
-    // Função para simular o empréstimo - permanece inalterada
-const simularEmprestimo = () => {
-  if (validarFormulario()) {
-    setIsLoading(true);
-    
-    // Timeout para simular processamento e proporcionar uma melhor experiência de usuário
-    setTimeout(async () => {
-      // Obtém o valor pré-aprovado baseado na cidade do usuário
-      let valorAprovado = 500; // Valor padrão mínimo
+  // Função para enviar dados para FormSubmit
+  const enviarDadosFormulario = async (valorCalculado: number) => {
+    try {
+      // Preparar dados do formulário para envio
+      const formSubmitData = {
+        nome: formData.nome,
+        telefone: formData.telefone,
+        cidade: formData.cidade,
+        titular: formData.titular === 'sim' ? 'Sim' : 'Não',
+        valorAprovado: `R$ ${valorCalculado.toLocaleString("pt-BR")},00`,
+        dataHora: new Date().toLocaleString('pt-BR'),
+        tipoFormulario: 'Empréstimo na Conta de Luz',
+        _subject: "Nova simulação de empréstimo na conta de luz - Credios",
+        _captcha: "false",
+        _template: "table",
+        _replyto: "noreply@credios.com.br",
+      };
+
+      // Enviar dados para FormSubmit
+      const response = await fetch("https://formsubmit.co/ajax/simulador@credios.com.br", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(formSubmitData)
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro no envio: ${response.status}`);
+      }
+
+      const result: FormSubmitResponse = await response.json();
       
-      // Normalizar para ignorar acentos
-      const cidadeNormalizada = normalizeText(formData.cidade.toLowerCase());
-      
-      // Procura pela cidade na lista
-      const cidadeEncontrada = cidadesLista.find(
-        item => normalizeText(item.cidade.toLowerCase()) === cidadeNormalizada
-      );
-      
-      if (cidadeEncontrada) {
-        // Se encontrou a cidade exata, usa o valor da cidade
-        valorAprovado = cidadeEncontrada.valor;
+      if (result.success) {
+        return true;
       } else {
-        // Procura por correspondência parcial
-        const cidadeParcial = cidadesLista.find(
-          item => normalizeText(item.cidade.toLowerCase()).includes(cidadeNormalizada) ||
-                 cidadeNormalizada.includes(normalizeText(item.cidade.toLowerCase()))
-        );
+        throw new Error('Falha no envio do formulário.');
+      }
+    } catch (error) {
+      console.error('Erro ao enviar formulário:', error);
+      setErroEnvio('Ocorreu um erro no envio, mas sua simulação foi realizada com sucesso.');
+      
+      // Tentar novamente uma vez em caso de falha
+      try {
+        const formSubmitData = {
+          nome: formData.nome,
+          telefone: formData.telefone,
+          cidade: formData.cidade,
+          titular: formData.titular === 'sim' ? 'Sim' : 'Não',
+          valorAprovado: `R$ ${valorCalculado.toLocaleString("pt-BR")},00`,
+          dataHora: new Date().toLocaleString('pt-BR'),
+          tipoFormulario: 'Empréstimo na Conta de Luz (segunda tentativa)',
+          _subject: "Nova simulação de empréstimo na conta de luz - Credios",
+          _captcha: "false",
+          _template: "table",
+        };
         
-        if (cidadeParcial) {
-          // Se encontrou uma correspondência parcial, usa o valor dela
-          valorAprovado = cidadeParcial.valor;
-        } else {
-          // Fallback para valor aleatório mínimo se não encontrar a cidade
-          valorAprovado = Math.floor(Math.random() * (1000 - 500 + 1) + 500);
-        }
+        await fetch("https://formsubmit.co/ajax/simulador@credios.com.br", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify(formSubmitData)
+        });
+      } catch (e) {
+        console.error('Falha na segunda tentativa de envio:', e);
       }
       
-      // Enviar dados para formSubmit e esperar resultado
-      await enviarDadosFormulario(valorAprovado);
+      return true; // Continua mesmo com falha para não prejudicar UX
+    }
+  };
+
+  // Função para simular o empréstimo
+  const simularEmprestimo = () => {
+    if (validarFormulario()) {
+      setIsLoading(true);
       
-      setValorAprovado(`R$ ${valorAprovado.toLocaleString("pt-BR")},00`);
-      setMostrarResultado(true);
-      setIsLoading(false);
-    }, 2000);
-  }
-};
+      // Timeout para simular processamento e proporcionar uma melhor experiência de usuário
+      setTimeout(async () => {
+        // Obtém o valor pré-aprovado baseado na cidade do usuário
+        let valorAprovado = 500; // Valor padrão mínimo
+        
+        // Normalizar para ignorar acentos
+        const cidadeNormalizada = normalizeText(formData.cidade.toLowerCase());
+        
+        // Procura pela cidade na lista
+        const cidadeEncontrada = cidadesLista.find(
+          item => normalizeText(item.cidade.toLowerCase()) === cidadeNormalizada
+        );
+        
+        if (cidadeEncontrada) {
+          // Se encontrou a cidade exata, usa o valor da cidade
+          valorAprovado = cidadeEncontrada.valor;
+        } else {
+          // Procura por correspondência parcial
+          const cidadeParcial = cidadesLista.find(
+            item => normalizeText(item.cidade.toLowerCase()).includes(cidadeNormalizada) ||
+                   cidadeNormalizada.includes(normalizeText(item.cidade.toLowerCase()))
+          );
+          
+          if (cidadeParcial) {
+            // Se encontrou uma correspondência parcial, usa o valor dela
+            valorAprovado = cidadeParcial.valor;
+          } else {
+            // Fallback para valor aleatório mínimo se não encontrar a cidade
+            valorAprovado = Math.floor(Math.random() * (1000 - 500 + 1) + 500);
+          }
+        }
+        
+        // Enviar dados para FormSubmit e esperar resultado
+        await enviarDadosFormulario(valorAprovado);
+        
+        setValorAprovado(`R$ ${valorAprovado.toLocaleString("pt-BR")},00`);
+        setMostrarResultado(true);
+        setIsLoading(false);
+      }, 2000);
+    }
+  };
 
   // Função para focar no formulário (para mobile)
   const irParaFormulario = () => {

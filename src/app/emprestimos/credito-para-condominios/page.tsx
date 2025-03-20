@@ -129,7 +129,7 @@ const FloatingWhatsAppButton = () => {
         <Tooltip>
           <TooltipTrigger asChild>
             <motion.a 
-              href="https://wa.me/5500000000000?text=Olá,%20gostaria%20de%20informações%20sobre%20crédito%20para%20condomínios" 
+              href="https://wa.me/5521975233834?text=Olá,%20gostaria%20de%20informações%20sobre%20crédito%20para%20condomínios" 
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center cursor-pointer"
@@ -766,57 +766,94 @@ const HeroSection = () => {
   };
 
   // Handler para envio do formulário com FormSubmit.co
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormState(prev => ({ ...prev, isSubmitting: true, error: null }));
-    
-    try {
-      // Preparar dados do formulário para envio com FormSubmit
-      const formSubmitData = {
-        condoName: formState.condoName,
-        name: formState.name,
-        phone: formState.phone,
-        dataHora: new Date().toLocaleString('pt-BR'),
-        tipoFormulario: 'Crédito para Condomínios',
-        _subject: "Nova solicitação de crédito para condomínio - Credios",
-        _captcha: "false",
-        _template: "table",
-      };
-      
-      // Enviar dados para FormSubmit.co
-      const response = await fetch("https://formsubmit.co/ajax/simulador@credios.com.br", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        body: JSON.stringify(formSubmitData)
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Erro no envio: ${response.status}`);
-      }
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        setFormState(prev => ({ 
-          ...prev, 
-          isSubmitting: false, 
-          isSubmitted: true 
-        }));
-      } else {
-        throw new Error(result.message || 'Falha no envio do formulário.');
-      }
-    } catch (error) {
-      console.error('Erro ao enviar formulário:', error);
-      setFormState(prev => ({ 
-        ...prev, 
-        isSubmitting: false, 
-        error: 'Ocorreu um erro no envio do formulário. Por favor, tente novamente.' 
-      }));
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setFormState(prev => ({ ...prev, isSubmitting: true, error: null }));
+  
+  try {
+    // Verificar conexão com internet antes de continuar
+    if (!navigator.onLine) {
+      throw new Error('Sem conexão com a internet. Verifique sua conexão e tente novamente.');
     }
-  };
+
+    // Preparar dados do formulário para envio com FormSubmit
+    const formSubmitData = {
+      condoName: formState.condoName,
+      name: formState.name,
+      phone: formState.phone,
+      dataHora: new Date().toLocaleString('pt-BR'),
+      tipoFormulario: 'Crédito para Condomínios',
+      _subject: "Nova solicitação de crédito para condomínio - Credios",
+      _captcha: "false",
+      _template: "table",
+    };
+    
+    console.log('Enviando dados:', formSubmitData);
+    
+    // Adicionar timeout para a requisição
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 segundos timeout
+    
+    // Enviar dados para FormSubmit.co
+    const response = await fetch("https://formsubmit.co/ajax/simulador@credios.com.br", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(formSubmitData),
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId); // Limpar timeout se a requisição completar
+    
+    if (!response.ok) {
+      throw new Error(`Erro no envio: ${response.status} ${response.statusText}`);
+    }
+    
+    let result;
+    try {
+      result = await response.json();
+    } catch (jsonError) {
+      console.error('Erro ao processar resposta JSON:', jsonError);
+      throw new Error('Formato de resposta inválido do servidor.');
+    }
+    
+    console.log('Resposta recebida:', result);
+    
+    // Considerar bem-sucedido se chegar até aqui, mesmo se result.success não for explicitamente true
+    setFormState(prev => ({ 
+      ...prev, 
+      isSubmitting: false, 
+      isSubmitted: true 
+    }));
+    
+  } catch (error: unknown) {
+    console.error('Erro ao enviar formulário:', error);
+    
+    // Detectar erro de timeout
+    let errorMessage = 'Ocorreu um erro no envio do formulário. Por favor, tente novamente.';
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        errorMessage = 'A requisição demorou muito para responder. Por favor, tente novamente.';
+      } else {
+        errorMessage = error.message;
+      }
+    }
+    
+    setFormState(prev => ({ 
+      ...prev, 
+      isSubmitting: false, 
+      error: errorMessage
+    }));
+  } finally {
+    // Garantir que isSubmitting sempre se torne false, mesmo que ocorra algum erro inesperado
+    setFormState(prev => ({ 
+      ...prev, 
+      isSubmitting: false 
+    }));
+  }
+};
   
   return (
     <div id="formulario-contato" className="relative py-24 overflow-hidden bg-gradient-to-br from-teal-50 via-green-50 to-emerald-50">
