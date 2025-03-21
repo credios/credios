@@ -278,8 +278,26 @@ const HeroSection: React.FC = () => {
     setMostrarSugestoes(false);
   };
 
-  // Função para enviar dados para FormSubmit
+  // Função para enviar dados para FormSubmit com timeout
   const enviarDadosFormulario = async (valorCalculado: number) => {
+    // Criamos uma função para fazer o fetch com timeout
+    const fetchWithTimeout = async (url: string, options: RequestInit, timeout = 5000) => {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+      
+      try {
+        const response = await fetch(url, {
+          ...options,
+          signal: controller.signal
+        });
+        clearTimeout(id);
+        return response;
+      } catch (error) {
+        clearTimeout(id);
+        throw error;
+      }
+    };
+    
     try {
       // Preparar dados do formulário para envio
       const formSubmitData = {
@@ -296,15 +314,15 @@ const HeroSection: React.FC = () => {
         _replyto: "noreply@credios.com.br",
       };
 
-      // Enviar dados para FormSubmit
-      const response = await fetch("https://formsubmit.co/ajax/simulador@credios.com.br", {
+      // Enviar dados para FormSubmit com timeout de 5 segundos
+      const response = await fetchWithTimeout("https://formsubmit.co/ajax/simulador@credios.com.br", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json"
         },
         body: JSON.stringify(formSubmitData)
-      });
+      }, 5000);
 
       if (!response.ok) {
         throw new Error(`Erro no envio: ${response.status}`);
@@ -321,32 +339,8 @@ const HeroSection: React.FC = () => {
       console.error('Erro ao enviar formulário:', error);
       setErroEnvio('Ocorreu um erro no envio, mas sua simulação foi realizada com sucesso.');
       
-      // Tentar novamente uma vez em caso de falha
-      try {
-        const formSubmitData = {
-          nome: formData.nome,
-          telefone: formData.telefone,
-          cidade: formData.cidade,
-          titular: formData.titular === 'sim' ? 'Sim' : 'Não',
-          valorAprovado: `R$ ${valorCalculado.toLocaleString("pt-BR")},00`,
-          dataHora: new Date().toLocaleString('pt-BR'),
-          tipoFormulario: 'Empréstimo na Conta de Luz (segunda tentativa)',
-          _subject: "Nova simulação de empréstimo na conta de luz - Credios",
-          _captcha: "false",
-          _template: "table",
-        };
-        
-        await fetch("https://formsubmit.co/ajax/simulador@credios.com.br", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: JSON.stringify(formSubmitData)
-        });
-      } catch (e) {
-        console.error('Falha na segunda tentativa de envio:', e);
-      }
+      // Não tentamos novamente para evitar mais atrasos
+      // Se for necessário, podemos enviar em background posteriormente
       
       return true; // Continua mesmo com falha para não prejudicar UX
     }
@@ -357,44 +351,69 @@ const HeroSection: React.FC = () => {
     if (validarFormulario()) {
       setIsLoading(true);
       
+      // Definimos um timer máximo para garantir que o carregamento nunca ultrapassará esse valor
+      const maxLoadingTimer = setTimeout(() => {
+        if (isLoading) {
+          setIsLoading(false);
+          setMostrarResultado(true);
+          console.warn('Loading timeout atingido - finalizando carregamento forçadamente');
+        }
+      }, 10000); // Timeout máximo de 10 segundos
+      
       // Timeout para simular processamento e proporcionar uma melhor experiência de usuário
-      setTimeout(async () => {
-        // Obtém o valor pré-aprovado baseado na cidade do usuário
-        let valorAprovado = 500; // Valor padrão mínimo
-        
-        // Normalizar para ignorar acentos
-        const cidadeNormalizada = normalizeText(formData.cidade.toLowerCase());
-        
-        // Procura pela cidade na lista
-        const cidadeEncontrada = cidadesLista.find(
-          item => normalizeText(item.cidade.toLowerCase()) === cidadeNormalizada
-        );
-        
-        if (cidadeEncontrada) {
-          // Se encontrou a cidade exata, usa o valor da cidade
-          valorAprovado = cidadeEncontrada.valor;
-        } else {
-          // Procura por correspondência parcial
-          const cidadeParcial = cidadesLista.find(
-            item => normalizeText(item.cidade.toLowerCase()).includes(cidadeNormalizada) ||
-                   cidadeNormalizada.includes(normalizeText(item.cidade.toLowerCase()))
+      setTimeout(() => {
+        try {
+          // Obtém o valor pré-aprovado baseado na cidade do usuário
+          let valorAprovado = 1000; // Valor padrão mínimo atualizado para 1000
+          
+          // Normalizar para ignorar acentos
+          const cidadeNormalizada = normalizeText(formData.cidade.toLowerCase());
+          
+          // Procura pela cidade na lista
+          const cidadeEncontrada = cidadesLista.find(
+            item => normalizeText(item.cidade.toLowerCase()) === cidadeNormalizada
           );
           
-          if (cidadeParcial) {
-            // Se encontrou uma correspondência parcial, usa o valor dela
-            valorAprovado = cidadeParcial.valor;
+          if (cidadeEncontrada) {
+            // Se encontrou a cidade exata, usa o valor da cidade
+            valorAprovado = cidadeEncontrada.valor;
           } else {
-            // Fallback para valor aleatório mínimo se não encontrar a cidade
-            valorAprovado = Math.floor(Math.random() * (1000 - 500 + 1) + 500);
+            // Procura por correspondência parcial
+            const cidadeParcial = cidadesLista.find(
+              item => normalizeText(item.cidade.toLowerCase()).includes(cidadeNormalizada) ||
+                     cidadeNormalizada.includes(normalizeText(item.cidade.toLowerCase()))
+            );
+            
+            if (cidadeParcial) {
+              // Se encontrou uma correspondência parcial, usa o valor dela
+              valorAprovado = cidadeParcial.valor;
+            } else {
+              // Fallback para valor aleatório mínimo se não encontrar a cidade
+              // Atualizado para gerar valores entre 1000 e 2000
+              valorAprovado = Math.floor(Math.random() * (2000 - 1000 + 1) + 1000);
+            }
           }
+          
+          // Primeiro mostramos o resultado para o usuário
+          setValorAprovado(`R$ ${valorAprovado.toLocaleString("pt-BR")},00`);
+          setMostrarResultado(true);
+          setIsLoading(false);
+          
+          // Cancelamos o timer máximo pois já terminamos o carregamento
+          clearTimeout(maxLoadingTimer);
+          
+          // Depois enviamos os dados em background sem bloquear a interface
+          // Isso garante que o usuário veja o resultado rapidamente
+          enviarDadosFormulario(valorAprovado).catch(error => {
+            console.error("Erro ao enviar formulário em background:", error);
+          });
+          
+        } catch (error) {
+          // Em caso de erro, garantimos que o loading seja removido
+          console.error("Erro durante a simulação:", error);
+          setIsLoading(false);
+          clearTimeout(maxLoadingTimer);
         }
-        
-        // Enviar dados para FormSubmit e esperar resultado
-        await enviarDadosFormulario(valorAprovado);
-        
-        setValorAprovado(`R$ ${valorAprovado.toLocaleString("pt-BR")},00`);
-        setMostrarResultado(true);
-        setIsLoading(false);
       }, 2000);
     }
   };
