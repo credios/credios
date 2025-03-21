@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, SVGProps } from "react";
 import Script from 'next/script';
 import { motion, useScroll } from "framer-motion";
-import HeroSection from "@/components/herosection"; // Make sure this path matches your actual component location
+import HeroLanding from "@/components/herolanding"; // Make sure this path matches your actual component location
 import { 
   Shield, 
   BadgeCheck, 
@@ -355,11 +355,31 @@ const LandingLuz001: React.FC = () => {
         gtag('config', '${googleAdsId}');
       `}
     </Script>
+
+  <Script id="google-ads-event-snippet" strategy="afterInteractive">
+        {`
+          function gtag_report_conversion(url) {
+            var callback = function () {
+              if (typeof(url) != 'undefined') {
+                window.location = url;
+              }
+            };
+            gtag('event', 'conversion', {
+                'send_to': 'AW-16944100859/uLP-CM_S6K0aEPvryY8_',
+                'value': 1.0,
+                'currency': 'BRL',
+                'event_callback': callback
+            });
+            return false;
+          }
+        `}
+      </Script>
+
     <div className="min-h-screen bg-white overflow-x-hidden relative">
       {/* Main Content */}
       <div>
         {/* Hero Section (Your existing component) */}
-        <HeroSection />
+        <HeroLanding />
 
         {/* Social Proof Section */}
         <section className="py-10 px-4 bg-white relative overflow-hidden">
