@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, SVGProps } from "react";
+import Script from 'next/script';
 import { motion, useScroll } from "framer-motion";
 import HeroSection from "@/components/herosection"; // Make sure this path matches your actual component location
 import { 
@@ -124,6 +125,7 @@ const useIntersectionObserver = (options = {}) => {
 };
 
 const LandingLuz001: React.FC = () => {
+    
   // Animation controls for scrolling sections
   const { ref: benefitsRef, isIntersecting: benefitsInView } = useIntersectionObserver({
     threshold: 0.2,
@@ -333,7 +335,26 @@ const LandingLuz001: React.FC = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Adicione essa constante antes do return:
+  const googleAdsId = 'AW-16944100859';
+
   return (
+    <>
+    {/* Google Ads Global Site Tag - Primeiro script que carrega o gtag.js */}
+    <Script
+      src={`https://www.googletagmanager.com/gtag/js?id=${googleAdsId}`}
+      strategy="afterInteractive"
+    />
+    
+    {/* Google Ads Configuration - Segundo script que configura o gtag */}
+    <Script id="google-ads-config" strategy="afterInteractive">
+      {`
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '${googleAdsId}');
+      `}
+    </Script>
     <div className="min-h-screen bg-white overflow-x-hidden relative">
       {/* Main Content */}
       <div>
@@ -1020,6 +1041,7 @@ const LandingLuz001: React.FC = () => {
         </motion.a>
       </div>
     </div>
+    </>
   );
 };
 
