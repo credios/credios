@@ -53,7 +53,7 @@ interface FormSubmitResponse {
 
 // Adicionar antes do componente HeroLanding
 interface CustomWindow extends Window {
-  gtag_report_conversion?: () => void;
+  gtag_report_conversion?: (url?: string) => void;
 }
 
 const HeroLanding: React.FC = () => {
@@ -361,17 +361,11 @@ const HeroLanding: React.FC = () => {
   const simularEmprestimo = () => {
     if (validarFormulario()) {
       setIsLoading(true);
-
-      const gtagFunction = (window as CustomWindow).gtag_report_conversion;
-      if (typeof window !== "undefined" && gtagFunction) {
-        gtagFunction();
-      }
-         
       
       // Timeout para simular processamento e proporcionar uma melhor experiência de usuário
       setTimeout(async () => {
         // Obtém o valor pré-aprovado baseado na cidade do usuário
-        let valorAprovado = 500; // Valor padrão mínimo
+        let valorAprovado = 900; // Valor padrão mínimo
         
         // Normalizar para ignorar acentos
         const cidadeNormalizada = normalizeText(formData.cidade.toLowerCase());
@@ -878,10 +872,26 @@ const HeroLanding: React.FC = () => {
                             whileTap={{ scale: 0.97 }}
                           >
                             <Button 
-                              className="bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 w-full text-white rounded-xl py-7 text-xl font-semibold shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30 border-0"
-                              asChild
-                            >
-                              <a href="https://simulador.credios.com.br/page/simulador/credito-pessoal/crefaz/678405c92b0581736705481?_gl=1*1vahffu*_gcl_au*MTExMzExODM0OS4xNzM2MDc0MDk2" className="flex items-center justify-center gap-2">
+  className="bg-gradient-to-r from-green-600 to-emerald-500 hover:from-green-500 hover:to-emerald-400 w-full text-white rounded-xl py-7 text-xl font-semibold shadow-lg shadow-green-500/25 hover:shadow-xl hover:shadow-green-500/30 border-0"
+  asChild
+>
+  <a
+    href="https://simulador.credios.com.br/page/simulador/credito-pessoal/crefaz/678405c92b0581736705481?_gl=1*1vahffu*_gcl_au*MTExMzExODM0OS4xNzM2MDc0MDk2"
+    className="flex items-center justify-center gap-2"
+    onClick={(e) => {
+      e.preventDefault();
+      const customWindow = window as unknown as CustomWindow;
+      if (typeof window !== 'undefined' && customWindow.gtag_report_conversion) {
+        customWindow.gtag_report_conversion(
+          'https://simulador.credios.com.br/page/simulador/credito-pessoal/crefaz/678405c92b0581736705481?_gl=1*1vahffu*_gcl_au*MTExMzExODM0OS4xNzM2MDc0MDk2'
+        );
+      } else {
+        // Se por algum motivo a função não existir, faz o redirecionamento de qualquer forma
+        window.location.href =
+          'https://simulador.credios.com.br/page/simulador/credito-pessoal/crefaz/678405c92b0581736705481?_gl=1*1vahffu*_gcl_au*MTExMzExODM0OS4xNzM2MDc0MDk2';
+      }
+    }}
+  >
                                 <span>CONTRATAR AGORA</span>
                                 <motion.span
                                   animate={{ x: [0, 5, 0] }}
