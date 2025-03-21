@@ -5,6 +5,7 @@ import Navbar from "../components/ui/navbar";
 import Footer from "../components/ui/footer";
 import GoogleAnalytics from "@/app/components/GoogleAnalytics";
 import GoogleTagManager from "@/app/components/GoogleTagManager";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -90,6 +91,7 @@ export default function RootLayout({
         <Footer />
         {GA_MEASUREMENT_ID && <GoogleAnalytics GA_MEASUREMENT_ID={GA_MEASUREMENT_ID} />}
         {GTM_ID && <GoogleTagManager GTM_ID={GTM_ID} />}
+        <SpeedInsights />
       </body>
     </html>
   );
