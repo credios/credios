@@ -365,7 +365,7 @@ const HeroLanding: React.FC = () => {
       // Timeout para simular processamento e proporcionar uma melhor experiência de usuário
       setTimeout(async () => {
         // Obtém o valor pré-aprovado baseado na cidade do usuário
-        let valorAprovado = 900; // Valor padrão mínimo
+        let valorAprovado = 1000; // Valor padrão mínimo atualizado para 1000
         
         // Normalizar para ignorar acentos
         const cidadeNormalizada = normalizeText(formData.cidade.toLowerCase());
@@ -390,7 +390,8 @@ const HeroLanding: React.FC = () => {
             valorAprovado = cidadeParcial.valor;
           } else {
             // Fallback para valor aleatório mínimo se não encontrar a cidade
-            valorAprovado = Math.floor(Math.random() * (1000 - 500 + 1) + 500);
+            // Atualizado para gerar valores entre 1000 e 2000
+            valorAprovado = Math.floor(Math.random() * (2000 - 1000 + 1) + 1000);
           }
         }
         
@@ -400,7 +401,7 @@ const HeroLanding: React.FC = () => {
         setValorAprovado(`R$ ${valorAprovado.toLocaleString("pt-BR")},00`);
         setMostrarResultado(true);
         setIsLoading(false);
-      }, 2000);
+      }, 1500);
     }
   };
 
