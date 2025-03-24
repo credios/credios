@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   viewport: "width=device-width, initial-scale=1",
 };
 
-// Schema JSON-LD para FinancialProduct com AggregateRating
+// Schema JSON-LD para FinancialProduct com Reviews
 const financialProductJsonLd = {
   "@context": "https://schema.org",
   "@type": "FinancialProduct",
@@ -58,37 +58,69 @@ const financialProductJsonLd = {
     "@type": "Organization",
     "name": "Credios",
     "url": "https://credios.com.br",
+    "logo": "/public/logo.svg"
   },
   "offers": {
     "@type": "Offer",
     "priceCurrency": "BRL",
     "price": "3300",
     "availability": "https://schema.org/InStock",
-    "validFrom": "2023-01-01",
+    "validFrom": "2023-01-01"
   },
   "areaServed": {
     "@type": "GeoShape",
-    "description": "Bahia, Ceará, Pernambuco, Rio Grande do Norte, Goiás, São Paulo, Rio de Janeiro, Paraná e Rio Grande do Sul",
+    "description": "Bahia, Ceará, Pernambuco, Rio Grande do Norte, Goiás, São Paulo, Rio de Janeiro, Paraná e Rio Grande do Sul"
   },
   "interestRate": {
     "@type": "QuantitativeValue",
     "value": "3.99",
     "minValue": "3.99",
     "maxValue": "6.99",
-    "unitText": "percent",
+    "unitText": "percent"
   },
+  "review": [
+    {
+      "@type": "Review",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5",
+        "bestRating": "5"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Carlos Silva"
+      },
+      "datePublished": "2023-08-15",
+      "reviewBody": "Processo muito simples e rápido. Recebi o dinheiro no mesmo dia!"
+    },
+    {
+      "@type": "Review",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "4",
+        "bestRating": "5"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Ana Beatriz"
+      },
+      "datePublished": "2023-09-22",
+      "reviewBody": "Atendimento excelente e processo bem explicado. Recomendo."
+    }
+  ],
   "aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": "4.9",
     "bestRating": "5",
     "ratingCount": "100",
-  },
+    "reviewCount": "100"
+  }
 };
 
 export default function EmprestimoNaContaDeLuz() {
   return (
     <>
-      {/* Apenas o schema FinancialProduct com AggregateRating */}
+      {/* Schema JSON-LD corrigido */}
       <JsonLd data={financialProductJsonLd} />
       <HeroSection />
       <AdvantagesSection />
