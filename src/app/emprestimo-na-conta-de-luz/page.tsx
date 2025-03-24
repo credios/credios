@@ -47,18 +47,27 @@ export const metadata: Metadata = {
   viewport: "width=device-width, initial-scale=1",
 };
 
-// Schema JSON-LD para FinancialProduct com Reviews
-const financialProductJsonLd = {
+// Schema JSON-LD para Service (principal)
+const serviceJsonLd = {
   "@context": "https://schema.org",
-  "@type": "FinancialProduct",
+  "@type": "Service",
+  "@id": "https://credios.com.br/emprestimo-na-conta-de-luz#service",
   "name": "Empréstimo na Conta de Luz Credios",
   "description": "Empréstimo usando conta de luz como garantia, sem consulta ao SPC/Serasa, com aprovação em minutos e valores de até R$ 3.300.",
   "url": "https://credios.com.br/emprestimo-na-conta-de-luz",
   "provider": {
     "@type": "Organization",
+    "@id": "https://credios.com.br#organization",
     "name": "Credios",
     "url": "https://credios.com.br",
-    "logo": "/public/logo.svg"
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://credios.com.br/images/logo.png"
+    }
+  },
+  "areaServed": {
+    "@type": "GeoShape",
+    "description": "Bahia, Ceará, Pernambuco, Rio Grande do Norte, Goiás, São Paulo, Rio de Janeiro, Paraná e Rio Grande do Sul"
   },
   "offers": {
     "@type": "Offer",
@@ -67,9 +76,75 @@ const financialProductJsonLd = {
     "availability": "https://schema.org/InStock",
     "validFrom": "2023-01-01"
   },
-  "areaServed": {
-    "@type": "GeoShape",
-    "description": "Bahia, Ceará, Pernambuco, Rio Grande do Norte, Goiás, São Paulo, Rio de Janeiro, Paraná e Rio Grande do Sul"
+  "termsOfService": "https://credios.com.br/termos-de-uso"
+};
+
+// Schema separado para AggregateRating
+const aggregateRatingJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AggregateRating",
+  "itemReviewed": {
+    "@type": "Service",
+    "@id": "https://credios.com.br/emprestimo-na-conta-de-luz#service"
+  },
+  "ratingValue": "4.9",
+  "bestRating": "5",
+  "ratingCount": "100",
+  "reviewCount": "100"
+};
+
+// Schema para reviews individuais
+const reviewJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Review",
+  "itemReviewed": {
+    "@type": "Service",
+    "@id": "https://credios.com.br/emprestimo-na-conta-de-luz#service"
+  },
+  "reviewRating": {
+    "@type": "Rating",
+    "ratingValue": "5",
+    "bestRating": "5"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Carlos Silva"
+  },
+  "datePublished": "2023-08-15",
+  "reviewBody": "Processo muito simples e rápido. Recebi o dinheiro no mesmo dia!"
+};
+
+// Schema para um segundo review individual
+const review2JsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Review",
+  "itemReviewed": {
+    "@type": "Service",
+    "@id": "https://credios.com.br/emprestimo-na-conta-de-luz#service"
+  },
+  "reviewRating": {
+    "@type": "Rating",
+    "ratingValue": "4",
+    "bestRating": "5"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Ana Beatriz"
+  },
+  "datePublished": "2023-09-22",
+  "reviewBody": "Atendimento excelente e processo bem explicado. Recomendo."
+};
+
+// Schema para informações financeiras específicas 
+const financialProductJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FinancialProduct",
+  "name": "Financiamento para Empréstimo na Conta de Luz",
+  "description": "Detalhes financeiros do empréstimo na conta de luz",
+  "url": "https://credios.com.br/emprestimo-na-conta-de-luz",
+  "provider": {
+    "@type": "Organization",
+    "@id": "https://credios.com.br#organization"
   },
   "interestRate": {
     "@type": "QuantitativeValue",
@@ -78,50 +153,19 @@ const financialProductJsonLd = {
     "maxValue": "6.99",
     "unitText": "percent"
   },
-  "review": [
-    {
-      "@type": "Review",
-      "reviewRating": {
-        "@type": "Rating",
-        "ratingValue": "5",
-        "bestRating": "5"
-      },
-      "author": {
-        "@type": "Person",
-        "name": "Carlos Silva"
-      },
-      "datePublished": "2023-08-15",
-      "reviewBody": "Processo muito simples e rápido. Recebi o dinheiro no mesmo dia!"
-    },
-    {
-      "@type": "Review",
-      "reviewRating": {
-        "@type": "Rating",
-        "ratingValue": "4",
-        "bestRating": "5"
-      },
-      "author": {
-        "@type": "Person",
-        "name": "Ana Beatriz"
-      },
-      "datePublished": "2023-09-22",
-      "reviewBody": "Atendimento excelente e processo bem explicado. Recomendo."
-    }
-  ],
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "bestRating": "5",
-    "ratingCount": "100",
-    "reviewCount": "100"
-  }
+  "feesAndCommissionsSpecification": "Sem taxa de abertura de crédito. Juros a partir de 3,99% ao mês."
 };
 
 export default function EmprestimoNaContaDeLuz() {
   return (
     <>
-      {/* Schema JSON-LD corrigido */}
+      {/* Schema JSON-LD separados para evitar conflitos */}
+      <JsonLd data={serviceJsonLd} />
+      <JsonLd data={aggregateRatingJsonLd} />
+      <JsonLd data={reviewJsonLd} />
+      <JsonLd data={review2JsonLd} />
       <JsonLd data={financialProductJsonLd} />
+      
       <HeroSection />
       <AdvantagesSection />
     </>
