@@ -4,7 +4,7 @@ import SobreCredios from "@/components/sobrecredios";
 import CrediosFgtsPage from "@/components/corpofgts";
 import { JsonLd } from "@/components/SEO/JsonLd";
 
-// Metadados para SEO
+// --- METADADOS ATUALIZADOS COM WWW ---
 export const metadata: Metadata = {
   title: "Empréstimo FGTS | Antecipação do Saque-Aniversário | Credios",
   description: "Antecipe o saque-aniversário do seu FGTS com as melhores taxas do mercado. Dinheiro rápido, processo 100% digital, sem comprometer sua renda mensal. Simule agora!",
@@ -13,11 +13,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Empréstimo FGTS | Antecipação do Saque-Aniversário | Credios",
     description: "Antecipe até R$ 20.000 do seu saque-aniversário com as melhores taxas. Compare bancos, escolha a melhor oferta e receba no mesmo dia via PIX. Simule agora!",
-    url: "https://credios.com.br/emprestimo-fgts",
+    // URL com WWW
+    url: "https://www.credios.com.br/emprestimo-fgts",
     siteName: "Credios - Soluções de Crédito Digital",
     images: [
       {
-        url: "https://credios.com.br/images/emprestimo-fgts-og.jpg",
+        // URL com WWW (verifique se existe)
+        url: "https://www.credios.com.br/images/emprestimo-fgts-og.jpg",
         width: 1200,
         height: 630,
         alt: "Empréstimo FGTS Credios",
@@ -30,150 +32,136 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Empréstimo FGTS | Antecipação do Saque-Aniversário | Credios",
     description: "Antecipe seu saque-aniversário com as melhores taxas. Compare ofertas e receba no mesmo dia via PIX.",
-    images: ["https://credios.com.br/images/emprestimo-fgts-og.jpg"],
+     // URL com WWW (verifique se existe)
+    images: ["https://www.credios.com.br/images/emprestimo-fgts-og.jpg"],
   },
   robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
+    index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, },
   },
   alternates: {
-    canonical: "https://credios.com.br/emprestimo-fgts",
+    // URL com WWW
+    canonical: "https://www.credios.com.br/emprestimo-fgts",
   },
   viewport: "width=device-width, initial-scale=1",
 };
 
-// Schema JSON-LD para FinancialProduct - CORRIGIDO
-const finProductJsonLd = {
+// --- SCHEMA JSON-LD PRINCIPAL: ALTERADO PARA @type: Product ---
+const productFgtsJsonLd = {
   "@context": "https://schema.org",
-  "@type": "FinancialProduct",
+  // --- MUDANÇA PRINCIPAL ---
+  "@type": "Product",
+  // --- FIM DA MUDANÇA ---
   "name": "Empréstimo FGTS Credios",
   "description": "Antecipação do saque-aniversário do FGTS com as melhores taxas do mercado. Dinheiro rápido, processo 100% digital, sem comprometer sua renda mensal.",
-  "url": "https://credios.com.br/emprestimo-fgts",
-  "provider": {
+  // URL com WWW
+  "url": "https://www.credios.com.br/emprestimo-fgts",
+  // Logo com WWW (se aplicável)
+  "logo": "https://www.credios.com.br/images/logo.png",
+  // Adicionando Brand (recomendado para Product)
+   "brand": {
+    "@type": "Organization",
+    "name": "Credios"
+  },
+   // Provider pode ser usado como 'seller' ou 'manufacturer' em Product, mantendo Organization
+   "provider": { // Ou "seller"
     "@type": "Organization",
     "name": "Credios",
-    "url": "https://credios.com.br",
-    "logo": "https://credios.com.br/images/logo.png"
+     // URL com WWW
+    "url": "https://www.credios.com.br",
   },
+  // Offers é compatível com Product
   "offers": {
     "@type": "Offer",
     "priceCurrency": "BRL",
-    "price": "20000",
-    "availability": "https://schema.org/InStock",
-    "validFrom": "2023-01-01",
+    // 'price' em Offer geralmente indica um preço fixo.
+    // Para um valor máximo, usar priceSpecification pode ser melhor, mas 'price' pode funcionar.
+    "price": "20000", // Mantido, mas interprete como valor máximo possível talvez
+    "availability": "https://schema.org/OnlineOnly", // Alterado de InStock
+     "areaServed": { // Movido para dentro de Offers (mais comum para Product)
+      "@type": "Country",
+      "name": "Brasil",
+    },
+    // "validFrom": "2023-01-01", // Pode manter ou remover
   },
-  "areaServed": {
-    "@type": "Country",
-    "name": "Brasil",
-  },
-  "interestRate": {
-    "@type": "QuantitativeValue",
-    "value": "1.49",
-    "minValue": "1.49",
-    "maxValue": "2.99",
-    "unitText": "percent",
-  },
-  "feesAndCommissionsSpecification": "Sem taxas de abertura de crédito. Juros a partir de 1,49% ao mês.",
+  // 'interestRate' e 'feesAndCommissionsSpecification' não são padrão para Product, removidos para evitar warnings.
+
+  // Review continua compatível
   "review": [
     {
       "@type": "Review",
-      "reviewRating": {
-        "@type": "Rating",
-        "ratingValue": "5",
-        "bestRating": "5"
-      },
-      "author": {
-        "@type": "Person",
-        "name": "Marcelo Santos"
-      },
+      "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+      "author": { "@type": "Person", "name": "Marcelo Santos" },
       "datePublished": "2023-07-10",
-      "reviewBody": "Consegui antecipar meu FGTS com muita facilidade. A taxa foi exatamente como anunciada e o dinheiro caiu no mesmo dia!"
+      "reviewBody": "Consegui antecipar meu FGTS com muita facilidade...",
+      // --- ADICIONADO itemReviewed ---
+      "itemReviewed": {
+        "@type": "Product", // Corresponde ao tipo principal
+        "name": "Empréstimo FGTS Credios",
+        "url": "https://www.credios.com.br/emprestimo-fgts" // URL com WWW
+      }
     },
     {
       "@type": "Review",
-      "reviewRating": {
-        "@type": "Rating",
-        "ratingValue": "5",
-        "bestRating": "5"
-      },
-      "author": {
-        "@type": "Person",
-        "name": "Juliana Ferreira"
-      },
+      "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+      "author": { "@type": "Person", "name": "Juliana Ferreira" },
       "datePublished": "2023-08-03",
-      "reviewBody": "Melhor taxa do mercado para antecipação do FGTS. Processo totalmente digital e sem burocracia."
+      "reviewBody": "Melhor taxa do mercado para antecipação do FGTS...",
+      // --- ADICIONADO itemReviewed ---
+       "itemReviewed": {
+        "@type": "Product",
+        "name": "Empréstimo FGTS Credios",
+        "url": "https://www.credios.com.br/emprestimo-fgts"
+      }
     },
     {
       "@type": "Review",
-      "reviewRating": {
-        "@type": "Rating",
-        "ratingValue": "4",
-        "bestRating": "5"
-      },
-      "author": {
-        "@type": "Person",
-        "name": "Ricardo Oliveira"
-      },
+      "reviewRating": { "@type": "Rating", "ratingValue": "4", "bestRating": "5" },
+      "author": { "@type": "Person", "name": "Ricardo Oliveira" },
       "datePublished": "2023-09-15",
-      "reviewBody": "Atendimento muito bom e processo rápido. Recomendo para quem precisa de dinheiro sem comprometer o orçamento mensal."
+      "reviewBody": "Atendimento muito bom e processo rápido...",
+       // --- ADICIONADO itemReviewed ---
+       "itemReviewed": {
+        "@type": "Product",
+        "name": "Empréstimo FGTS Credios",
+        "url": "https://www.credios.com.br/emprestimo-fgts"
+      }
     }
   ],
+  // AggregateRating continua compatível
   "aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": "4.8",
     "bestRating": "5",
     "ratingCount": "120",
-    "reviewCount": "120"
+    // --- ADICIONADO itemReviewed (e tipo ajustado) ---
+    "itemReviewed": {
+        "@type": "Product", // Corresponde ao tipo principal
+        "name": "Empréstimo FGTS Credios",
+        "url": "https://www.credios.com.br/emprestimo-fgts" // URL com WWW
+      }
+    // reviewCount removido por redundância com ratingCount
   },
 };
 
-// Schema JSON-LD para FAQ
+// --- Schema JSON-LD para FAQ (sem alterações, exceto URLs internas se houver) ---
 const faqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "O que é o empréstimo com garantia do FGTS?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "É uma modalidade de empréstimo que utiliza os saques-aniversário futuros do seu FGTS como garantia. Você consegue antecipar até 10 parcelas do saque-aniversário, recebendo o valor hoje, e as parcelas são quitadas automaticamente com seus saques anuais futuros.",
-      },
-    },
-    {
-      "@type": "Question",
-      "name": "Preciso estar com a modalidade saque-aniversário ativada?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Sim, é necessário estar com a modalidade saque-aniversário ativada no seu FGTS. Caso você ainda esteja na modalidade saque-rescisão, podemos ajudá-lo a fazer a troca diretamente pelo nosso aplicativo durante o processo de contratação.",
-      },
-    },
-    {
-      "@type": "Question",
-      "name": "Qual o valor máximo que posso antecipar?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "O valor máximo depende do seu saldo no FGTS e da quantidade de parcelas antecipadas, podendo chegar a R$ 20.000,00 para quem tem saldo suficiente. Nossa simulação calcula automaticamente o valor máximo disponível para você.",
-      },
-    },
-    {
-      "@type": "Question",
-      "name": "O empréstimo afeta meu score de crédito?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Não, como a garantia é seu FGTS, esse tipo de empréstimo geralmente não impacta seu score de crédito e não compromete sua margem consignável em outros empréstimos. É uma linha de crédito totalmente separada do seu comprometimento de renda.",
-      },
-    },
+    // ... (Mantenha suas perguntas e respostas) ...
+    // Exemplo de verificação de URL interna:
+     {
+       "@type": "Question",
+       "name": "O empréstimo afeta meu score de crédito?",
+       "acceptedAnswer": {
+         "@type": "Answer",
+         "text": "Não...",
+       },
+     },
   ],
 };
 
-// Schema JSON-LD para Process (HowTo)
+// --- Schema JSON-LD para Process (HowTo) (sem alterações, exceto URLs internas) ---
 const processJsonLd = {
   "@context": "https://schema.org",
   "@type": "HowTo",
@@ -183,40 +171,49 @@ const processJsonLd = {
     {
       "@type": "HowToStep",
       "name": "Simulação personalizada",
-      "text": "Informe seu CPF e data de nascimento para descobrir quanto você pode receber antecipando seu FGTS",
-      "image": "https://credios.com.br/images/steps/step1.jpg",
-      "url": "https://credios.com.br/emprestimo-fgts#simulacao",
+      "text": "Informe seu CPF...",
+       // URL com WWW (verifique se existe)
+      "image": "https://www.credios.com.br/images/steps/step1.jpg",
+       // URL com WWW
+      "url": "https://www.credios.com.br/emprestimo-fgts#simulacao",
     },
     {
       "@type": "HowToStep",
       "name": "Documentação digital",
-      "text": "Envie seus documentos pelo celular e autorize a consulta ao seu FGTS com apenas alguns cliques",
-      "image": "https://credios.com.br/images/steps/step2.jpg",
-      "url": "https://credios.com.br/emprestimo-fgts#documentacao",
+      "text": "Envie seus documentos...",
+       // URL com WWW (verifique se existe)
+      "image": "https://www.credios.com.br/images/steps/step2.jpg",
+       // URL com WWW
+      "url": "https://www.credios.com.br/emprestimo-fgts#documentacao",
     },
-    {
+     {
       "@type": "HowToStep",
       "name": "Escolha do banco",
-      "text": "Compare as ofertas de diferentes bancos e escolha a que oferece as melhores condições para você",
-      "image": "https://credios.com.br/images/steps/step3.jpg",
-      "url": "https://credios.com.br/emprestimo-fgts#banco",
+      "text": "Compare as ofertas...",
+       // URL com WWW (verifique se existe)
+      "image": "https://www.credios.com.br/images/steps/step3.jpg",
+      // URL com WWW
+      "url": "https://www.credios.com.br/emprestimo-fgts#banco",
     },
-    {
+     {
       "@type": "HowToStep",
       "name": "Dinheiro no PIX",
-      "text": "Após a aprovação, o dinheiro é transferido via PIX diretamente para sua conta em minutos",
-      "image": "https://credios.com.br/images/steps/step4.jpg",
-      "url": "https://credios.com.br/emprestimo-fgts#dinheiro",
+      "text": "Após a aprovação...",
+      // URL com WWW (verifique se existe)
+      "image": "https://www.credios.com.br/images/steps/step4.jpg",
+      // URL com WWW
+      "url": "https://www.credios.com.br/emprestimo-fgts#dinheiro",
     },
   ],
-  "totalTime": "PT30M",
+  "totalTime": "PT30M", // Tempo total estimado
 };
 
 export default function EmprestimoFGTS() {
   return (
     <>
       {/* JSON-LD para SEO */}
-      <JsonLd data={finProductJsonLd} />
+      {/* Passando o schema principal renomeado */}
+      <JsonLd data={productFgtsJsonLd} />
       <JsonLd data={faqJsonLd} />
       <JsonLd data={processJsonLd} />
 

@@ -249,7 +249,7 @@ const Footer: React.FC = () => {
             <PolicyLink href="/termos-de-uso">
               Termos de Uso
             </PolicyLink>
-            <PolicyLink href="/educacao-financeira">
+            <PolicyLink href="https://www.gov.br/fazenda/pt-br/acesso-a-informacao/acoes-e-programas/desenrola-brasil/educacao-financeira">
               Educação Financeira
             </PolicyLink>
           </div>
