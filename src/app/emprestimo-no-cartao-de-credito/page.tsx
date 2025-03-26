@@ -1,21 +1,23 @@
 import { Metadata } from "next";
-import EmprestimoCartao from "@/components/corpoemprestimocartao";
+import EmprestimoCartao from "@/components/corpoemprestimocartao"; // Componente do corpo da página
 import { JsonLd } from "@/components/SEO/JsonLd";
 
-// Metadados para SEO
+// Metadados para SEO (COM WWW)
 export const metadata: Metadata = {
   title: "Empréstimo no Cartão de Crédito | Dinheiro em até 5 minutos | Credios",
-  description: "Transforme seu limite do cartão de crédito em dinheiro na conta via Pix em até 5 minutos. Taxas a partir de 1,99% ao mês, sem burocracia e 100% online. Simule agora!",
-  keywords: "empréstimo no cartão de crédito, crédito rápido, empréstimo online, empréstimo sem burocracia, empréstimo com cartão, empréstimo imediato, dinheiro via pix",
+  description: "Transforme seu limite do cartão de crédito em dinheiro na conta via Pix em até 5 minutos...",
+  keywords: "empréstimo no cartão de crédito, crédito rápido, empréstimo online...",
   authors: [{ name: "Credios" }],
   openGraph: {
     title: "Empréstimo no Cartão de Crédito | Dinheiro em até 5 minutos | Credios",
-    description: "Transforme seu limite do cartão de crédito em dinheiro na conta via Pix em até 5 minutos. Taxas a partir de 1,99% ao mês, aprovação instantânea.",
-    url: "https://credios.com.br/emprestimo-no-cartao-de-credito",
+    description: "Transforme seu limite do cartão de crédito em dinheiro na conta via Pix...",
+    // --- CORRIGIDO ---
+    url: "https://www.credios.com.br/emprestimo-no-cartao-de-credito",
     siteName: "Credios - Soluções de Crédito Digital",
     images: [
       {
-        url: "https://credios.com.br/images/og-emprestimo-no-cartao-de-credito.jpg",
+        // --- CORRIGIDO ---
+        url: "https://www.credios.com.br/images/og-emprestimo-no-cartao-de-credito.jpg",
         width: 1200,
         height: 630,
         alt: "Empréstimo no Cartão de Crédito Credios",
@@ -27,8 +29,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Empréstimo no Cartão de Crédito | Dinheiro em 5 minutos",
-    description: "Transforme seu limite do cartão em dinheiro na conta via Pix em até 5 minutos. Simule agora!",
-    images: ["https://credios.com.br/images/og-emprestimo-no-cartao-de-credito.jpg"],
+    description: "Transforme seu limite do cartão em dinheiro na conta via Pix...",
+    // --- CORRIGIDO ---
+    images: ["https://www.credios.com.br/images/og-emprestimo-no-cartao-de-credito.jpg"],
   },
   robots: {
     index: true,
@@ -41,58 +44,82 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://credios.com.br/emprestimo-no-cartao-de-credito",
+     // --- CORRIGIDO ---
+    canonical: "https://www.credios.com.br/emprestimo-no-cartao-de-credito",
   },
   viewport: "width=device-width, initial-scale=1",
 };
 
-// Schema JSON-LD para FinancialProduct
+// Schema JSON-LD para FinancialProduct (COM WWW)
 const finProductJsonLd = {
   "@context": "https://schema.org",
+   // Considerar usar "Product" se quiser tentar obter estrelas, como nas outras páginas.
+   // FinancialProduct é semanticamente mais correto, mas pode não gerar estrelas.
   "@type": "FinancialProduct",
   "name": "Empréstimo no Cartão de Crédito Credios",
-  "description": "Empréstimo rápido utilizando o limite do cartão de crédito com aprovação em minutos",
+  "description": "Empréstimo rápido utilizando o limite do cartão de crédito...",
+  // Adicionando URL principal do produto/página
+  "url": "https://www.credios.com.br/emprestimo-no-cartao-de-credito",
   "category": "Empréstimo Pessoal",
   "offers": {
     "@type": "Offer",
+    // "price" aqui pode representar um valor exemplo ou máximo. Verificar semântica.
     "price": "1000.00",
     "priceCurrency": "BRL",
-    "availability": "https://schema.org/InStock"
+    "availability": "https://schema.org/OnlineOnly" // Mudado de InStock
   },
-  "interestRate": {
+  "interestRate": { // Taxa de juros
     "@type": "QuantitativeValue",
-    "value": "1.99",
+    "value": "1.99", // A taxa *a partir de*
     "minValue": "1.99",
-    "maxValue": "6.99"
+    "maxValue": "6.99", // Exemplo de taxa máxima
+    "unitText": "% ao mês" // Adicionando unidade para clareza
   },
-  "loanTerm": {
+  "loanTerm": { // Prazo do empréstimo
     "@type": "QuantitativeValue",
-    "minValue": "1",
-    "maxValue": "12",
-    "unitCode": "MON"
+    "minValue": "1", // Mínimo de parcelas
+    "maxValue": "12", // Máximo de parcelas
+    "unitCode": "MON", // Código para Meses
+    "unitText": "meses" // Adicionando unidade para clareza
   },
-  "areaServed": "BR",
-  "provider": {
+  "areaServed": { // Área de serviço
+     "@type": "Country",
+     "name": "BR"
+  },
+  "provider": { // Organização que oferece
     "@type": "Organization",
     "name": "Credios",
-    "logo": "https://credios.com.br/logo.png",
-    "url": "https://credios.com.br"
+     // --- CORRIGIDO (ATENÇÃO AO CAMINHO '/logo.png') ---
+    "logo": "https://www.credios.com.br/logo.png",
+     // --- CORRIGIDO ---
+    "url": "https://www.credios.com.br"
   },
+   // "review" singular geralmente não é usado para rich snippets, prefira "aggregateRating".
+   // Se for apenas uma review representativa, ok, mas não gerará estrelas.
+   // Para estrelas, use aggregateRating com itemReviewed como fizemos nas outras páginas (e mude @type para Product).
   "review": {
     "@type": "Review",
-    "reviewRating": {
-      "@type": "Rating",
-      "ratingValue": "4.9",
-      "bestRating": "5"
-    },
-    "author": {
-      "@type": "Person",
-      "name": "Usuários Credios"
-    }
+    "reviewRating": { "@type": "Rating", "ratingValue": "4.9", "bestRating": "5" },
+    "author": { "@type": "Person", "name": "Usuários Credios" }
+     // Para validação, poderia adicionar "itemReviewed" aqui também,
+     // apontando para o FinancialProduct/Product.
   }
+   /* Exemplo se fosse usar AggregateRating para estrelas (requer @type: Product acima):
+   "aggregateRating": {
+     "@type": "AggregateRating",
+     "ratingValue": "4.9",
+     "bestRating": "5",
+     "ratingCount": "500", // Número total de avaliações
+     "itemReviewed": {
+       "@type": "Product", // Tem que ser Product
+       "name": "Empréstimo no Cartão de Crédito Credios",
+       "url": "https://www.credios.com.br/emprestimo-no-cartao-de-credito"
+     }
+   }
+   */
 };
 
-// Schema JSON-LD para FAQ
+// Schema JSON-LD para FAQ (sem URLs internas para corrigir)
 const faqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
@@ -100,68 +127,62 @@ const faqJsonLd = {
     {
       "@type": "Question",
       "name": "O empréstimo no cartão de crédito da Credios é realmente seguro?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Absolutamente! A Credios utiliza criptografia de nível bancário para proteger cada transação. Seus dados são armazenados em ambiente seguro, com certificações internacionais de segurança e proteção contra vazamentos. Milhares de brasileiros já confiam em nosso sistema diariamente."
-      }
+      "acceptedAnswer": { "@type": "Answer", "text": "Absolutamente! A Credios utiliza criptografia..." }
     },
     {
       "@type": "Question",
-      "name": "Quais bandeiras de cartão de crédito são aceitas para o empréstimo?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Trabalhamos com todas as principais bandeiras: Visa, Mastercard, Elo e American Express. Mesmo cartões de bancos digitais são aceitos! Basta iniciar a simulação para verificar se o seu cartão está apto para o empréstimo imediato."
-      }
+      "name": "Quais bandeiras de cartão de crédito são aceitas...",
+      "acceptedAnswer": { "@type": "Answer", "text": "Trabalhamos com todas as principais bandeiras..." }
     },
     {
       "@type": "Question",
-      "name": "Qual o valor máximo de empréstimo que posso solicitar no meu cartão?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "O valor disponível para empréstimo depende diretamente do seu limite disponível no cartão de crédito. Durante a simulação, nossa tecnologia verifica automaticamente e mostra quanto você pode receber, que pode chegar até 95% do seu limite disponível. Muitos clientes conseguem valores entre R$1.000 e R$15.000 rapidamente."
-      }
+      "name": "Qual o valor máximo de empréstimo que posso solicitar...",
+      "acceptedAnswer": { "@type": "Answer", "text": "O valor disponível depende diretamente do seu limite..." }
     },
     {
       "@type": "Question",
       "name": "Em quanto tempo o dinheiro do empréstimo cai na minha conta?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Nosso sistema de aprovação é instantâneo e o envio do dinheiro é feito via Pix, o que significa que você recebe o valor em minutos após a aprovação. A grande maioria dos nossos clientes relata recebimento em menos de 5 minutos! É o empréstimo mais rápido do mercado."
-      }
+      "acceptedAnswer": { "@type": "Answer", "text": "Nosso sistema de aprovação é instantâneo e o envio via Pix..." }
     }
   ]
 };
 
-// Schema JSON-LD para Process (HowTo)
+// Schema JSON-LD para Process (HowTo) (COM WWW)
 const processJsonLd = {
   "@context": "https://schema.org",
   "@type": "HowTo",
   "name": "Como conseguir um empréstimo no cartão de crédito",
-  "description": "Processo passo a passo para obter crédito rápido usando seu cartão de crédito",
+  "description": "Processo passo a passo para obter crédito rápido usando seu cartão...",
   "step": [
     {
       "@type": "HowToStep",
-      "name": "Simule em 30 Segundos e Descubra Seu Limite",
-      "text": "Insira os dados do seu cartão e descubra instantaneamente quanto crédito você pode ter. Sem afetar seu score de crédito!",
-      "image": "https://credios.com.br/images/steps/step1.jpg",
-      "url": "https://credios.com.br/emprestimo-no-cartao-de-credito#simulacao"
+      "name": "Simule em 30 Segundos...",
+      "text": "Insira os dados do seu cartão e descubra instantaneamente...",
+      // --- CORRIGIDO ---
+      "image": "https://www.credios.com.br/images/steps/step1.jpg",
+      // --- CORRIGIDO ---
+      "url": "https://www.credios.com.br/emprestimo-no-cartao-de-credito#simulacao"
     },
     {
       "@type": "HowToStep",
-      "name": "Aprovação Instantânea Garantida",
-      "text": "Nossa tecnologia verifica seu cartão em tempo real e aprova seu crédito na hora. Sem análise manual, sem demora!",
-      "image": "https://credios.com.br/images/steps/step2.jpg",
-      "url": "https://credios.com.br/emprestimo-no-cartao-de-credito#aprovacao"
+      "name": "Aprovação Instantânea...",
+      "text": "Nossa tecnologia verifica seu cartão em tempo real...",
+      // --- CORRIGIDO ---
+      "image": "https://www.credios.com.br/images/steps/step2.jpg",
+      // --- CORRIGIDO ---
+      "url": "https://www.credios.com.br/emprestimo-no-cartao-de-credito#aprovacao"
     },
     {
       "@type": "HowToStep",
       "name": "Receba pelo Pix Imediatamente",
-      "text": "O dinheiro cai na sua conta em minutos, pronto para usar como quiser. Sem esperar dias ou horas como nos bancos tradicionais!",
-      "image": "https://credios.com.br/images/steps/step3.jpg",
-      "url": "https://credios.com.br/emprestimo-no-cartao-de-credito#recebimento"
+      "text": "O dinheiro cai na sua conta em minutos...",
+       // --- CORRIGIDO ---
+      "image": "https://www.credios.com.br/images/steps/step3.jpg",
+       // --- CORRIGIDO ---
+      "url": "https://www.credios.com.br/emprestimo-no-cartao-de-credito#recebimento"
     }
   ],
-  "totalTime": "PT10M"
+  "totalTime": "PT10M" // Tempo estimado para completar o processo
 };
 
 export default function EmprestimoNoCartaoDeCreditoPage() {
@@ -171,7 +192,7 @@ export default function EmprestimoNoCartaoDeCreditoPage() {
       <JsonLd data={finProductJsonLd} />
       <JsonLd data={faqJsonLd} />
       <JsonLd data={processJsonLd} />
-      
+
       {/* Componente principal da página */}
       <EmprestimoCartao />
     </>

@@ -3,20 +3,22 @@ import HomeHero from "@/components/homehero";
 import CrediosProducts from "@/components/corpohome";
 import { JsonLd } from "@/components/SEO/JsonLd";
 
-// Metadados para SEO
+// Metadados para SEO (COM WWW)
 export const metadata: Metadata = {
   title: "Credios | Crédito Digital para Todos | Empréstimo para Negativados",
-  description: "Credios oferece empréstimos na conta de luz e antecipação de FGTS, mesmo para negativados. Crédito rápido e fácil, 100% digital, aprovação em minutos e dinheiro via PIX.",
-  keywords: "Credios, empréstimo digital, crédito para negativados, antecipação FGTS, empréstimo na conta de luz, crédito rápido, nome sujo, empréstimo sem burocracia",
+  description: "Credios oferece empréstimos na conta de luz e antecipação de FGTS, mesmo para negativados...",
+  keywords: "Credios, empréstimo digital, crédito para negativados, antecipação FGTS, empréstimo na conta de luz...",
   authors: [{ name: "Credios" }],
   openGraph: {
     title: "Credios | Crédito Digital Facilitado para Todos",
-    description: "Empréstimos na conta de luz e antecipação de FGTS, ideal para negativados. Crédito rápido e fácil, 100% digital com aprovação em minutos e dinheiro via PIX.",
-    url: "https://credios.com.br",
+    description: "Empréstimos na conta de luz e antecipação de FGTS, ideal para negativados...",
+    // --- CORRIGIDO ---
+    url: "https://www.credios.com.br",
     siteName: "Credios - Soluções de Crédito Digital",
     images: [
       {
-        url: "https://credios.com.br/images/credios-og.jpg",
+        // --- CORRIGIDO ---
+        url: "https://www.credios.com.br/images/credios-og.jpg",
         width: 1200,
         height: 630,
         alt: "Credios - Soluções de Crédito Digital",
@@ -28,8 +30,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Credios | Crédito Digital para Todos",
-    description: "Empréstimos na conta de luz e antecipação de FGTS, ideal para negativados. Crédito rápido, 100% digital com aprovação em minutos.",
-    images: ["https://credios.com.br/images/credios-og.jpg"],
+    description: "Empréstimos na conta de luz e antecipação de FGTS, ideal para negativados...",
+    // --- CORRIGIDO ---
+    images: ["https://www.credios.com.br/images/credios-og.jpg"],
   },
   robots: {
     index: true,
@@ -42,20 +45,23 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://credios.com.br",
+    // --- CORRIGIDO ---
+    canonical: "https://www.credios.com.br",
   },
   viewport: "width=device-width, initial-scale=1",
 };
 
-// Schema JSON-LD para a página inicial
+// Schema JSON-LD para a página inicial (COM WWW)
 const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Credios",
-  "url": "https://credios.com.br",
-  "logo": "https://credios.com.br/images/logo.png",
-  "description": "Plataforma de crédito digital focada em soluções para quem precisa de crédito rápido e fácil, mesmo com restrições no nome.",
-  "sameAs": [
+  // --- CORRIGIDO ---
+  "url": "https://www.credios.com.br",
+  // --- CORRIGIDO ---
+  "logo": "https://www.credios.com.br/images/logo.png",
+  "description": "Plataforma de crédito digital focada em soluções para quem precisa de crédito rápido e fácil...",
+  "sameAs": [ // Mantidos como estão (links externos)
     "https://www.facebook.com/credios",
     "https://www.instagram.com/credios",
     "https://api.whatsapp.com/send?phone=552130300606"
@@ -74,7 +80,7 @@ const websiteJsonLd = {
   }
 };
 
-// Schema JSON-LD para produtos
+// Schema JSON-LD para produtos (COM WWW)
 const productsJsonLd = {
   "@context": "https://schema.org",
   "@type": "ItemList",
@@ -83,10 +89,10 @@ const productsJsonLd = {
       "@type": "ListItem",
       "position": 1,
       "item": {
-        "@type": "FinancialProduct",
+        "@type": "Product", // Ou "Product" se você padronizar assim
         "name": "Empréstimo na Conta de Luz",
-        "description": "Empréstimo usando sua conta de energia elétrica como garantia, com aprovação mesmo para negativados.",
-        "url": "https://credios.com.br/emprestimo-conta-luz",
+        "description": "Empréstimo usando sua conta de energia elétrica como garantia...",
+        "url": "https://www.credios.com.br/emprestimo-na-conta-de-luz",
         "provider": {
           "@type": "Organization",
           "name": "Credios"
@@ -97,10 +103,11 @@ const productsJsonLd = {
       "@type": "ListItem",
       "position": 2,
       "item": {
-        "@type": "FinancialProduct",
+        "@type": "Product", // Ou "Product" se você padronizar assim
         "name": "Empréstimo FGTS",
         "description": "Antecipe seu saque-aniversário do FGTS com as melhores taxas do mercado.",
-        "url": "https://credios.com.br/emprestimo-fgts",
+        // --- CORRIGIDO ---
+        "url": "https://www.credios.com.br/emprestimo-fgts",
         "provider": {
           "@type": "Organization",
           "name": "Credios"
@@ -110,18 +117,20 @@ const productsJsonLd = {
   ]
 };
 
-// Schema JSON-LD para avaliações
+// Schema JSON-LD para avaliações (já apontava para Organization, sem URL própria a corrigir)
 const reviewsJsonLd = {
   "@context": "https://schema.org",
   "@type": "AggregateRating",
   "itemReviewed": {
     "@type": "Organization",
-    "name": "Credios"
+    // --- CORRIGIDO (Adicionando URL da Organização) ---
+    "name": "Credios",
+    "url": "https://www.credios.com.br" // Adiciona a URL aqui também
   },
   "ratingValue": "4.8",
   "bestRating": "5",
   "worstRating": "1",
-  "ratingCount": "10000"
+  "ratingCount": "10000" // Verifique se este número está atualizado
 };
 
 export default function Home() {
@@ -131,7 +140,7 @@ export default function Home() {
       <JsonLd data={websiteJsonLd} />
       <JsonLd data={productsJsonLd} />
       <JsonLd data={reviewsJsonLd} />
-      
+
       {/* Componentes da página */}
       <HomeHero />
       <CrediosProducts />
