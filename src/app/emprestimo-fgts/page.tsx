@@ -4,129 +4,137 @@ import SobreCredios from "@/components/sobrecredios";
 import CrediosFgtsPage from "@/components/corpofgts";
 import { JsonLd } from "@/components/SEO/JsonLd";
 
-// --- METADADOS (JÁ COM WWW NAS VERSÕES ANTERIORES, MANTIDO) ---
+// --- METADADOS (Mantidos com WWW) ---
 export const metadata: Metadata = {
   title: "Empréstimo FGTS | Antecipação do Saque-Aniversário | Credios",
   description: "Antecipe o saque-aniversário do seu FGTS com as melhores taxas do mercado. Dinheiro rápido, processo 100% digital, sem comprometer sua renda mensal. Simule agora!",
-  keywords: "empréstimo FGTS, antecipação saque-aniversário, empréstimo digital, melhores taxas FGTS, antecipação FGTS sem comprometer renda, crédito FGTS aprovação rápida, empréstimo rápido FGTS, antecipação FGTS online",
+  // ... (keywords, authors, openGraph com www, twitter com www, robots, alternates com www, viewport) ...
   authors: [{ name: "Credios" }],
   openGraph: {
     title: "Empréstimo FGTS | Antecipação do Saque-Aniversário | Credios",
-    description: "Antecipe até R$ 20.000 do seu saque-aniversário com as melhores taxas. Compare bancos, escolha a melhor oferta e receba no mesmo dia via PIX. Simule agora!",
+    description: "Antecipe até R$ 20.000 do seu saque-aniversário com as melhores taxas...",
     url: "https://www.credios.com.br/emprestimo-fgts", // WWW
     siteName: "Credios - Soluções de Crédito Digital",
-    images: [ { url: "https://www.credios.com.br/images/emprestimo-fgts-og.jpg", /*...*/ } ], // WWW
+    images: [ { url: "https://www.credios.com.br/images/emprestimo-fgts-og.jpg", width: 1200, height: 630, alt: "Empréstimo FGTS Credios" } ], // WWW
     locale: "pt_BR", type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Empréstimo FGTS | Antecipação do Saque-Aniversário | Credios",
-    description: "Antecipe seu saque-aniversário com as melhores taxas. Compare ofertas e receba no mesmo dia via PIX.",
+    description: "Antecipe seu saque-aniversário com as melhores taxas...",
     images: ["https://www.credios.com.br/images/emprestimo-fgts-og.jpg"], // WWW
   },
-  robots: { /* ... */ },
-  alternates: { canonical: "https://www.credios.com.br/emprestimo-fgts" }, // WWW
-  viewport: "width=device-width, initial-scale=1",
+   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, }, },
+   alternates: { canonical: "https://www.credios.com.br/emprestimo-fgts" }, // WWW
+   viewport: "width=device-width, initial-scale=1",
 };
 
-// --- SCHEMA JSON-LD PRINCIPAL: ALTERADO PARA @type: Service ---
-const serviceFgtsJsonLd = {
+// --- SCHEMA JSON-LD PRINCIPAL: REVERTIDO PARA @type: Product COM itemReviewed ---
+const productFgtsJsonLd = {
   "@context": "https://schema.org",
-  // --- MUDANÇA PRINCIPAL ---
-  "@type": "Service",
-  // --- FIM DA MUDANÇA ---
-  "name": "Antecipação Saque-Aniversário FGTS (Empréstimo)", // Nome focado no serviço
-  "serviceType": "Serviço de Crédito com Garantia FGTS", // Tipo específico do serviço
-  "description": "Serviço online para antecipação do saque-aniversário do FGTS com taxas competitivas. Contratação digital e recebimento rápido via PIX.",
+  // --- TIPO REVERTIDO ---
+  "@type": "Product",
+  "name": "Empréstimo FGTS - Antecipação Saque-Aniversário", // Nome estilo produto
+  "description": "Antecipação do saque-aniversário do FGTS com contratação 100% digital. Melhores taxas e dinheiro rápido na conta via PIX.",
+   // Adicionando uma imagem (use a URL correta da sua imagem OG ou outra relevante)
+  "image": "https://www.credios.com.br/images/emprestimo-fgts-og.jpg", // WWW
   "url": "https://www.credios.com.br/emprestimo-fgts", // WWW
-  "provider": { // Essencial para Service
-    "@type": "Organization",
-    "name": "Credios",
-    "url": "https://www.credios.com.br", // WWW
-    "logo": "https://www.credios.com.br/images/logo.png" // WWW
-  },
-   "brand": { // Marca do serviço/provider
-    "@type": "Organization",
+  "brand": { // Brand é padrão para Product
+    "@type": "Organization", // Usar Organization é mais robusto que apenas Brand
     "name": "Credios"
   },
-   "areaServed": { // Área de cobertura do serviço
-    "@type": "Country",
-    "name": "BR" // Código ISO 3166-1 alpha-2 para Brasil
+   // Provider/Seller (Opcional se já tem Brand, mas pode reforçar)
+  "provider": {
+     "@type": "Organization",
+     "name": "Credios",
+     "url": "https://www.credios.com.br" // WWW
   },
-  // Offers descreve a oferta do serviço (não o "produto" em si)
+   "logo": "https://www.credios.com.br/images/logo.png", // WWW - Logo da marca/provider
+   // Offers é padrão para Product
   "offers": {
     "@type": "Offer",
-    "itemOffered": { // Linka explicitamente a oferta ao serviço
-        "@type": "Service",
-        "name": "Antecipação Saque-Aniversário FGTS (Empréstimo)"
-    },
     "priceCurrency": "BRL",
-    // Não há um "preço" fixo, então omitimos 'price'. Poderia usar priceSpecification para taxas, mas simplificamos.
-    "availability": "https://schema.org/OnlineOnly",
-    "areaServed": { "@type": "Country", "name": "BR" }, // Pode repetir ou referenciar a principal
+     // Usando 'price' para indicar o valor máximo, como no seu código antigo que funcionava.
+     // Alternativamente, use priceSpecification: { maxPrice: 20000 }
+    "price": "20000.00", // Valor máximo
+    "availability": "https://schema.org/OnlineOnly", // Disponibilidade online
+    "areaServed": { // Área coberta pela oferta
+      "@type": "Country",
+      "name": "BR"
+    },
+     "url": "https://www.credios.com.br/emprestimo-fgts", // URL da oferta/produto
+     "seller": { // Quem vende/oferece
+        "@type": "Organization",
+        "name": "Credios"
+      }
   },
-   // AggregateRating e Review mantidos para valor semântico, mas SEM expectativa de Rich Snippet de estrelas
+   // AggregateRating com itemReviewed CORRETO
    "aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": "4.8",
     "bestRating": "5",
-    "ratingCount": "120",
-    "itemReviewed": { // Aponta para o Service principal
-      // --- TIPO ALTERADO ---
-      "@type": "Service",
-      "name": "Antecipação Saque-Aniversário FGTS (Empréstimo)",
+    "ratingCount": "120", // Ou reviewCount
+    "itemReviewed": { // Aponta para o Product principal
+      // --- TIPO CORRIGIDO ---
+      "@type": "Product",
+      "name": "Empréstimo FGTS - Antecipação Saque-Aniversário",
       "url": "https://www.credios.com.br/emprestimo-fgts" // WWW
     }
   },
-  "review": [ // Reviews individuais
+  // Reviews individuais com itemReviewed CORRETO
+  "review": [
     {
       "@type": "Review",
-      /* ... author, datePublished, reviewBody ... */
+      "author": { "@type": "Person", "name": "Marcelo Santos" },
+      "datePublished": "2023-07-10",
+      "reviewBody": "Consegui antecipar meu FGTS com muita facilidade...",
       "reviewRating": { "@type": "Rating", "ratingValue": "5" },
-      "itemReviewed": { // Aponta para o Service principal
-        // --- TIPO ALTERADO ---
-        "@type": "Service",
-        "name": "Antecipação Saque-Aniversário FGTS (Empréstimo)",
+      "itemReviewed": { // Aponta para o Product principal
+        // --- TIPO CORRIGIDO ---
+        "@type": "Product",
+        "name": "Empréstimo FGTS - Antecipação Saque-Aniversário",
         "url": "https://www.credios.com.br/emprestimo-fgts" // WWW
       }
     },
-    {
+    // ... (restante das reviews com a mesma estrutura de itemReviewed @type: Product) ...
+     {
       "@type": "Review",
-       /* ... author, datePublished, reviewBody ... */
+      "author": { "@type": "Person", "name": "Juliana Ferreira" },
+      "datePublished": "2023-08-03",
+      "reviewBody": "Melhor taxa do mercado para antecipação do FGTS...",
       "reviewRating": { "@type": "Rating", "ratingValue": "5" },
-      "itemReviewed": { // Aponta para o Service principal
-         // --- TIPO ALTERADO ---
-        "@type": "Service",
-        "name": "Antecipação Saque-Aniversário FGTS (Empréstimo)",
-        "url": "https://www.credios.com.br/emprestimo-fgts" // WWW
+      "itemReviewed": {
+        "@type": "Product",
+        "name": "Empréstimo FGTS - Antecipação Saque-Aniversário",
+        "url": "https://www.credios.com.br/emprestimo-fgts"
       }
     },
      {
       "@type": "Review",
-       /* ... author, datePublished, reviewBody ... */
+      "author": { "@type": "Person", "name": "Ricardo Oliveira" },
+      "datePublished": "2023-09-15",
+      "reviewBody": "Atendimento muito bom e processo rápido...",
       "reviewRating": { "@type": "Rating", "ratingValue": "4" },
-      "itemReviewed": { // Aponta para o Service principal
-         // --- TIPO ALTERADO ---
-        "@type": "Service",
-        "name": "Antecipação Saque-Aniversário FGTS (Empréstimo)",
-        "url": "https://www.credios.com.br/emprestimo-fgts" // WWW
+      "itemReviewed": {
+        "@type": "Product",
+        "name": "Empréstimo FGTS - Antecipação Saque-Aniversário",
+        "url": "https://www.credios.com.br/emprestimo-fgts"
       }
     }
   ]
 };
 
-// --- SCHEMA FAQ (Mantido, URLs já devem estar OK) ---
+// --- SCHEMA FAQ (Mantido) ---
 const faqJsonLd = { /* ... seu schema FAQ ... */ };
 
-// --- SCHEMA HOWTO (Mantido, URLs já devem estar OK) ---
+// --- SCHEMA HOWTO (Mantido) ---
 const processJsonLd = { /* ... seu schema HowTo ... */ };
 
 export default function EmprestimoFGTS() {
   return (
     <>
       {/* JSON-LD para SEO */}
-      {/* Passando o schema principal renomeado */}
-      <JsonLd data={serviceFgtsJsonLd} />
+      <JsonLd data={productFgtsJsonLd} />
       <JsonLd data={faqJsonLd} />
       <JsonLd data={processJsonLd} />
 
