@@ -1,9 +1,9 @@
 import { Metadata } from "next";
-import AdvantagesSection from "@/components/advantagessection";
-import HeroSection from "@/components/herosection";
-import { JsonLd } from "@/components/SEO/JsonLd";
+import AdvantagesSection from "@/components/advantagessection"; // Certifique-se que o caminho está correto
+import HeroSection from "@/components/herosection"; // Certifique-se que o caminho está correto
+import { JsonLd } from "@/components/SEO/JsonLd"; // Certifique-se que o caminho está correto
 
-// Metadados para SEO - mantidos como estão
+// Metadados para SEO - mantidos como estavam no original
 export const metadata: Metadata = {
   title: "Empréstimo na Conta de Luz | Até R$ 3.300 | Credios",
   description: "Solicite empréstimo na conta de luz com aprovação imediata. Até R$ 3.300 sem consulta SPC/Serasa. Receba via PIX em até 24h e pague nas faturas de energia.",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     siteName: "Credios - Soluções de Crédito Digital",
     images: [
       {
-        url: "https://credios.com.br/images/emprestimo-na-conta-de-luz-og.jpg",
+        url: "https://credios.com.br/images/emprestimo-na-conta-de-luz-og.jpg", // Verifique se esta imagem existe
         width: 1200,
         height: 630,
         alt: "Empréstimo na Conta de Luz Credios",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Empréstimo na Conta de Luz | Até R$ 3.300 | Credios",
     description: "Solicite empréstimo usando sua conta de luz. Aprovação imediata mesmo com nome negativado. Receba via PIX em até 24h.",
-    images: ["https://credios.com.br/images/emprestimo-na-conta-de-luz-og.jpg"],
+    images: ["https://credios.com.br/images/emprestimo-na-conta-de-luz-og.jpg"], // Verifique se esta imagem existe
   },
   robots: {
     index: true,
@@ -47,127 +47,89 @@ export const metadata: Metadata = {
   viewport: "width=device-width, initial-scale=1",
 };
 
-// Schema JSON-LD para Service (principal)
-const serviceJsonLd = {
+// Schema JSON-LD para FinancialProduct com AggregateRating (CORRIGIDO E MELHORADO)
+const financialProductJsonLd = {
   "@context": "https://schema.org",
-  "@type": "Service",
-  "@id": "https://credios.com.br/emprestimo-na-conta-de-luz#service",
+  "@type": "FinancialProduct",
   "name": "Empréstimo na Conta de Luz Credios",
   "description": "Empréstimo usando conta de luz como garantia, sem consulta ao SPC/Serasa, com aprovação em minutos e valores de até R$ 3.300.",
   "url": "https://credios.com.br/emprestimo-na-conta-de-luz",
   "provider": {
     "@type": "Organization",
-    "@id": "https://credios.com.br#organization",
     "name": "Credios",
     "url": "https://credios.com.br",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://credios.com.br/images/logo.png"
-    }
-  },
-  "areaServed": {
-    "@type": "GeoShape",
-    "description": "Bahia, Ceará, Pernambuco, Rio Grande do Norte, Goiás, São Paulo, Rio de Janeiro, Paraná e Rio Grande do Sul"
   },
   "offers": {
     "@type": "Offer",
     "priceCurrency": "BRL",
-    "price": "3300",
-    "availability": "https://schema.org/InStock",
-    "validFrom": "2023-01-01"
+    // Usando 'amount' para representar o valor máximo do empréstimo
+    "amount": {
+      "@type": "MonetaryAmount",
+      "currency": "BRL",
+      "maxValue": 3300
+    },
+    "availability": "https://schema.org/OnlineOnly", // Mais adequado para produto digital
+    "validFrom": "2023-01-01", // Atualize se necessário
   },
-  "termsOfService": "https://credios.com.br/termos-de-uso"
-};
-
-// Schema separado para AggregateRating
-const aggregateRatingJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "AggregateRating",
-  "itemReviewed": {
-    "@type": "Service",
-    "@id": "https://credios.com.br/emprestimo-na-conta-de-luz#service"
-  },
-  "ratingValue": "4.9",
-  "bestRating": "5",
-  "ratingCount": "100",
-  "reviewCount": "100"
-};
-
-// Schema para reviews individuais
-const reviewJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Review",
-  "itemReviewed": {
-    "@type": "Service",
-    "@id": "https://credios.com.br/emprestimo-na-conta-de-luz#service"
-  },
-  "reviewRating": {
-    "@type": "Rating",
-    "ratingValue": "5",
-    "bestRating": "5"
-  },
-  "author": {
-    "@type": "Person",
-    "name": "Carlos Silva"
-  },
-  "datePublished": "2023-08-15",
-  "reviewBody": "Processo muito simples e rápido. Recebi o dinheiro no mesmo dia!"
-};
-
-// Schema para um segundo review individual
-const review2JsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Review",
-  "itemReviewed": {
-    "@type": "Service",
-    "@id": "https://credios.com.br/emprestimo-na-conta-de-luz#service"
-  },
-  "reviewRating": {
-    "@type": "Rating",
-    "ratingValue": "4",
-    "bestRating": "5"
-  },
-  "author": {
-    "@type": "Person",
-    "name": "Ana Beatriz"
-  },
-  "datePublished": "2023-09-22",
-  "reviewBody": "Atendimento excelente e processo bem explicado. Recomendo."
-};
-
-// Schema para informações financeiras específicas 
-const financialProductJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "FinancialProduct",
-  "name": "Financiamento para Empréstimo na Conta de Luz",
-  "description": "Detalhes financeiros do empréstimo na conta de luz",
-  "url": "https://credios.com.br/emprestimo-na-conta-de-luz",
-  "provider": {
-    "@type": "Organization",
-    "@id": "https://credios.com.br#organization"
+  "areaServed": {
+    "@type": "AdministrativeArea", // Usando AdministrativeArea para clareza
+    "name": [ // Lista de nomes dos estados onde o serviço está disponível
+        "Bahia",
+        "Ceará",
+        "Pernambuco",
+        "Rio Grande do Norte",
+        "Goiás",
+        "São Paulo",
+        "Rio de Janeiro",
+        "Paraná",
+        "Rio Grande do Sul"
+    ]
   },
   "interestRate": {
     "@type": "QuantitativeValue",
-    "value": "3.99",
-    "minValue": "3.99",
-    "maxValue": "6.99",
-    "unitText": "percent"
+    "minValue": 3.99, // Valor mínimo da taxa
+    "maxValue": 6.99, // Valor máximo da taxa
+    "unitText": "percent per month", // Especificando que a taxa é mensal (ajuste se for anual: "percent per year")
   },
-  "feesAndCommissionsSpecification": "Sem taxa de abertura de crédito. Juros a partir de 3,99% ao mês."
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9", // O valor da avaliação média
+    "bestRating": "5",    // A maior nota possível (geralmente 5)
+    "ratingCount": "100", // O número total de avaliações
+    // --- CORREÇÃO ESSENCIAL ---
+    "itemReviewed": {
+      "@type": "FinancialProduct", // Especifica o tipo do item avaliado
+      "name": "Empréstimo na Conta de Luz Credios", // Nome do item avaliado (deve corresponder ao nome principal)
+      "url": "https://credios.com.br/emprestimo-na-conta-de-luz" // URL do item avaliado
+    }
+    // --- FIM DA CORREÇÃO ---
+  },
+  // Propriedade 'brand' recomendada
+  "brand": {
+    "@type": "Organization",
+    "name": "Credios"
+  },
+  // Propriedade 'loanTerm' recomendada (se aplicável)
+  // "loanTerm": {
+  //   "@type": "QuantitativeValue",
+  //   "minValue": 6,
+  //   "maxValue": 24,
+  //   "unitCode": "MON" // Código para meses (ou ANN para anos)
+  // }
 };
 
+// Componente da página
 export default function EmprestimoNaContaDeLuz() {
   return (
     <>
-      {/* Schema JSON-LD separados para evitar conflitos */}
-      <JsonLd data={serviceJsonLd} />
-      <JsonLd data={aggregateRatingJsonLd} />
-      <JsonLd data={reviewJsonLd} />
-      <JsonLd data={review2JsonLd} />
+      {/* Inclui o JSON-LD corrigido no head da página */}
       <JsonLd data={financialProductJsonLd} />
-      
+
+      {/* Seções do corpo da página (mantidas como no original) */}
       <HeroSection />
       <AdvantagesSection />
+
+      {/* Adicione aqui outras seções ou conteúdo da sua página, se houver */}
     </>
   );
 }
