@@ -1,90 +1,107 @@
 import { Metadata } from "next";
-import AdvantagesSection from "@/components/advantagessection"; // Certifique-se que o caminho está correto
-import HeroSection from "@/components/herosection"; // Certifique-se que o caminho está correto
-import { JsonLd } from "@/components/SEO/JsonLd"; // Certifique-se que o caminho está correto
+import AdvantagesSection from "@/components/advantagessection";
+import HeroSection from "@/components/herosection";
+import { JsonLd } from "@/components/SEO/JsonLd";
 
-// --- METADADOS (JÁ COM WWW) ---
+// --- METADADOS (JÁ COM WWW NAS VERSÕES ANTERIORES, MANTIDO) ---
 export const metadata: Metadata = {
   title: "Empréstimo na Conta de Luz | Até R$ 3.300 | Credios",
   description: "Solicite empréstimo na conta de luz com aprovação imediata. Até R$ 3.300 sem consulta SPC/Serasa. Receba via PIX em até 24h e pague nas faturas de energia.",
   keywords: "empréstimo na conta de luz, crédito pela conta de energia, empréstimo sem SPC, nome sujo, empréstimo rápido, empréstimo aprovação imediata",
   authors: [{ name: "Credios" }],
-  openGraph: { /* ... URLs já com www ... */ },
-  twitter: { /* ... URLs já com www ... */ },
-  robots: { /* ... */ },
-  alternates: {
-    canonical: "https://www.credios.com.br/emprestimo-na-conta-de-luz",
+  openGraph: {
+    title: "Empréstimo na Conta de Luz | Até R$ 3.300 | Credios",
+    description: "Solicite empréstimo usando sua conta de luz como garantia. Aprovação imediata mesmo com nome negativado. Receba até R$ 3.300 via PIX em até 24h.",
+    url: "https://www.credios.com.br/emprestimo-na-conta-de-luz", // WWW
+    siteName: "Credios - Soluções de Crédito Digital",
+    images: [ { url: "https://www.credios.com.br/images/emprestimo-na-conta-de-luz-og.jpg", /*...*/ } ], // WWW
+    locale: "pt_BR", type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "Empréstimo na Conta de Luz | Até R$ 3.300 | Credios",
+    description: "Solicite empréstimo usando sua conta de luz. Aprovação imediata mesmo com nome negativado. Receba via PIX em até 24h.",
+    images: ["https://www.credios.com.br/images/emprestimo-na-conta-de-luz-og.jpg"], // WWW
+  },
+  robots: { /* ... */ },
+  alternates: { canonical: "https://www.credios.com.br/emprestimo-na-conta-de-luz" }, // WWW
   viewport: "width=device-width, initial-scale=1",
 };
 
-// --- SCHEMA JSON-LD ATUALIZADO PARA @type: Product E COM WWW ---
-const productContaLuzJsonLd = {
+// --- SCHEMA JSON-LD ATUALIZADO PARA @type: Service E COM WWW ---
+const serviceContaLuzJsonLd = {
   "@context": "https://schema.org",
   // --- MUDANÇA PRINCIPAL ---
-  "@type": "Product",
+  "@type": "Service",
   // --- FIM DA MUDANÇA ---
-  "name": "Empréstimo na Conta de Luz Credios",
-  "description": "Empréstimo usando conta de luz como garantia, sem consulta ao SPC/Serasa, com aprovação em minutos e valores de até R$ 3.300.",
-  // URL com www
-  "url": "https://www.credios.com.br/emprestimo-na-conta-de-luz",
-  // Adicionando logo se disponível (use URL com www)
-  // "logo": "https://www.credios.com.br/images/logo.png",
-  "brand": { // Marca é padrão para Product
+  "name": "Empréstimo Pessoal na Conta de Luz", // Nome focado no serviço
+  "serviceType": "Serviço de Crédito Pessoal com Débito em Fatura de Energia", // Tipo específico
+  "description": "Serviço de empréstimo pessoal online com pagamento facilitado através da fatura de energia elétrica. Valores de até R$ 3.300, mesmo para negativados.",
+  "url": "https://www.credios.com.br/emprestimo-na-conta-de-luz", // WWW
+  "provider": { // Essencial para Service
+    "@type": "Organization",
+    "name": "Credios",
+    "url": "https://www.credios.com.br", // WWW
+    "logo": "https://www.credios.com.br/images/logo.png" // WWW (adicionei o logo como exemplo)
+  },
+  "brand": { // Marca do serviço/provider
     "@type": "Organization",
     "name": "Credios"
   },
-  "provider": { // Pode ser "seller" também
-    "@type": "Organization",
-    "name": "Credios",
-    // URL com www
-    "url": "https://www.credios.com.br",
+  "areaServed": { // Área de cobertura específica deste serviço
+    "@type": "AdministrativeArea", // Usando lista de estados
+    "name": [
+         "Bahia", "Ceará", "Pernambuco", "Rio Grande do Norte", "Goiás",
+         "São Paulo", "Rio de Janeiro", "Paraná", "Rio Grande do Sul"
+    ]
   },
-  // Offers é compatível com Product
+  // Offers descreve a oferta do serviço
   "offers": {
     "@type": "Offer",
+    "itemOffered": { // Linka explicitamente a oferta ao serviço
+        "@type": "Service",
+        "name": "Empréstimo Pessoal na Conta de Luz"
+    },
     "priceCurrency": "BRL",
-    "availability": "https://schema.org/OnlineOnly",
-    // Definindo o valor máximo usando priceSpecification (mais semântico para Product)
+    // Poderíamos usar priceSpecification para indicar o range de valores (min/max), taxas, etc.
+    // Exemplo com valor máximo:
     "priceSpecification": {
         "@type": "PriceSpecification",
         "priceCurrency": "BRL",
-        "maxPrice": 3300 // Indica o valor máximo
-        // Se houver um valor mínimo, pode usar "minPrice"
+        "maxPrice": 3300,
+        "valueAddedTaxIncluded": true, // Ou false, se aplicável
+        "description": "Valor máximo do empréstimo." // Descrição opcional
     },
-     "areaServed": { // Pode ficar dentro de offers
+    "availability": "https://schema.org/OnlineOnly",
+    // Referencia a areaServed principal ou repete a lista de estados
+     "areaServed": {
        "@type": "AdministrativeArea",
-       "name": [
-            "Bahia", "Ceará", "Pernambuco", "Rio Grande do Norte", "Goiás",
-            "São Paulo", "Rio de Janeiro", "Paraná", "Rio Grande do Sul"
-       ]
-     },
+       "name": [ "BA", "CE", "PE", "RN", "GO", "SP", "RJ", "PR", "RS" ] // Pode usar abreviações se preferir
+    },
   },
-  // 'loanType', 'amount' (direto no objeto), 'interestRate' removidos por não serem padrão de Product
-  // AggregateRating é compatível
-  "aggregateRating": {
+  // AggregateRating mantido para valor semântico, mas SEM expectativa de Rich Snippet de estrelas
+   "aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": "4.9",
     "bestRating": "5",
     "ratingCount": "100",
-    "itemReviewed": {
+    "itemReviewed": { // Aponta para o Service principal
       // --- TIPO ALTERADO ---
-      "@type": "Product", // Corresponde ao tipo principal
-      "name": "Empréstimo na Conta de Luz Credios",
-      // URL com www
-      "url": "https://www.credios.com.br/emprestimo-na-conta-de-luz"
+      "@type": "Service",
+      "name": "Empréstimo Pessoal na Conta de Luz",
+      "url": "https://www.credios.com.br/emprestimo-na-conta-de-luz" // WWW
     }
   },
-  // Se houvesse reviews individuais aqui, precisariam do "itemReviewed" também.
+  // Se tivesse reviews individuais, precisariam de itemReviewed apontando para Service.
 };
 
 // Componente da página
 export default function EmprestimoNaContaDeLuz() {
   return (
     <>
-      {/* Inclui o JSON-LD atualizado (Product com www) */}
+      {/* Inclui o JSON-LD atualizado (Service com www) */}
       {/* Passando o schema principal renomeado */}
-      <JsonLd data={productContaLuzJsonLd} />
+      <JsonLd data={serviceContaLuzJsonLd} />
 
       {/* Seções do corpo da página */}
       <HeroSection />
