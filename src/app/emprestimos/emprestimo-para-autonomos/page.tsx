@@ -212,7 +212,7 @@ const ADVANTAGES: AdvantageItem[] = [
       "Ideal para autônomos! Use sua fatura de energia como garantia e obtenha até R$ 3.300 sem comprovar renda. Perfeito para investir no seu negócio.",
     highlight: "FÁCIL APROVAÇÃO",
     action: "Simular Agora",
-    actionUrl: "/simular-conta-luz",
+    actionUrl: "/emprestimo-na-conta-de-luz",
     stats: [{ value: "R$ 3.300", label: "Limite Máximo" }],
     backgroundColor: "from-amber-50 to-yellow-50",
     accentColor: "yellow",
@@ -236,7 +236,7 @@ const ADVANTAGES: AdvantageItem[] = [
       "Dinheiro na conta em minutos para investir no seu negócio ou aproveitar oportunidades. Ideal para comprar mercadorias, equipamentos ou expandir.",
     highlight: "PIX",
     action: "Solicitar Agora",
-    actionUrl: "/simular-autonomo",
+    actionUrl: "/emprestimo-na-conta-de-luz",
     stats: [{ value: "15 MIN", label: "Média de Liberação" }],
     backgroundColor: "from-blue-50 to-cyan-50",
     accentColor: "blue",
@@ -374,7 +374,7 @@ const LOAN_OPTIONS: LoanOption[] = [
     description: "Use sua conta de energia como garantia e consiga até R$3.300, sem comprovar renda.",
     icon: <PlugZap className="h-6 w-6" />,
     color: "yellow",
-    url: "/emprestimo-conta-luz-autonomo",
+    url: "/emprestimo-na-conta-de-luz",
     highlighted: true,
     badge: "MAIS SIMPLES",
     available: true,
@@ -385,7 +385,7 @@ const LOAN_OPTIONS: LoanOption[] = [
     description: "Antecipe seu saque-aniversário mesmo sendo autônomo ou MEI.",
     icon: <Calendar className="h-6 w-6" />,
     color: "blue",
-    url: "/emprestimo-fgts-autonomo",
+    url: "/emprestimo-fgts",
     highlighted: true,
     available: true,
   },
@@ -395,7 +395,7 @@ const LOAN_OPTIONS: LoanOption[] = [
     description: "Soluções específicas para Microempreendedores Individuais com CNPJ ativo.",
     icon: <BadgeCheck className="h-6 w-6" />,
     color: "indigo",
-    url: "/credito-mei",
+    url: "/emprestimo-na-conta-de-luz",
     highlighted: true,
     badge: "EXCLUSIVO",
     available: true,
@@ -406,8 +406,8 @@ const LOAN_OPTIONS: LoanOption[] = [
     description: "Crédito para impulsionar seu negócio, comprar equipamentos ou mercadorias.",
     icon: <TrendingUp className="h-6 w-6" />,
     color: "green",
-    url: "/capital-giro-autonomo",
-    available: true,
+    url: "https://credios.com.br",
+    available: false,
   },
   {
     id: "emergencial",
@@ -415,8 +415,8 @@ const LOAN_OPTIONS: LoanOption[] = [
     description: "Soluções rápidas para necessidades imediatas do seu negócio.",
     icon: <Zap className="h-6 w-6" />,
     color: "orange",
-    url: "/credito-emergencial-autonomo",
-    available: true,
+    url: "https://credios.com.br",
+    available: false,
   },
   {
     id: "sazonais",
@@ -424,8 +424,8 @@ const LOAN_OPTIONS: LoanOption[] = [
     description: "Empréstimos adaptados para profissionais com rendas variáveis durante o ano.",
     icon: <LineChart className="h-6 w-6" />,
     color: "purple",
-    url: "/credito-sazonal-autonomo",
-    available: true,
+    url: "https://credios.com.br",
+    available: false,
   },
 ];
 
@@ -608,7 +608,7 @@ const HeroSection = () => {
               className="flex flex-wrap gap-4 mb-8"
               variants={slideInLeft}
             >
-              <Link href="/simular-autonomo">
+              <Link href="/emprestimo-na-conta-de-luz">
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white rounded-full px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 font-semibold flex items-center gap-2 cursor-pointer"
@@ -698,7 +698,7 @@ const HeroSection = () => {
               <div className="absolute inset-0 bg-gradient-to-br from-indigo-400/20 to-blue-400/20 rounded-2xl"></div>
               <div className="absolute inset-0 bg-white/30 backdrop-blur-sm rounded-2xl"></div>
               <Image
-                src="/images/autonomo-hero.png" // Substitua pela sua imagem real
+                src="/images/image009.jpg" // Substitua pela sua imagem real
                 alt="Empréstimo para autônomos sem comprovação de renda"
                 width={500}
                 height={450}
@@ -1106,7 +1106,7 @@ const HowItWorksSection = () => {
           transition={{ duration: 0.5, delay: 0.2 }}
           viewport={{ once: true }}
         >
-          <Link href="/simular-autonomo">
+          <Link href="/emprestimo-na-conta-de-luz">
             <Button 
               size="lg" 
               className="bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white rounded-full px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
@@ -1388,7 +1388,7 @@ const BusinessTypesSection = () => {
             transition={{ duration: 0.5, delay: 0.8 }}
             viewport={{ once: true }}
           >
-            <Link href="/simular-autonomo">
+            <Link href="/emprestimo-na-conta-de-luz">
               <Button
                 className="bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white rounded-full px-6 py-2 font-medium shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
               >
@@ -1657,7 +1657,7 @@ const FinalCTA = () => (
             </div>
           </div>
           
-          <Link href="/simular-autonomo">
+          <Link href="/emprestimo-na-conta-de-luz">
             <Button
               size="lg"
               className="bg-white text-indigo-600 hover:bg-gray-100 rounded-full px-10 py-7 text-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 font-bold flex items-center gap-2 cursor-pointer"

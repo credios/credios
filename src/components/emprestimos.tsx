@@ -200,7 +200,7 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
       description: "Taxas reduzidas usando seu imóvel como garantia",
       icon: <Home className="h-6 w-6" />,
       color: "slate",
-      url: "/emprestimos/emprestimo-garantia-imovel",
+      url: "https://credios.com.br",
       available: false,
     },
     {
@@ -209,7 +209,7 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
       description: "Use seu veículo como garantia e pague menos juros",
       icon: <Car className="h-6 w-6" />,
       color: "cyan",
-      url: "/emprestimos/emprestimo-garantia-veiculo",
+      url: "https://credios.com.br",
       available: false,
     },
   ];

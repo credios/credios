@@ -157,7 +157,7 @@ export default async function BlogPage({
             <Clock className="mr-2 text-primary" size={22} />
             <span>Últimos Artigos</span>
           </h2>
-          <Link href="/blog/archive" className="text-primary font-medium hover:underline flex items-center group">
+          <Link href="/blog" className="text-primary font-medium hover:underline flex items-center group">
             Ver arquivo
             <ArrowRight size={16} className="ml-1 group-hover:translate-x-1 transition-transform" />
           </Link>

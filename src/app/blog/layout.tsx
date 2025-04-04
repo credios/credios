@@ -4,7 +4,6 @@ import { ArrowLeft } from 'lucide-react';
 
 // Importando o componente do CTA
 import LoanCTA from '@/components/blog/loan-cta';
-import BlogFooter from '@/components/blog/blog-footer';
 
 export default function BlogLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -41,8 +40,6 @@ export default function BlogLayout({ children }: { children: React.ReactNode }) 
         <LoanCTA />
       </div>
       
-      {/* Footer Melhorado */}
-      <BlogFooter />
     </div>
   );
 }

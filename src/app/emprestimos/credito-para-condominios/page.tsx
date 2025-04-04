@@ -324,7 +324,7 @@ const ADVANTAGES: AdvantageItem[] = [
       "Condições exclusivas para pessoa jurídica, com taxas a partir de 1,99% ao mês. Muito mais vantajoso que empréstimos tradicionais para condomínios.",
     highlight: "1,99% a.m.",
     action: "Simular Agora",
-    actionUrl: "/simular-condominios",
+    actionUrl: "#formulario-contato",
     stats: [{ value: "MENORES", label: "Taxas do Mercado" }],
     backgroundColor: "from-cyan-50 to-blue-50",
     accentColor: "cyan",
